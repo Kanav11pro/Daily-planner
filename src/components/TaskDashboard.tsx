@@ -1,65 +1,48 @@
 
-import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TaskList } from "./TaskList";
-import { WeeklyView } from "./WeeklyView";
-import { Calendar, List } from "lucide-react";
 
 interface TaskDashboardProps {
   tasks: any[];
   onToggleTask: (taskId: number) => void;
   onDeleteTask: (taskId: number) => void;
   onAddTask: () => void;
+  selectedDate: Date;
 }
 
-export const TaskDashboard = ({ tasks, onToggleTask, onDeleteTask, onAddTask }: TaskDashboardProps) => {
-  const [activeTab, setActiveTab] = useState("daily");
+export const TaskDashboard = ({ tasks, onToggleTask, onDeleteTask, onAddTask, selectedDate }: TaskDashboardProps) => {
+  const formatDateTitle = (date: Date) => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
 
-  const today = new Date().toDateString();
-  const todayTasks = tasks.filter(task => 
-    new Date(task.createdAt).toDateString() === today || task.type === 'daily'
-  );
-
-  const weeklyTasks = tasks.filter(task => task.type === 'weekly');
+    if (date.toDateString() === today.toDateString()) {
+      return "Today's Study Plan";
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return "Tomorrow's Study Plan";
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return "Yesterday's Study Plan";
+    } else {
+      return `Study Plan for ${date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'short',
+        day: 'numeric'
+      })}`;
+    }
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-2 bg-gray-50 p-1 m-4 rounded-xl">
-          <TabsTrigger 
-            value="daily" 
-            className="flex items-center space-x-2 data-[state=active]:bg-white data-[state=active]:shadow-md"
-          >
-            <List className="h-4 w-4" />
-            <span>Daily Tasks</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="weekly"
-            className="flex items-center space-x-2 data-[state=active]:bg-white data-[state=active]:shadow-md"
-          >
-            <Calendar className="h-4 w-4" />
-            <span>Weekly View</span>
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="daily" className="p-6 pt-0">
-          <TaskList
-            tasks={todayTasks}
-            onToggleTask={onToggleTask}
-            onDeleteTask={onDeleteTask}
-            onAddTask={onAddTask}
-            title="Today's Study Plan"
-          />
-        </TabsContent>
-
-        <TabsContent value="weekly" className="p-6 pt-0">
-          <WeeklyView
-            tasks={weeklyTasks}
-            onToggleTask={onToggleTask}
-            onDeleteTask={onDeleteTask}
-          />
-        </TabsContent>
-      </Tabs>
+      <div className="p-6">
+        <TaskList
+          tasks={tasks}
+          onToggleTask={onToggleTask}
+          onDeleteTask={onDeleteTask}
+          onAddTask={onAddTask}
+          title={formatDateTitle(selectedDate)}
+        />
+      </div>
     </div>
   );
 };

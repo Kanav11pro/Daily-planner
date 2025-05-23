@@ -10,37 +10,215 @@ import { Label } from "@/components/ui/label";
 interface TaskModalProps {
   onClose: () => void;
   onAddTask: (task: any) => void;
+  selectedDate: Date;
 }
 
-export const TaskModal = ({ onClose, onAddTask }: TaskModalProps) => {
+const subjectsWithChapters = {
+  Mathematics: [
+    'Coordinate Geometry', 'Calculus', 'Algebra', 'Trigonometry', 
+    'Probability', 'Statistics', 'Matrices', 'Vectors', 'Complex Numbers'
+  ],
+  Physics: [
+    'Mechanics', 'Thermodynamics', 'Waves and Oscillations', 'Electrodynamics',
+    'Modern Physics', 'Optics', 'Atomic Physics', 'Nuclear Physics'
+  ],
+  Chemistry: [
+    'Physical Chemistry', 'Organic Chemistry', 'Inorganic Chemistry',
+    'Chemical Bonding', 'Thermodynamics', 'Equilibrium', 'Kinetics'
+  ],
+  English: [
+    'Grammar', 'Comprehension', 'Writing Skills', 'Vocabulary'
+  ],
+  Biology: [
+    'Cell Biology', 'Genetics', 'Evolution', 'Plant Physiology',
+    'Human Physiology', 'Ecology', 'Biotechnology'
+  ]
+};
+
+export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) => {
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
+    subject: '',
+    chapter: '',
     title: '',
     description: '',
-    subject: '',
     priority: 'medium',
     duration: '',
-    type: 'daily',
-    scheduledDay: ''
+    scheduledDate: selectedDate.toISOString()
   });
 
-  const subjects = ['Mathematics', 'Physics', 'Chemistry', 'English', 'Biology', 'General'];
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const handleNext = () => {
+    if (step === 1 && formData.subject) setStep(2);
+    else if (step === 2 && formData.chapter) setStep(3);
+    else if (step === 3 && formData.title) setStep(4);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.title.trim() || !formData.subject) return;
+    if (!formData.title.trim() || !formData.subject || !formData.chapter) return;
     
     onAddTask(formData);
     onClose();
+  };
+
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <div className="space-y-4">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-semibold text-gray-800">Select Subject</h3>
+              <p className="text-sm text-gray-600">Choose the subject you want to study</p>
+            </div>
+            <div className="grid grid-cols-1 gap-3">
+              {Object.keys(subjectsWithChapters).map(subject => (
+                <button
+                  key={subject}
+                  onClick={() => {
+                    setFormData({ ...formData, subject, chapter: '' });
+                    setStep(2);
+                  }}
+                  className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                    formData.subject === subject
+                      ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                      : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="font-medium">{subject}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-4">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-semibold text-gray-800">Select Chapter</h3>
+              <p className="text-sm text-gray-600">Choose the chapter for {formData.subject}</p>
+            </div>
+            <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto">
+              {subjectsWithChapters[formData.subject]?.map(chapter => (
+                <button
+                  key={chapter}
+                  onClick={() => {
+                    setFormData({ ...formData, chapter });
+                    setStep(3);
+                  }}
+                  className={`p-3 rounded-lg border transition-all duration-200 text-left ${
+                    formData.chapter === chapter
+                      ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                      : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+                  }`}
+                >
+                  {chapter}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-4">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-semibold text-gray-800">Task Details</h3>
+              <p className="text-sm text-gray-600">{formData.subject} - {formData.chapter}</p>
+            </div>
+            <div>
+              <Label htmlFor="title">Task Title</Label>
+              <Input
+                id="title"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                placeholder="e.g., Complete Exercise 5.1"
+                required
+                autoFocus
+              />
+            </div>
+            <div>
+              <Label htmlFor="description">Description (Optional)</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Add any additional details..."
+                rows={3}
+              />
+            </div>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-4">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-semibold text-gray-800">Final Details</h3>
+              <p className="text-sm text-gray-600">Set priority and duration</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="priority">Priority</Label>
+                <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="high">🔴 High</SelectItem>
+                    <SelectItem value="medium">🟡 Medium</SelectItem>
+                    <SelectItem value="low">🟢 Low</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="duration">Duration (minutes)</Label>
+                <Input
+                  id="duration"
+                  type="number"
+                  value={formData.duration}
+                  onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                  placeholder="60"
+                />
+              </div>
+            </div>
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h4 className="font-medium text-gray-800 mb-2">Task Summary:</h4>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">{formData.subject}</span> - {formData.chapter}
+              </p>
+              <p className="text-sm text-gray-800 font-medium">{formData.title}</p>
+              {formData.description && (
+                <p className="text-xs text-gray-600 mt-1">{formData.description}</p>
+              )}
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Add Study Task
-          </h2>
+          <div className="flex items-center space-x-4">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Add Study Task
+            </h2>
+            <div className="flex space-x-1">
+              {[1, 2, 3, 4].map(i => (
+                <div
+                  key={i}
+                  className={`w-2 h-2 rounded-full ${
+                    i <= step ? 'bg-indigo-500' : 'bg-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -49,102 +227,20 @@ export const TaskModal = ({ onClose, onAddTask }: TaskModalProps) => {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <Label htmlFor="title">Task Title</Label>
-            <Input
-              id="title"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="e.g., Complete Calculus Chapter 5"
-              required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="description">Description (Optional)</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Add any additional details..."
-              rows={3}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="subject">Subject</Label>
-              <Select value={formData.subject} onValueChange={(value) => setFormData({ ...formData, subject: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select subject" />
-                </SelectTrigger>
-                <SelectContent>
-                  {subjects.map(subject => (
-                    <SelectItem key={subject} value={subject}>{subject}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="priority">Priority</Label>
-              <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="low">Low</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="duration">Duration (minutes)</Label>
-              <Input
-                id="duration"
-                type="number"
-                value={formData.duration}
-                onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                placeholder="60"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="type">Task Type</Label>
-              <Select value={formData.type} onValueChange={(value) => setFormData({ ...formData, type: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {formData.type === 'weekly' && (
-            <div>
-              <Label htmlFor="scheduledDay">Scheduled Day</Label>
-              <Select value={formData.scheduledDay} onValueChange={(value) => setFormData({ ...formData, scheduledDay: value })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select day" />
-                </SelectTrigger>
-                <SelectContent>
-                  {daysOfWeek.map(day => (
-                    <SelectItem key={day} value={day}>{day}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          <div className="flex space-x-3 pt-4">
+        <div className="p-6">
+          {renderStep()}
+          
+          <div className="flex space-x-3 pt-6">
+            {step > 1 && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setStep(step - 1)}
+                className="flex-1"
+              >
+                Back
+              </Button>
+            )}
             <Button
               type="button"
               variant="outline"
@@ -153,14 +249,28 @@ export const TaskModal = ({ onClose, onAddTask }: TaskModalProps) => {
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
-            >
-              Add Task
-            </Button>
+            {step < 4 ? (
+              <Button
+                onClick={handleNext}
+                className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+                disabled={
+                  (step === 1 && !formData.subject) ||
+                  (step === 2 && !formData.chapter) ||
+                  (step === 3 && !formData.title)
+                }
+              >
+                Next
+              </Button>
+            ) : (
+              <Button
+                onClick={handleSubmit}
+                className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
+              >
+                Add Task
+              </Button>
+            )}
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );

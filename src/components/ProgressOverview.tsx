@@ -1,106 +1,131 @@
 
-import { Trophy, Target, TrendingUp, BookOpen } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TrendingUp, Target, Calendar, Trophy } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
+interface Task {
+  id: number;
+  title: string;
+  subject: string;
+  completed: boolean;
+  priority: string;
+  createdAt: string;
+}
+
 interface ProgressOverviewProps {
-  tasks: any[];
+  tasks: Task[];
 }
 
 export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter(task => task.completed).length;
-  const completionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-  
+  const today = new Date().toDateString();
   const todayTasks = tasks.filter(task => 
-    new Date(task.createdAt).toDateString() === new Date().toDateString()
+    new Date(task.createdAt).toDateString() === today
   );
-  const todayCompleted = todayTasks.filter(task => task.completed).length;
-  const todayRate = todayTasks.length > 0 ? (todayCompleted / todayTasks.length) * 100 : 0;
+
+  const completedToday = todayTasks.filter(task => task.completed).length;
+  const totalToday = todayTasks.length;
+  const progressPercentage = totalToday > 0 ? (completedToday / totalToday) * 100 : 0;
 
   const subjectProgress = tasks.reduce((acc, task) => {
     if (!acc[task.subject]) {
-      acc[task.subject] = { total: 0, completed: 0 };
+      acc[task.subject] = { completed: 0, total: 0 };
     }
     acc[task.subject].total++;
-    if (task.completed) acc[task.subject].completed++;
+    if (task.completed) {
+      acc[task.subject].completed++;
+    }
     return acc;
-  }, {});
+  }, {} as Record<string, { completed: number; total: number }>);
+
+  const weeklyStreak = 7; // This would be calculated based on daily completions
 
   return (
     <div className="space-y-6">
-      <Card className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-0">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center space-x-2">
-            <Trophy className="h-5 w-5" />
-            <span>Overall Progress</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl font-bold mb-2">{Math.round(completionRate)}%</div>
-          <Progress value={completionRate} className="bg-white/20" />
-          <p className="text-sm text-indigo-100 mt-2">
-            {completedTasks} of {totalTasks} tasks completed
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center space-x-2 text-gray-700">
+      <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2 text-indigo-800">
             <Target className="h-5 w-5" />
-            <span>Today's Focus</span>
+            <span>Today's Progress</span>
           </CardTitle>
+          <CardDescription>Keep up the momentum!</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-gray-800 mb-2">{Math.round(todayRate)}%</div>
-          <Progress value={todayRate} className="mb-2" />
-          <p className="text-sm text-gray-600">
-            {todayCompleted} of {todayTasks.length} tasks done today
-          </p>
+          <div className="space-y-4">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-indigo-700">
+                {completedToday}/{totalToday}
+              </div>
+              <p className="text-sm text-gray-600">Tasks Completed</p>
+            </div>
+            <Progress value={progressPercentage} className="h-3" />
+            <p className="text-center text-sm text-gray-600">
+              {Math.round(progressPercentage)}% of today's goals achieved
+            </p>
+          </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center space-x-2 text-gray-700">
-            <BookOpen className="h-5 w-5" />
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <TrendingUp className="h-5 w-5 text-green-600" />
             <span>Subject Progress</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {Object.entries(subjectProgress).map(([subject, progress]) => {
-            const rate = (progress.completed / progress.total) * 100;
-            return (
-              <div key={subject}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="font-medium text-gray-700">{subject}</span>
-                  <span className="text-gray-500">{progress.completed}/{progress.total}</span>
+        <CardContent>
+          <div className="space-y-3">
+            {Object.entries(subjectProgress).map(([subject, progress]) => (
+              <div key={subject} className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="font-medium">{subject}</span>
+                  <span className="text-gray-600">
+                    {progress.completed}/{progress.total}
+                  </span>
                 </div>
-                <Progress value={rate} className="h-2" />
+                <Progress 
+                  value={progress.total > 0 ? (progress.completed / progress.total) * 100 : 0} 
+                  className="h-2" 
+                />
               </div>
-            );
-          })}
-          
-          {Object.keys(subjectProgress).length === 0 && (
-            <div className="text-center text-gray-400 py-4">
-              <BookOpen className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Add tasks to see subject progress</p>
-            </div>
-          )}
+            ))}
+          </div>
         </CardContent>
       </Card>
 
-      <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-        <CardContent className="pt-6">
-          <div className="flex items-center space-x-3">
-            <div className="bg-green-500 p-2 rounded-lg">
-              <TrendingUp className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <p className="font-semibold text-green-800">Keep Going!</p>
-              <p className="text-sm text-green-600">You're making great progress</p>
-            </div>
+      <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200">
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2 text-yellow-800">
+            <Trophy className="h-5 w-5" />
+            <span>Study Streak</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-yellow-700">{weeklyStreak} days</div>
+            <p className="text-sm text-gray-600">Keep it going! 🔥</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Calendar className="h-5 w-5 text-blue-600" />
+            <span>Weekly Summary</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-7 gap-2 text-center">
+            {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, index) => (
+              <div key={index} className="space-y-1">
+                <div className="text-xs text-gray-500">{day}</div>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                  index < 5 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-400'
+                }`}>
+                  {index < 5 ? '✓' : '-'}
+                </div>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
