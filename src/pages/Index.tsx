@@ -3,12 +3,13 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { QuoteSection } from "@/components/QuoteSection";
 import { TaskDashboard } from "@/components/TaskDashboard";
-import { ProgressOverview } from "@/components/ProgressOverview";
+import { TaskAnalytics } from "@/components/TaskAnalytics";
 import { TaskModal } from "@/components/TaskModal";
 import { Celebration } from "@/components/Celebration";
 import { DateSelector } from "@/components/DateSelector";
+import { ThemeProvider, useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
-const Index = () => {
+const IndexContent = () => {
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -16,6 +17,9 @@ const Index = () => {
     const saved = localStorage.getItem('examPrepTasks');
     return saved ? JSON.parse(saved) : [];
   });
+
+  const { theme } = useTheme();
+  const themeColors = getThemeColors(theme);
 
   useEffect(() => {
     localStorage.setItem('examPrepTasks', JSON.stringify(tasks));
@@ -59,10 +63,10 @@ const Index = () => {
   const selectedDateTasks = getTasksForDate(selectedDate);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className={`min-h-screen bg-gradient-to-br ${themeColors.secondary}`}>
       <Header onAddTask={() => setShowTaskModal(true)} />
       
-      <main className="container mx-auto px-4 py-6 space-y-8">
+      <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
         <QuoteSection />
         
         <DateSelector 
@@ -71,8 +75,8 @@ const Index = () => {
           onAddTask={() => setShowTaskModal(true)}
         />
         
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="lg:col-span-2 order-2 lg:order-1">
             <TaskDashboard 
               tasks={selectedDateTasks}
               onToggleTask={toggleTask}
@@ -81,8 +85,8 @@ const Index = () => {
               selectedDate={selectedDate}
             />
           </div>
-          <div>
-            <ProgressOverview tasks={tasks} />
+          <div className="order-1 lg:order-2">
+            <TaskAnalytics tasks={tasks} />
           </div>
         </div>
       </main>
@@ -97,6 +101,14 @@ const Index = () => {
 
       {showCelebration && <Celebration />}
     </div>
+  );
+};
+
+const Index = () => {
+  return (
+    <ThemeProvider>
+      <IndexContent />
+    </ThemeProvider>
   );
 };
 

@@ -1,5 +1,6 @@
 
 import { TaskList } from "./TaskList";
+import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
 interface TaskDashboardProps {
   tasks: any[];
@@ -10,6 +11,9 @@ interface TaskDashboardProps {
 }
 
 export const TaskDashboard = ({ tasks, onToggleTask, onDeleteTask, onAddTask, selectedDate }: TaskDashboardProps) => {
+  const { theme } = useTheme();
+  const themeColors = getThemeColors(theme);
+
   const formatDateTitle = (date: Date) => {
     const today = new Date();
     const tomorrow = new Date(today);
@@ -33,8 +37,8 @@ export const TaskDashboard = ({ tasks, onToggleTask, onDeleteTask, onAddTask, se
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-      <div className="p-6">
+    <div className={`${themeColors.card} rounded-2xl shadow-xl ${themeColors.border} border overflow-hidden`}>
+      <div className="p-4 sm:p-6">
         <TaskList
           tasks={tasks}
           onToggleTask={onToggleTask}
