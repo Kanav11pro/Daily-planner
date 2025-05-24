@@ -1,5 +1,4 @@
-
-import { TrendingUp, Target, Calendar, Clock, Award, BookOpen, Zap } from "lucide-react";
+import { TrendingUp, Target, Calendar, Clock, Award, BookOpen, Zap, Sparkles } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
