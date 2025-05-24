@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { QuoteSection } from "@/components/QuoteSection";
 import { TaskDashboard } from "@/components/TaskDashboard";
 import { TaskAnalytics } from "@/components/TaskAnalytics";
+import { WeeklyAnalytics } from "@/components/WeeklyAnalytics";
 import { TaskModal } from "@/components/TaskModal";
 import { Celebration } from "@/components/Celebration";
 import { DateSelector } from "@/components/DateSelector";
@@ -12,6 +13,7 @@ import { ThemeProvider, useTheme, getThemeColors } from "@/contexts/ThemeContext
 const IndexContent = () => {
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showWeeklyAnalytics, setShowWeeklyAnalytics] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [tasks, setTasks] = useState(() => {
     const saved = localStorage.getItem('examPrepTasks');
@@ -88,7 +90,10 @@ const IndexContent = () => {
               />
             </div>
             <div>
-              <TaskAnalytics tasks={tasks} />
+              <TaskAnalytics 
+                tasks={tasks} 
+                onOpenWeeklyAnalytics={() => setShowWeeklyAnalytics(true)}
+              />
             </div>
           </div>
         </main>
@@ -98,6 +103,13 @@ const IndexContent = () => {
             onClose={() => setShowTaskModal(false)}
             onAddTask={addTask}
             selectedDate={selectedDate}
+          />
+        )}
+
+        {showWeeklyAnalytics && (
+          <WeeklyAnalytics
+            tasks={tasks}
+            onClose={() => setShowWeeklyAnalytics(false)}
           />
         )}
 

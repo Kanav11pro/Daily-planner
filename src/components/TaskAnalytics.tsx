@@ -1,6 +1,7 @@
-import { TrendingUp, Target, Calendar, Clock, Award, BookOpen, Zap, Sparkles } from "lucide-react";
+import { TrendingUp, Target, Calendar, Clock, Award, BookOpen, Zap, Sparkles, Brain, BarChart3 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
 interface Task {
@@ -15,9 +16,10 @@ interface Task {
 
 interface TaskAnalyticsProps {
   tasks: Task[];
+  onOpenWeeklyAnalytics: () => void;
 }
 
-export const TaskAnalytics = ({ tasks }: TaskAnalyticsProps) => {
+export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsProps) => {
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
@@ -64,39 +66,50 @@ export const TaskAnalytics = ({ tasks }: TaskAnalyticsProps) => {
   const totalHighPriority = tasks.filter(task => task.priority === 'high').length;
 
   const getMotivationalContent = () => {
-    if (averageCompletion >= 80) {
-      return {
-        emoji: '🔥',
-        title: 'On Fire!',
-        message: 'You\'re crushing your goals! Keep this amazing streak going!',
-        gradient: 'from-red-500 to-orange-500',
-        animation: 'animate-bounce'
-      };
-    } else if (averageCompletion >= 60) {
-      return {
+    const motivationalQuotes = [
+      {
         emoji: '💪',
-        title: 'Strong Progress!',
-        message: 'Excellent work! You\'re building great study habits!',
-        gradient: 'from-blue-500 to-purple-500',
-        animation: 'animate-pulse'
-      };
-    } else if (averageCompletion >= 40) {
-      return {
-        emoji: '📈',
-        title: 'Building Momentum!',
-        message: 'You\'re on the right track! Every step counts!',
-        gradient: 'from-green-500 to-teal-500',
-        animation: 'animate-pulse'
-      };
-    } else {
-      return {
-        emoji: '🌱',
-        title: 'Getting Started!',
-        message: 'Great things start small! You\'ve got this!',
-        gradient: 'from-emerald-500 to-green-500',
-        animation: 'animate-bounce'
-      };
-    }
+        title: 'BEAST MODE ON!',
+        message: 'Champions train when nobody is watching. Your dedication today builds tomorrow\'s success!',
+        gradient: 'from-red-600 via-orange-500 to-yellow-500',
+        animation: 'animate-pulse',
+        intensity: 'high'
+      },
+      {
+        emoji: '🔥',
+        title: 'GRIND NEVER STOPS!',
+        message: 'Every page you study, every problem you solve - you\'re building an unstoppable mind!',
+        gradient: 'from-purple-600 via-red-500 to-orange-500',
+        animation: 'animate-bounce',
+        intensity: 'high'
+      },
+      {
+        emoji: '⚡',
+        title: 'POWER THROUGH!',
+        message: 'The difference between ordinary and extraordinary is that little "EXTRA" - keep pushing!',
+        gradient: 'from-blue-600 via-purple-600 to-pink-600',
+        animation: 'animate-pulse',
+        intensity: 'high'
+      },
+      {
+        emoji: '🎯',
+        title: 'LOCKED AND LOADED!',
+        message: 'Focus like a laser, work like a warrior. Your goals are waiting for your action!',
+        gradient: 'from-green-600 via-blue-600 to-purple-600',
+        animation: 'animate-bounce',
+        intensity: 'high'
+      },
+      {
+        emoji: '🚀',
+        title: 'BLAST OFF TIME!',
+        message: 'Today\'s study session is your launchpad. Prepare for intellectual takeoff!',
+        gradient: 'from-indigo-600 via-purple-600 to-pink-600',
+        animation: 'animate-pulse',
+        intensity: 'high'
+      }
+    ];
+
+    return motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
   };
 
   const motivationalContent = getMotivationalContent();
@@ -198,34 +211,37 @@ export const TaskAnalytics = ({ tasks }: TaskAnalyticsProps) => {
       </Card>
 
       <Card className={`bg-gradient-to-br ${motivationalContent.gradient} text-white ${themeColors.glow} shadow-xl overflow-hidden relative`}>
-        <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
-        <div className="absolute top-2 right-2 opacity-20">
-          <Zap className="h-12 w-12 animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
+        <div className="absolute top-2 right-2 opacity-30">
+          <Brain className="h-12 w-12 animate-spin" style={{ animationDuration: '4s' }} />
         </div>
-        <div className="absolute bottom-2 left-2 opacity-20">
-          <Sparkles className="h-8 w-8 animate-spin" style={{ animationDuration: '3s' }} />
+        <div className="absolute bottom-2 left-2 opacity-30">
+          <Zap className="h-8 w-8 animate-bounce" />
+        </div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-10">
+          <Sparkles className="h-32 w-32 animate-pulse" />
         </div>
         <CardHeader className="pb-3 relative z-10">
           <CardTitle className="flex items-center space-x-2 text-white">
             <Zap className="h-5 w-5" />
-            <span>Motivation Engine</span>
+            <span>MOTIVATION ENGINE</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="relative z-10">
           <div className="text-center space-y-4">
-            <div className={`text-4xl ${motivationalContent.animation}`}>
+            <div className={`text-5xl ${motivationalContent.animation}`}>
               {motivationalContent.emoji}
             </div>
             <div>
-              <h3 className="text-xl font-bold mb-2">{motivationalContent.title}</h3>
-              <p className="text-sm opacity-90 leading-relaxed">
+              <h3 className="text-xl font-bold mb-2 tracking-wide uppercase">{motivationalContent.title}</h3>
+              <p className="text-sm opacity-90 leading-relaxed font-medium">
                 {motivationalContent.message}
               </p>
             </div>
             <div className="flex justify-center space-x-2">
-              <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce"></div>
-              <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              <div className="w-3 h-3 bg-white/80 rounded-full animate-bounce"></div>
+              <div className="w-3 h-3 bg-white/80 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+              <div className="w-3 h-3 bg-white/80 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
             </div>
           </div>
         </CardContent>
@@ -256,6 +272,23 @@ export const TaskAnalytics = ({ tasks }: TaskAnalyticsProps) => {
               </div>
             ))}
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg hover:shadow-xl transition-all duration-300`}>
+        <CardContent className="p-6">
+          <Button 
+            onClick={onOpenWeeklyAnalytics}
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-4 rounded-xl transition-all duration-300 hover:scale-105"
+          >
+            <div className="flex items-center justify-center space-x-3">
+              <BarChart3 className="h-6 w-6" />
+              <div className="text-left">
+                <div className="font-semibold">Weekly Analytics</div>
+                <div className="text-sm opacity-90">View detailed insights & charts</div>
+              </div>
+            </div>
+          </Button>
         </CardContent>
       </Card>
     </div>

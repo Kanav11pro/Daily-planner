@@ -30,54 +30,54 @@ const themes = {
     glow: 'shadow-indigo-200/50'
   },
   ocean: {
-    primary: 'from-blue-600 to-cyan-600',
-    secondary: 'from-blue-50 via-cyan-50 to-teal-50',
-    background: 'from-cyan-50 via-blue-50 to-teal-100',
-    accent: 'bg-blue-50 text-blue-800',
-    card: 'bg-white/90 backdrop-blur-sm',
-    border: 'border-blue-200',
-    text: 'text-blue-900',
-    glow: 'shadow-blue-200/50'
+    primary: 'from-cyan-500 to-blue-600',
+    secondary: 'from-cyan-50 via-blue-50 to-teal-50',
+    background: 'from-cyan-100 via-blue-200 to-teal-300',
+    accent: 'bg-cyan-100 text-cyan-900',
+    card: 'bg-white/95 backdrop-blur-md border border-cyan-200',
+    border: 'border-cyan-300',
+    text: 'text-cyan-900',
+    glow: 'shadow-cyan-300/60'
   },
   sunset: {
-    primary: 'from-orange-500 to-pink-500',
-    secondary: 'from-orange-50 via-pink-50 to-red-50',
-    background: 'from-orange-50 via-pink-50 to-red-100',
-    accent: 'bg-orange-50 text-orange-800',
-    card: 'bg-white/90 backdrop-blur-sm',
-    border: 'border-orange-200',
+    primary: 'from-orange-500 to-red-500',
+    secondary: 'from-orange-50 via-red-50 to-pink-50',
+    background: 'from-orange-200 via-red-200 to-pink-300',
+    accent: 'bg-orange-100 text-orange-900',
+    card: 'bg-white/95 backdrop-blur-md border border-orange-200',
+    border: 'border-orange-300',
     text: 'text-orange-900',
-    glow: 'shadow-orange-200/50'
+    glow: 'shadow-orange-300/60'
   },
   forest: {
-    primary: 'from-green-600 to-emerald-600',
+    primary: 'from-green-600 to-emerald-700',
     secondary: 'from-green-50 via-emerald-50 to-teal-50',
-    background: 'from-green-50 via-emerald-50 to-teal-100',
-    accent: 'bg-green-50 text-green-800',
-    card: 'bg-white/90 backdrop-blur-sm',
-    border: 'border-green-200',
+    background: 'from-green-200 via-emerald-300 to-teal-400',
+    accent: 'bg-green-100 text-green-900',
+    card: 'bg-white/95 backdrop-blur-md border border-green-200',
+    border: 'border-green-300',
     text: 'text-green-900',
-    glow: 'shadow-green-200/50'
+    glow: 'shadow-green-300/60'
   },
   purple: {
-    primary: 'from-purple-600 to-violet-600',
-    secondary: 'from-purple-50 via-violet-50 to-fuchsia-50',
-    background: 'from-purple-50 via-violet-50 to-fuchsia-100',
-    accent: 'bg-purple-50 text-purple-800',
-    card: 'bg-white/90 backdrop-blur-sm',
-    border: 'border-purple-200',
+    primary: 'from-purple-600 to-pink-600',
+    secondary: 'from-purple-50 via-pink-50 to-fuchsia-50',
+    background: 'from-purple-200 via-pink-300 to-fuchsia-400',
+    accent: 'bg-purple-100 text-purple-900',
+    card: 'bg-white/95 backdrop-blur-md border border-purple-200',
+    border: 'border-purple-300',
     text: 'text-purple-900',
-    glow: 'shadow-purple-200/50'
+    glow: 'shadow-purple-300/60'
   },
   midnight: {
-    primary: 'from-slate-700 to-gray-800',
-    secondary: 'from-slate-100 via-gray-100 to-zinc-100',
-    background: 'from-slate-100 via-gray-100 to-zinc-200',
-    accent: 'bg-slate-100 text-slate-800',
-    card: 'bg-white/90 backdrop-blur-sm',
-    border: 'border-slate-200',
-    text: 'text-slate-900',
-    glow: 'shadow-slate-200/50'
+    primary: 'from-gray-800 to-slate-900',
+    secondary: 'from-gray-800 via-slate-800 to-zinc-900',
+    background: 'from-gray-900 via-slate-900 to-zinc-950',
+    accent: 'bg-gray-800 text-gray-100',
+    card: 'bg-gray-800/95 backdrop-blur-md border border-gray-600',
+    border: 'border-gray-600',
+    text: 'text-gray-100',
+    glow: 'shadow-gray-800/60'
   }
 };
 
