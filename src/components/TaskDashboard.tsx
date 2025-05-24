@@ -37,7 +37,7 @@ export const TaskDashboard = ({ tasks, onToggleTask, onDeleteTask, onAddTask, se
   };
 
   return (
-    <div className={`${themeColors.card} rounded-2xl shadow-xl ${themeColors.border} border overflow-hidden`}>
+    <div className={`${themeColors.card} rounded-2xl shadow-xl ${themeColors.border} border overflow-hidden ${themeColors.glow} shadow-2xl`}>
       <div className="p-4 sm:p-6">
         <TaskList
           tasks={tasks}

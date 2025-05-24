@@ -41,7 +41,7 @@ const IndexContent = () => {
         const updatedTask = { ...task, completed: !task.completed };
         if (updatedTask.completed) {
           setShowCelebration(true);
-          setTimeout(() => setShowCelebration(false), 3000);
+          setTimeout(() => setShowCelebration(false), 4000);
         }
         return updatedTask;
       }
@@ -63,43 +63,46 @@ const IndexContent = () => {
   const selectedDateTasks = getTasksForDate(selectedDate);
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${themeColors.secondary}`}>
-      <Header onAddTask={() => setShowTaskModal(true)} />
-      
-      <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
-        <QuoteSection />
+    <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} relative overflow-hidden`}>
+      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
+      <div className="relative z-10">
+        <Header onAddTask={() => setShowTaskModal(true)} />
         
-        <DateSelector 
-          selectedDate={selectedDate}
-          onDateChange={setSelectedDate}
-          onAddTask={() => setShowTaskModal(true)}
-        />
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-          <div className="lg:col-span-2 order-2 lg:order-1">
-            <TaskDashboard 
-              tasks={selectedDateTasks}
-              onToggleTask={toggleTask}
-              onDeleteTask={deleteTask}
-              onAddTask={() => setShowTaskModal(true)}
-              selectedDate={selectedDate}
-            />
+        <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
+          <QuoteSection />
+          
+          <DateSelector 
+            selectedDate={selectedDate}
+            onDateChange={setSelectedDate}
+            onAddTask={() => setShowTaskModal(true)}
+          />
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className="lg:col-span-2">
+              <TaskDashboard 
+                tasks={selectedDateTasks}
+                onToggleTask={toggleTask}
+                onDeleteTask={deleteTask}
+                onAddTask={() => setShowTaskModal(true)}
+                selectedDate={selectedDate}
+              />
+            </div>
+            <div>
+              <TaskAnalytics tasks={tasks} />
+            </div>
           </div>
-          <div className="order-1 lg:order-2">
-            <TaskAnalytics tasks={tasks} />
-          </div>
-        </div>
-      </main>
+        </main>
 
-      {showTaskModal && (
-        <TaskModal
-          onClose={() => setShowTaskModal(false)}
-          onAddTask={addTask}
-          selectedDate={selectedDate}
-        />
-      )}
+        {showTaskModal && (
+          <TaskModal
+            onClose={() => setShowTaskModal(false)}
+            onAddTask={addTask}
+            selectedDate={selectedDate}
+          />
+        )}
 
-      {showCelebration && <Celebration />}
+        {showCelebration && <Celebration />}
+      </div>
     </div>
   );
 };
