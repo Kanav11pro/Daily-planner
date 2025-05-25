@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { Header } from "@/components/Header";
 import { QuoteSection } from "@/components/QuoteSection";
 import { TaskDashboard } from "@/components/TaskDashboard";
@@ -7,63 +8,68 @@ import { WeeklyAnalytics } from "@/components/WeeklyAnalytics";
 import { TaskModal } from "@/components/TaskModal";
 import { Celebration } from "@/components/Celebration";
 import { DateSelector } from "@/components/DateSelector";
+import { ProfileSection } from "@/components/ProfileSection";
+import { AuthForm } from "@/components/AuthForm";
 import { ThemeProvider, useTheme, getThemeColors } from "@/contexts/ThemeContext";
+import { useAuth } from "@/hooks/useAuth";
+import { useTasks } from "@/hooks/useTasks";
 
 const IndexContent = () => {
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [showWeeklyAnalytics, setShowWeeklyAnalytics] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [tasks, setTasks] = useState(() => {
-    const saved = localStorage.getItem('examPrepTasks');
-    return saved ? JSON.parse(saved) : [];
-  });
-
+  
+  const { user, loading: authLoading } = useAuth();
+  const { tasks, loading: tasksLoading, addTask, updateTask, deleteTask, toggleTask } = useTasks();
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
-  useEffect(() => {
-    localStorage.setItem('examPrepTasks', JSON.stringify(tasks));
-  }, [tasks]);
+  // Show loading spinner while checking auth
+  if (authLoading) {
+    return (
+      <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} flex items-center justify-center`}>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
 
-  const addTask = (task) => {
+  // Show auth form if not authenticated
+  if (!user) {
+    return <AuthForm />;
+  }
+
+  const handleAddTask = async (taskData: any) => {
     const newTask = {
-      ...task,
-      id: Date.now(),
-      createdAt: task.scheduledDate || new Date().toISOString(),
+      ...taskData,
+      scheduled_date: taskData.scheduledDate || selectedDate.toISOString().split('T')[0],
       completed: false
     };
-    setTasks([...tasks, newTask]);
+    await addTask(newTask);
+    setShowTaskModal(false);
   };
 
-  const editTask = (taskId: number, updatedTask: any) => {
-    setTasks(tasks.map(task => 
-      task.id === taskId ? { ...task, ...updatedTask } : task
-    ));
+  const handleEditTask = async (taskId: string, updatedTask: any) => {
+    await updateTask(taskId, updatedTask);
   };
 
-  const toggleTask = (taskId) => {
-    setTasks(tasks.map(task => {
-      if (task.id === taskId) {
-        const updatedTask = { ...task, completed: !task.completed };
-        if (updatedTask.completed) {
-          setShowCelebration(true);
-          setTimeout(() => setShowCelebration(false), 4000);
-        }
-        return updatedTask;
-      }
-      return task;
-    }));
+  const handleToggleTask = async (taskId: string) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (task && !task.completed) {
+      setShowCelebration(true);
+      setTimeout(() => setShowCelebration(false), 4000);
+    }
+    await toggleTask(taskId);
   };
 
-  const deleteTask = (taskId) => {
-    setTasks(tasks.filter(task => task.id !== taskId));
+  const handleDeleteTask = async (taskId: string) => {
+    await deleteTask(taskId);
   };
 
-  const getTasksForDate = (date) => {
-    const dateString = date.toDateString();
+  const getTasksForDate = (date: Date) => {
+    const dateString = date.toISOString().split('T')[0];
     return tasks.filter(task => 
-      new Date(task.createdAt).toDateString() === dateString
+      task.scheduled_date === dateString
     );
   };
 
@@ -76,6 +82,7 @@ const IndexContent = () => {
         <Header onAddTask={() => setShowTaskModal(true)} />
         
         <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
+          <ProfileSection />
           <QuoteSection />
           
           <DateSelector 
@@ -88,9 +95,9 @@ const IndexContent = () => {
             <div className="lg:col-span-2">
               <TaskDashboard 
                 tasks={selectedDateTasks}
-                onToggleTask={toggleTask}
-                onDeleteTask={deleteTask}
-                onEditTask={editTask}
+                onToggleTask={handleToggleTask}
+                onDeleteTask={handleDeleteTask}
+                onEditTask={handleEditTask}
                 onAddTask={() => setShowTaskModal(true)}
                 selectedDate={selectedDate}
               />
@@ -107,7 +114,7 @@ const IndexContent = () => {
         {showTaskModal && (
           <TaskModal
             onClose={() => setShowTaskModal(false)}
-            onAddTask={addTask}
+            onAddTask={handleAddTask}
             selectedDate={selectedDate}
           />
         )}
