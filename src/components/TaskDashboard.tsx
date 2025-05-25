@@ -6,11 +6,12 @@ interface TaskDashboardProps {
   tasks: any[];
   onToggleTask: (taskId: number) => void;
   onDeleteTask: (taskId: number) => void;
+  onEditTask: (taskId: number, updatedTask: any) => void;
   onAddTask: () => void;
   selectedDate: Date;
 }
 
-export const TaskDashboard = ({ tasks, onToggleTask, onDeleteTask, onAddTask, selectedDate }: TaskDashboardProps) => {
+export const TaskDashboard = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddTask, selectedDate }: TaskDashboardProps) => {
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
@@ -43,6 +44,7 @@ export const TaskDashboard = ({ tasks, onToggleTask, onDeleteTask, onAddTask, se
           tasks={tasks}
           onToggleTask={onToggleTask}
           onDeleteTask={onDeleteTask}
+          onEditTask={onEditTask}
           onAddTask={onAddTask}
           title={formatDateTitle(selectedDate)}
         />

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,63 @@ interface TaskModalProps {
 }
 
 const subjectsWithChapters = {
+  Maths: [
+    'Basic of Mathematics',
+    'Quadratic Equation',
+    'Complex Number',
+    'Permutation Combination',
+    'Sequences and Series',
+    'Binomial Theorem',
+    'Trigonometric Ratios & Identities',
+    'Straight Lines',
+    'Circle',
+    'Parabola',
+    'Ellipse',
+    'Hyperbola',
+    'Limits',
+    'Statistics',
+    'Sets and Relations',
+    'Matrices',
+    'Determinants',
+    'Inverse Trigonometric Functions',
+    'Functions',
+    'Continuity and Differentiability',
+    'Differentiation',
+    'Application of Derivatives',
+    'Indefinite Integration',
+    'Definite Integration',
+    'Area Under Curves',
+    'Differential Equations',
+    'Vector Algebra',
+    'Three Dimensional Geometry',
+    'Probability'
+  ],
+  Chemistry: [
+    'Some Basic Concepts of Chemistry',
+    'Structure of Atom',
+    'Classification of Elements and Periodicity in Properties',
+    'Chemical Bonding and Molecular Structure',
+    'Thermodynamics (C)',
+    'Chemical Equilibrium',
+    'Ionic Equilibrium',
+    'Redox Reactions',
+    'p Block Elements (Group 13 & 14)',
+    'General Organic Chemistry',
+    'Hydrocarbons',
+    'Solutions',
+    'Electrochemistry',
+    'Chemical Kinetics',
+    'p Block Elements (Group 15, 16, 17 & 18)',
+    'd and f Block Elements',
+    'Coordination Compounds',
+    'Haloalkanes and Haloarenes',
+    'Alcohols Phenols and Ethers',
+    'Aldehydes and Ketones',
+    'Carboxylic Acid Derivatives',
+    'Amines',
+    'Biomolecules',
+    'Practical Chemistry'
+  ],
   Physics: [
     'Mathematics in Physics',
     'Units and Dimensions',
@@ -46,69 +104,12 @@ const subjectsWithChapters = {
     'Semiconductors',
     'Experimental Physics'
   ],
-  Chemistry: [
-    'Some Basic Concepts of Chemistry',
-    'Structure of Atom',
-    'Classification of Elements and Periodicity in Properties',
-    'Chemical Bonding and Molecular Structure',
-    'Thermodynamics (C)',
-    'Chemical Equilibrium',
-    'Ionic Equilibrium',
-    'Redox Reactions',
-    'p Block Elements (Group 13 & 14)',
-    'General Organic Chemistry',
-    'Hydrocarbons',
-    'Solutions',
-    'Electrochemistry',
-    'Chemical Kinetics',
-    'p Block Elements (Group 15, 16, 17 & 18)',
-    'd and f Block Elements',
-    'Coordination Compounds',
-    'Haloalkanes and Haloarenes',
-    'Alcohols Phenols and Ethers',
-    'Aldehydes and Ketones',
-    'Carboxylic Acid Derivatives',
-    'Amines',
-    'Biomolecules',
-    'Practical Chemistry'
-  ],
-  Mathematics: [
-    'Basic of Mathematics',
-    'Quadratic Equation',
-    'Complex Number',
-    'Permutation Combination',
-    'Sequences and Series',
-    'Binomial Theorem',
-    'Trigonometric Ratios & Identities',
-    'Straight Lines',
-    'Circle',
-    'Parabola',
-    'Ellipse',
-    'Hyperbola',
-    'Limits',
-    'Statistics',
-    'Sets and Relations',
-    'Matrices',
-    'Determinants',
-    'Inverse Trigonometric Functions',
-    'Functions',
-    'Continuity and Differentiability',
-    'Differentiation',
-    'Application of Derivatives',
-    'Indefinite Integration',
-    'Definite Integration',
-    'Area Under Curves',
-    'Differential Equations',
-    'Vector Algebra',
-    'Three Dimensional Geometry',
-    'Probability'
-  ],
-  Biology: [
-    'Cell Biology', 'Genetics', 'Evolution', 'Plant Physiology',
-    'Human Physiology', 'Ecology', 'Biotechnology'
-  ],
-  English: [
-    'Grammar', 'Comprehension', 'Writing Skills', 'Vocabulary'
+  'Mock Test': [
+    'Full Length Test',
+    'Subject Wise Test',
+    'Chapter Wise Test',
+    'Previous Year Papers',
+    'Sample Papers'
   ]
 };
 

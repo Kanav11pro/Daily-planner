@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { QuoteSection } from "@/components/QuoteSection";
@@ -35,6 +34,12 @@ const IndexContent = () => {
       completed: false
     };
     setTasks([...tasks, newTask]);
+  };
+
+  const editTask = (taskId: number, updatedTask: any) => {
+    setTasks(tasks.map(task => 
+      task.id === taskId ? { ...task, ...updatedTask } : task
+    ));
   };
 
   const toggleTask = (taskId) => {
@@ -85,6 +90,7 @@ const IndexContent = () => {
                 tasks={selectedDateTasks}
                 onToggleTask={toggleTask}
                 onDeleteTask={deleteTask}
+                onEditTask={editTask}
                 onAddTask={() => setShowTaskModal(true)}
                 selectedDate={selectedDate}
               />

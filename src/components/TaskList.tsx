@@ -1,23 +1,26 @@
 
-import { Check, Clock, X, Plus, BookOpen, Sparkles } from "lucide-react";
+import { Check, Clock, X, Plus, BookOpen, Sparkles, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { EditTaskModal } from "./EditTaskModal";
+import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
 interface TaskListProps {
   tasks: any[];
   onToggleTask: (taskId: number) => void;
   onDeleteTask: (taskId: number) => void;
+  onEditTask: (taskId: number, updatedTask: any) => void;
   onAddTask: () => void;
   title: string;
 }
 
 const subjectColors = {
-  Mathematics: "bg-blue-100 text-blue-800 border-blue-300",
+  Maths: "bg-blue-100 text-blue-800 border-blue-300",
   Physics: "bg-green-100 text-green-800 border-green-300",
   Chemistry: "bg-red-100 text-red-800 border-red-300",
-  English: "bg-purple-100 text-purple-800 border-purple-300",
-  Biology: "bg-yellow-100 text-yellow-800 border-yellow-300"
+  "Mock Test": "bg-purple-100 text-purple-800 border-purple-300"
 };
 
 const priorityColors = {
@@ -32,8 +35,12 @@ const priorityIcons = {
   low: "🟢"
 };
 
-export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onAddTask, title }: TaskListProps) => {
+export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddTask, title }: TaskListProps) => {
   const [completingTasks, setCompletingTasks] = useState<Set<number>>(new Set());
+  const [editingTask, setEditingTask] = useState<any>(null);
+  const [deletingTaskId, setDeletingTaskId] = useState<number | null>(null);
+  const { theme } = useTheme();
+  const themeColors = getThemeColors(theme);
 
   const handleToggleTask = (taskId: number, isCompleted: boolean) => {
     if (!isCompleted) {
@@ -49,16 +56,28 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onAddTask, title }
     onToggleTask(taskId);
   };
 
+  const handleEditTask = (updatedTask: any) => {
+    onEditTask(editingTask.id, updatedTask);
+    setEditingTask(null);
+  };
+
+  const handleDeleteTask = () => {
+    if (deletingTaskId) {
+      onDeleteTask(deletingTaskId);
+      setDeletingTaskId(null);
+    }
+  };
+
   if (tasks.length === 0) {
     return (
       <div className="text-center py-8 sm:py-12">
-        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 sm:p-8 max-w-md mx-auto animate-fade-in">
+        <div className={`${themeColors.accent} rounded-xl p-6 sm:p-8 max-w-md mx-auto animate-fade-in`}>
           <div className="text-4xl sm:text-6xl mb-4 animate-bounce">📚</div>
-          <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">No tasks planned yet!</h3>
-          <p className="text-sm sm:text-base text-gray-500 mb-6">Start planning your study session by adding your first task.</p>
+          <h3 className={`text-lg sm:text-xl font-semibold mb-2 ${themeColors.text}`}>No tasks planned yet!</h3>
+          <p className={`text-sm sm:text-base mb-6 ${themeColors.text} opacity-70`}>Start planning your study session by adding your first task.</p>
           <Button
             onClick={onAddTask}
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 hover:scale-105"
+            className={`bg-gradient-to-r ${themeColors.primary} hover:opacity-90 transition-all duration-300 hover:scale-105`}
           >
             <Plus className="h-4 w-4 mr-2" />
             Plan Your First Task
@@ -80,8 +99,8 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onAddTask, title }
   return (
     <div className="animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
-        <h3 className="text-xl sm:text-2xl font-bold text-gray-800">{title}</h3>
-        <div className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
+        <h3 className={`text-xl sm:text-2xl font-bold ${themeColors.text}`}>{title}</h3>
+        <div className={`text-sm px-3 py-1 rounded-full ${themeColors.accent}`}>
           {tasks.filter(t => t.completed).length} of {tasks.length} completed
         </div>
       </div>
@@ -90,8 +109,8 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onAddTask, title }
         {Object.entries(tasksBySubject).map(([subject, subjectTasks]: [string, any[]]) => (
           <div key={subject} className="space-y-3 animate-fade-in">
             <div className="flex items-center space-x-2 flex-wrap">
-              <BookOpen className="h-5 w-5 text-gray-600" />
-              <h4 className="text-base sm:text-lg font-semibold text-gray-800">{subject}</h4>
+              <BookOpen className={`h-5 w-5 ${themeColors.text}`} />
+              <h4 className={`text-base sm:text-lg font-semibold ${themeColors.text}`}>{subject}</h4>
               <Badge className={`${subjectColors[subject] || "bg-gray-100 text-gray-800"} text-xs`}>
                 {subjectTasks.length} task{subjectTasks.length !== 1 ? 's' : ''}
               </Badge>
@@ -105,7 +124,7 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onAddTask, title }
                     key={task.id}
                     className={`group border-l-4 ${priorityColors[task.priority]} rounded-r-lg shadow-sm hover:shadow-lg transition-all duration-300 p-3 sm:p-4 bg-white transform hover:scale-[1.01] ${
                       task.completed ? 'opacity-75' : ''
-                    } ${isCompleting ? 'animate-pulse bg-gradient-to-r from-green-100 to-emerald-100' : ''}`}
+                    } ${isCompleting ? 'animate-pulse bg-gradient-to-r from-green-100 to-emerald-100' : ''} ${theme === 'midnight' ? 'bg-gray-800 text-gray-100' : ''}`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-3 flex-1">
@@ -124,16 +143,16 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onAddTask, title }
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between">
                             <div className="flex-1 min-w-0">
-                              <h5 className={`font-semibold text-gray-800 break-words ${task.completed ? 'line-through' : ''}`}>
+                              <h5 className={`font-semibold break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-100' : 'text-gray-800'}`}>
                                 {task.title}
                               </h5>
                               {task.chapter && (
-                                <p className={`text-sm text-gray-600 ${task.completed ? 'line-through' : ''}`}>
+                                <p className={`text-sm break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-300' : 'text-gray-600'}`}>
                                   Chapter: {task.chapter}
                                 </p>
                               )}
                               {task.description && (
-                                <p className={`text-gray-600 mt-1 text-sm break-words ${task.completed ? 'line-through' : ''}`}>
+                                <p className={`mt-1 text-sm break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-300' : 'text-gray-600'}`}>
                                   {task.description}
                                 </p>
                               )}
@@ -146,7 +165,7 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onAddTask, title }
                             </Badge>
                             
                             {task.duration && (
-                              <div className="flex items-center text-sm text-gray-500">
+                              <div className={`flex items-center text-sm ${theme === 'midnight' ? 'text-gray-400' : 'text-gray-500'}`}>
                                 <Clock className="h-4 w-4 mr-1" />
                                 {task.duration} min
                               </div>
@@ -155,12 +174,22 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onAddTask, title }
                         </div>
                       </div>
                       
-                      <button
-                        onClick={() => onDeleteTask(task.id)}
-                        className="opacity-0 group-hover:opacity-100 transition-all duration-300 text-red-500 hover:text-red-700 p-1 hover:scale-110 ml-2"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
+                      <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300 ml-2">
+                        <button
+                          onClick={() => setEditingTask(task)}
+                          className="text-blue-500 hover:text-blue-700 p-1 hover:scale-110 transition-all duration-300"
+                          title="Edit task"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => setDeletingTaskId(task.id)}
+                          className="text-red-500 hover:text-red-700 p-1 hover:scale-110 transition-all duration-300"
+                          title="Delete task"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -174,12 +203,27 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onAddTask, title }
         <Button
           onClick={onAddTask}
           variant="outline"
-          className="border-dashed border-2 border-indigo-300 text-indigo-600 hover:bg-indigo-50 transition-all duration-300 hover:scale-105"
+          className={`border-dashed border-2 transition-all duration-300 hover:scale-105 ${themeColors.border} ${themeColors.text} hover:${themeColors.accent.replace('bg-', 'bg-').replace('text-', 'hover:text-')}`}
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Another Task
         </Button>
       </div>
+
+      {editingTask && (
+        <EditTaskModal
+          task={editingTask}
+          onClose={() => setEditingTask(null)}
+          onSave={handleEditTask}
+        />
+      )}
+
+      {deletingTaskId && (
+        <DeleteConfirmDialog
+          onConfirm={handleDeleteTask}
+          onCancel={() => setDeletingTaskId(null)}
+        />
+      )}
     </div>
   );
 };
