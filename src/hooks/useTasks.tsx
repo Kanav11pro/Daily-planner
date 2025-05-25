@@ -16,6 +16,7 @@ export interface Task {
   scheduled_date: string;
   created_at: string;
   updated_at: string;
+  user_id: string;
 }
 
 export const useTasks = () => {
@@ -47,7 +48,7 @@ export const useTasks = () => {
     fetchTasks();
   }, [user]);
 
-  const addTask = async (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
+  const addTask = async (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
     if (!user) return;
 
     try {

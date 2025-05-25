@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -123,7 +122,7 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
     description: '',
     priority: 'medium',
     duration: '',
-    scheduledDate: selectedDate.toISOString()
+    scheduled_date: selectedDate.toISOString().split('T')[0]
   });
 
   const handleNext = () => {
@@ -132,11 +131,16 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
     else if (step === 3 && formData.title) setStep(4);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.subject || !formData.chapter) return;
     
-    onAddTask(formData);
+    const taskData = {
+      ...formData,
+      duration: formData.duration ? parseInt(formData.duration) : null
+    };
+    
+    onAddTask(taskData);
     onClose();
   };
 

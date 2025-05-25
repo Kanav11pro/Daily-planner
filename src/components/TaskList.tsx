@@ -1,4 +1,3 @@
-
 import { Check, Clock, X, Plus, BookOpen, Sparkles, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,9 +8,9 @@ import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
 interface TaskListProps {
   tasks: any[];
-  onToggleTask: (taskId: number) => void;
-  onDeleteTask: (taskId: number) => void;
-  onEditTask: (taskId: number, updatedTask: any) => void;
+  onToggleTask: (taskId: string) => void;
+  onDeleteTask: (taskId: string) => void;
+  onEditTask: (taskId: string, updatedTask: any) => void;
   onAddTask: () => void;
   title: string;
 }
@@ -36,13 +35,13 @@ const priorityIcons = {
 };
 
 export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddTask, title }: TaskListProps) => {
-  const [completingTasks, setCompletingTasks] = useState<Set<number>>(new Set());
+  const [completingTasks, setCompletingTasks] = useState<Set<string>>(new Set());
   const [editingTask, setEditingTask] = useState<any>(null);
-  const [deletingTaskId, setDeletingTaskId] = useState<number | null>(null);
+  const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
-  const handleToggleTask = (taskId: number, isCompleted: boolean) => {
+  const handleToggleTask = (taskId: string, isCompleted: boolean) => {
     if (!isCompleted) {
       setCompletingTasks(prev => new Set(prev).add(taskId));
       setTimeout(() => {

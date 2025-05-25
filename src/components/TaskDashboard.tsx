@@ -4,9 +4,9 @@ import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
 interface TaskDashboardProps {
   tasks: any[];
-  onToggleTask: (taskId: number) => void;
-  onDeleteTask: (taskId: number) => void;
-  onEditTask: (taskId: number, updatedTask: any) => void;
+  onToggleTask: (taskId: string) => void;
+  onDeleteTask: (taskId: string) => void;
+  onEditTask: (taskId: string, updatedTask: any) => void;
   onAddTask: () => void;
   selectedDate: Date;
 }
