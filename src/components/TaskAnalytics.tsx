@@ -1,4 +1,3 @@
-
 import { TrendingUp, Target, Calendar, Clock, Award, BookOpen, Zap, Sparkles, Brain, BarChart3 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -25,10 +24,15 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
+  // Get today's date in YYYY-MM-DD format to match scheduled_date format
   const today = new Date().toISOString().split('T')[0];
-  const todayTasks = tasks.filter(task => 
-    task.scheduled_date === today
-  );
+  
+  // Filter tasks for today using scheduled_date
+  const todayTasks = tasks.filter(task => task.scheduled_date === today);
+  
+  console.log('Today:', today);
+  console.log('All tasks:', tasks);
+  console.log('Today tasks:', todayTasks);
 
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date();
@@ -37,9 +41,7 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
   });
 
   const weeklyCompletion = last7Days.map(date => {
-    const dayTasks = tasks.filter(task => 
-      task.scheduled_date === date
-    );
+    const dayTasks = tasks.filter(task => task.scheduled_date === date);
     const completed = dayTasks.filter(task => task.completed).length;
     const total = dayTasks.length;
     return { date, completed, total, percentage: total > 0 ? (completed / total) * 100 : 0 };
@@ -132,12 +134,17 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
               <div className={`text-3xl font-bold ${themeColors.text}`}>
                 {completedToday}/{totalToday}
               </div>
-              <p className="text-sm text-gray-600">Tasks Completed</p>
+              <p className="text-sm text-gray-600">Tasks Completed Today</p>
             </div>
             <Progress value={progressPercentage} className="h-3" />
             <p className="text-center text-sm text-gray-600">
               {Math.round(progressPercentage)}% of today's goals achieved
             </p>
+            {totalToday === 0 && (
+              <p className="text-center text-sm text-gray-500 italic">
+                No tasks scheduled for today. Add some tasks to get started!
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>

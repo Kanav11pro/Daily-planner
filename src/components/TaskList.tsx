@@ -1,9 +1,11 @@
-import { Check, Clock, X, Plus, BookOpen, Sparkles, Edit, Trash2 } from "lucide-react";
+
+import { Check, Clock, X, Plus, BookOpen, Sparkles, Edit, Trash2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { EditTaskModal } from "./EditTaskModal";
 import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+import { MoveTaskModal } from "./MoveTaskModal";
 import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
 interface TaskListProps {
@@ -38,6 +40,7 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
   const [completingTasks, setCompletingTasks] = useState<Set<string>>(new Set());
   const [editingTask, setEditingTask] = useState<any>(null);
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
+  const [movingTask, setMovingTask] = useState<any>(null);
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
@@ -56,7 +59,9 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
   };
 
   const handleEditTask = (updatedTask: any) => {
-    onEditTask(editingTask.id, updatedTask);
+    // Remove any fields that don't exist in the database
+    const { createdAt, ...taskWithoutCreatedAt } = updatedTask;
+    onEditTask(editingTask.id, taskWithoutCreatedAt);
     setEditingTask(null);
   };
 
@@ -64,6 +69,13 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
     if (deletingTaskId) {
       onDeleteTask(deletingTaskId);
       setDeletingTaskId(null);
+    }
+  };
+
+  const handleMoveTask = (newDate: string) => {
+    if (movingTask) {
+      onEditTask(movingTask.id, { ...movingTask, scheduled_date: newDate });
+      setMovingTask(null);
     }
   };
 
@@ -175,6 +187,13 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
                       
                       <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300 ml-2">
                         <button
+                          onClick={() => setMovingTask(task)}
+                          className="text-purple-500 hover:text-purple-700 p-1 hover:scale-110 transition-all duration-300"
+                          title="Move to different date"
+                        >
+                          <Calendar className="h-4 w-4" />
+                        </button>
+                        <button
                           onClick={() => setEditingTask(task)}
                           className="text-blue-500 hover:text-blue-700 p-1 hover:scale-110 transition-all duration-300"
                           title="Edit task"
@@ -221,6 +240,14 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
         <DeleteConfirmDialog
           onConfirm={handleDeleteTask}
           onCancel={() => setDeletingTaskId(null)}
+        />
+      )}
+
+      {movingTask && (
+        <MoveTaskModal
+          task={movingTask}
+          onClose={() => setMovingTask(null)}
+          onMove={handleMoveTask}
         />
       )}
     </div>
