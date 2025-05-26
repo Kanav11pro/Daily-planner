@@ -4,12 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 
 interface Task {
-  id: number;
+  id: string;
   title: string;
   subject: string;
   completed: boolean;
   priority: string;
-  createdAt: string;
+  scheduled_date: string;
+  created_at: string;
+  duration?: number;
 }
 
 interface ProgressOverviewProps {
@@ -17,9 +19,9 @@ interface ProgressOverviewProps {
 }
 
 export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
-  const today = new Date().toDateString();
+  const today = new Date().toISOString().split('T')[0];
   const todayTasks = tasks.filter(task => 
-    new Date(task.createdAt).toDateString() === today
+    task.scheduled_date === today
   );
 
   const completedToday = todayTasks.filter(task => task.completed).length;
@@ -37,7 +39,19 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
     return acc;
   }, {} as Record<string, { completed: number; total: number }>);
 
-  const weeklyStreak = 7; // This would be calculated based on daily completions
+  // Calculate study streak (simplified - count days with completed tasks in last 7 days)
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    return date.toISOString().split('T')[0];
+  });
+
+  const daysWithCompletedTasks = last7Days.filter(date => {
+    const dayTasks = tasks.filter(task => task.scheduled_date === date);
+    return dayTasks.some(task => task.completed);
+  }).length;
+
+  const weeklyStreak = daysWithCompletedTasks;
 
   return (
     <div className="space-y-6">
@@ -116,16 +130,24 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-7 gap-2 text-center">
-            {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, index) => (
-              <div key={index} className="space-y-1">
-                <div className="text-xs text-gray-500">{day}</div>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
-                  index < 5 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-400'
-                }`}>
-                  {index < 5 ? '✓' : '-'}
+            {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, index) => {
+              const date = new Date();
+              date.setDate(date.getDate() - (6 - index));
+              const dateString = date.toISOString().split('T')[0];
+              const dayTasks = tasks.filter(task => task.scheduled_date === dateString);
+              const hasCompletedTasks = dayTasks.some(task => task.completed);
+              
+              return (
+                <div key={index} className="space-y-1">
+                  <div className="text-xs text-gray-500">{day}</div>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
+                    hasCompletedTasks ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-400'
+                  }`}>
+                    {hasCompletedTasks ? '✓' : '-'}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>

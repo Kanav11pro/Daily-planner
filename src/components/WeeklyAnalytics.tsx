@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button";
 import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
 interface Task {
-  id: number;
+  id: string;
   title: string;
   subject: string;
   completed: boolean;
   priority: string;
-  createdAt: string;
-  duration?: string;
+  created_at: string;
+  scheduled_date: string;
+  duration?: number;
 }
 
 interface WeeklyAnalyticsProps {
@@ -33,12 +34,14 @@ export const WeeklyAnalytics = ({ tasks, onClose }: WeeklyAnalyticsProps) => {
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
 
+    const startDateString = startOfWeek.toISOString().split('T')[0];
+    const endDateString = endOfWeek.toISOString().split('T')[0];
+
     return {
       start: startOfWeek,
       end: endOfWeek,
       tasks: tasks.filter(task => {
-        const taskDate = new Date(task.createdAt);
-        return taskDate >= startOfWeek && taskDate <= endOfWeek;
+        return task.scheduled_date >= startDateString && task.scheduled_date <= endDateString;
       })
     };
   };
@@ -49,8 +52,10 @@ export const WeeklyAnalytics = ({ tasks, onClose }: WeeklyAnalyticsProps) => {
   const dailyProgress = Array.from({ length: 7 }, (_, i) => {
     const date = new Date(currentWeekData.start);
     date.setDate(date.getDate() + i);
+    const dateString = date.toISOString().split('T')[0];
+    
     const dayTasks = weeklyTasks.filter(task => 
-      new Date(task.createdAt).toDateString() === date.toDateString()
+      task.scheduled_date === dateString
     );
     const completed = dayTasks.filter(task => task.completed).length;
     const total = dayTasks.length;
@@ -60,7 +65,7 @@ export const WeeklyAnalytics = ({ tasks, onClose }: WeeklyAnalyticsProps) => {
       completed,
       total,
       percentage: total > 0 ? Math.round((completed / total) * 100) : 0,
-      studyTime: dayTasks.reduce((sum, task) => sum + parseInt(task.duration || '0'), 0)
+      studyTime: dayTasks.reduce((sum, task) => sum + (task.duration || 0), 0)
     };
   });
 
@@ -83,7 +88,7 @@ export const WeeklyAnalytics = ({ tasks, onClose }: WeeklyAnalyticsProps) => {
   const totalCompleted = weeklyTasks.filter(task => task.completed).length;
   const totalTasks = weeklyTasks.length;
   const weeklyCompletionRate = totalTasks > 0 ? Math.round((totalCompleted / totalTasks) * 100) : 0;
-  const totalStudyTime = weeklyTasks.reduce((sum, task) => sum + parseInt(task.duration || '0'), 0);
+  const totalStudyTime = weeklyTasks.reduce((sum, task) => sum + (task.duration || 0), 0);
 
   const formatWeekRange = () => {
     const start = currentWeekData.start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });

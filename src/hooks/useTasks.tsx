@@ -17,6 +17,8 @@ export interface Task {
   created_at: string;
   updated_at: string;
   user_id: string;
+  // Add alias for compatibility with existing components
+  createdAt?: string;
 }
 
 export const useTasks = () => {
@@ -35,7 +37,15 @@ export const useTasks = () => {
         .order('scheduled_date', { ascending: true });
 
       if (error) throw error;
-      setTasks(data || []);
+      
+      // Transform data to include createdAt alias for compatibility
+      const transformedTasks = (data || []).map(task => ({
+        ...task,
+        createdAt: task.created_at,
+        priority: task.priority as 'low' | 'medium' | 'high'
+      }));
+      
+      setTasks(transformedTasks);
     } catch (error: any) {
       toast.error('Failed to fetch tasks');
       console.error('Error fetching tasks:', error);
@@ -48,7 +58,7 @@ export const useTasks = () => {
     fetchTasks();
   }, [user]);
 
-  const addTask = async (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at' | 'user_id'>) => {
+  const addTask = async (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at' | 'user_id' | 'createdAt'>) => {
     if (!user) return;
 
     try {
@@ -62,9 +72,16 @@ export const useTasks = () => {
         .single();
 
       if (error) throw error;
-      setTasks(prev => [...prev, data]);
+      
+      const transformedTask = {
+        ...data,
+        createdAt: data.created_at,
+        priority: data.priority as 'low' | 'medium' | 'high'
+      };
+      
+      setTasks(prev => [...prev, transformedTask]);
       toast.success('Task added successfully!');
-      return data;
+      return transformedTask;
     } catch (error: any) {
       toast.error('Failed to add task');
       console.error('Error adding task:', error);
@@ -81,9 +98,16 @@ export const useTasks = () => {
         .single();
 
       if (error) throw error;
-      setTasks(prev => prev.map(task => task.id === id ? data : task));
+      
+      const transformedTask = {
+        ...data,
+        createdAt: data.created_at,
+        priority: data.priority as 'low' | 'medium' | 'high'
+      };
+      
+      setTasks(prev => prev.map(task => task.id === id ? transformedTask : task));
       toast.success('Task updated successfully!');
-      return data;
+      return transformedTask;
     } catch (error: any) {
       toast.error('Failed to update task');
       console.error('Error updating task:', error);

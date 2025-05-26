@@ -1,3 +1,4 @@
+
 import { TrendingUp, Target, Calendar, Clock, Award, BookOpen, Zap, Sparkles, Brain, BarChart3 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -5,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
 interface Task {
-  id: number;
+  id: string;
   title: string;
   subject: string;
   completed: boolean;
   priority: string;
-  createdAt: string;
-  duration?: string;
+  created_at: string;
+  scheduled_date: string;
+  duration?: number;
 }
 
 interface TaskAnalyticsProps {
@@ -23,20 +25,20 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
-  const today = new Date().toDateString();
+  const today = new Date().toISOString().split('T')[0];
   const todayTasks = tasks.filter(task => 
-    new Date(task.createdAt).toDateString() === today
+    task.scheduled_date === today
   );
 
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() - i);
-    return date.toDateString();
+    return date.toISOString().split('T')[0];
   });
 
   const weeklyCompletion = last7Days.map(date => {
     const dayTasks = tasks.filter(task => 
-      new Date(task.createdAt).toDateString() === date
+      task.scheduled_date === date
     );
     const completed = dayTasks.filter(task => task.completed).length;
     const total = dayTasks.length;
@@ -54,7 +56,7 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
     acc[task.subject].total++;
     if (task.completed) {
       acc[task.subject].completed++;
-      acc[task.subject].timeSpent += parseInt(task.duration || '0');
+      acc[task.subject].timeSpent += task.duration || 0;
     }
     return acc;
   }, {} as Record<string, { completed: number; total: number; timeSpent: number }>);
