@@ -53,6 +53,10 @@ const IndexContent = () => {
     await updateTask(taskId, updatedTask);
   };
 
+  const handleMoveTask = async (taskId: string, newDate: string) => {
+    await updateTask(taskId, { scheduled_date: newDate });
+  };
+
   const handleToggleTask = async (taskId: string) => {
     const task = tasks.find(t => t.id === taskId);
     if (task && !task.completed) {
@@ -98,6 +102,7 @@ const IndexContent = () => {
                 onToggleTask={handleToggleTask}
                 onDeleteTask={handleDeleteTask}
                 onEditTask={handleEditTask}
+                onMoveTask={handleMoveTask}
                 onAddTask={() => setShowTaskModal(true)}
                 selectedDate={selectedDate}
               />
