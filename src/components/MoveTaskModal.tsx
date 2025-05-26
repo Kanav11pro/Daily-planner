@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 interface MoveTaskModalProps {
   task: any;
   onClose: () => void;
-  onMove: (newDate: string) => void;
+  onMove: (taskId: string, newDate: string) => void;
 }
 
 export const MoveTaskModal = ({ task, onClose, onMove }: MoveTaskModalProps) => {
@@ -18,7 +18,8 @@ export const MoveTaskModal = ({ task, onClose, onMove }: MoveTaskModalProps) => 
     e.preventDefault();
     if (!selectedDate) return;
     
-    onMove(selectedDate);
+    onMove(task.id, selectedDate);
+    onClose();
   };
 
   const today = new Date().toISOString().split('T')[0];

@@ -1,4 +1,3 @@
-
 import { Check, Clock, X, Plus, BookOpen, Sparkles, Edit, Trash2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -72,9 +71,11 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
     }
   };
 
-  const handleMoveTask = (newDate: string) => {
-    if (movingTask) {
-      onEditTask(movingTask.id, { ...movingTask, scheduled_date: newDate });
+  const handleMoveTask = (taskId: string, newDate: string) => {
+    // Use onEditTask to update the scheduled_date
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      onEditTask(taskId, { ...task, scheduled_date: newDate });
       setMovingTask(null);
     }
   };

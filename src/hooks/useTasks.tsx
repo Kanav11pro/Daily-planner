@@ -90,9 +90,12 @@ export const useTasks = () => {
 
   const updateTask = async (id: string, updates: Partial<Task>) => {
     try {
+      // Remove fields that don't exist in the database schema
+      const { createdAt, ...cleanUpdates } = updates;
+      
       const { data, error } = await supabase
         .from('tasks')
-        .update(updates)
+        .update(cleanUpdates)
         .eq('id', id)
         .select()
         .single();
@@ -111,6 +114,32 @@ export const useTasks = () => {
     } catch (error: any) {
       toast.error('Failed to update task');
       console.error('Error updating task:', error);
+    }
+  };
+
+  const moveTask = async (id: string, newDate: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .update({ scheduled_date: newDate })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      const transformedTask = {
+        ...data,
+        createdAt: data.created_at,
+        priority: data.priority as 'low' | 'medium' | 'high'
+      };
+      
+      setTasks(prev => prev.map(task => task.id === id ? transformedTask : task));
+      toast.success('Task moved successfully!');
+      return transformedTask;
+    } catch (error: any) {
+      toast.error('Failed to move task');
+      console.error('Error moving task:', error);
     }
   };
 
@@ -144,6 +173,7 @@ export const useTasks = () => {
     updateTask,
     deleteTask,
     toggleTask,
+    moveTask,
     refetch: fetchTasks,
   };
 };
