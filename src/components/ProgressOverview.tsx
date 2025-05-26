@@ -2,7 +2,17 @@
 import { TrendingUp, Target, Calendar, Trophy } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Task } from "@/hooks/useTasks";
+
+interface Task {
+  id: string;
+  title: string;
+  subject: string;
+  completed: boolean;
+  priority: string;
+  scheduled_date: string;
+  created_at: string;
+  duration?: number;
+}
 
 interface ProgressOverviewProps {
   tasks: Task[];

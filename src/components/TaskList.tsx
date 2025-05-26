@@ -1,219 +1,228 @@
-
-import { useState } from "react";
-import { Check, Plus, Edit2, Trash2, Clock, MoveHorizontal } from "lucide-react";
+import { Check, Clock, X, Plus, BookOpen, Sparkles, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
 import { EditTaskModal } from "./EditTaskModal";
-import { MoveTaskModal } from "./MoveTaskModal";
 import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
-import { Task } from "@/hooks/useTasks";
+import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
 interface TaskListProps {
-  tasks: Task[];
+  tasks: any[];
   onToggleTask: (taskId: string) => void;
   onDeleteTask: (taskId: string) => void;
   onEditTask: (taskId: string, updatedTask: any) => void;
-  onMoveTask?: (taskId: string, newDate: string) => void;
   onAddTask: () => void;
   title: string;
 }
 
-export const TaskList = ({ 
-  tasks, 
-  onToggleTask, 
-  onDeleteTask, 
-  onEditTask, 
-  onMoveTask,
-  onAddTask, 
-  title 
-}: TaskListProps) => {
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [movingTask, setMovingTask] = useState<Task | null>(null);
+const subjectColors = {
+  Maths: "bg-blue-100 text-blue-800 border-blue-300",
+  Physics: "bg-green-100 text-green-800 border-green-300",
+  Chemistry: "bg-red-100 text-red-800 border-red-300",
+  "Mock Test": "bg-purple-100 text-purple-800 border-purple-300"
+};
+
+const priorityColors = {
+  high: "border-l-red-500 bg-gradient-to-r from-red-50 to-pink-50",
+  medium: "border-l-yellow-500 bg-gradient-to-r from-yellow-50 to-orange-50",
+  low: "border-l-green-500 bg-gradient-to-r from-green-50 to-emerald-50"
+};
+
+const priorityIcons = {
+  high: "🔴",
+  medium: "🟡", 
+  low: "🟢"
+};
+
+export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddTask, title }: TaskListProps) => {
+  const [completingTasks, setCompletingTasks] = useState<Set<string>>(new Set());
+  const [editingTask, setEditingTask] = useState<any>(null);
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
+  const { theme } = useTheme();
+  const themeColors = getThemeColors(theme);
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+  const handleToggleTask = (taskId: string, isCompleted: boolean) => {
+    if (!isCompleted) {
+      setCompletingTasks(prev => new Set(prev).add(taskId));
+      setTimeout(() => {
+        setCompletingTasks(prev => {
+          const next = new Set(prev);
+          next.delete(taskId);
+          return next;
+        });
+      }, 1000);
     }
+    onToggleTask(taskId);
   };
 
-  const getPriorityEmoji = (priority: string) => {
-    switch (priority) {
-      case 'high': return '🔴';
-      case 'medium': return '🟡';
-      case 'low': return '🟢';
-      default: return '⚪';
-    }
-  };
-
-  const handleEditSave = (updatedTask: any) => {
-    onEditTask(updatedTask.id, updatedTask);
+  const handleEditTask = (updatedTask: any) => {
+    onEditTask(editingTask.id, updatedTask);
     setEditingTask(null);
   };
 
-  const handleMove = (taskId: string, newDate: string) => {
-    if (onMoveTask) {
-      onMoveTask(taskId, newDate);
-    }
-    setMovingTask(null);
-  };
-
-  const handleDelete = () => {
+  const handleDeleteTask = () => {
     if (deletingTaskId) {
       onDeleteTask(deletingTaskId);
       setDeletingTaskId(null);
     }
   };
 
-  return (
-    <>
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            {title}
-          </h2>
+  if (tasks.length === 0) {
+    return (
+      <div className="text-center py-8 sm:py-12">
+        <div className={`${themeColors.accent} rounded-xl p-6 sm:p-8 max-w-md mx-auto animate-fade-in`}>
+          <div className="text-4xl sm:text-6xl mb-4 animate-bounce">📚</div>
+          <h3 className={`text-lg sm:text-xl font-semibold mb-2 ${themeColors.text}`}>No tasks planned yet!</h3>
+          <p className={`text-sm sm:text-base mb-6 ${themeColors.text} opacity-70`}>Start planning your study session by adding your first task.</p>
           <Button
             onClick={onAddTask}
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white transition-all duration-200 hover:scale-105 self-start sm:self-auto"
+            className={`bg-gradient-to-r ${themeColors.primary} hover:opacity-90 transition-all duration-300 hover:scale-105`}
           >
             <Plus className="h-4 w-4 mr-2" />
-            Add Task
+            Plan Your First Task
           </Button>
         </div>
+      </div>
+    );
+  }
 
-        {tasks.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">📚</div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">No tasks scheduled</h3>
-            <p className="text-gray-500 mb-6">Start by adding your first study task!</p>
-            <Button
-              onClick={onAddTask}
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white transition-all duration-200 hover:scale-105"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Your First Task
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {tasks.map((task) => (
-              <div
-                key={task.id}
-                className={`group p-4 rounded-xl border-2 transition-all duration-200 hover:scale-[1.01] hover:shadow-lg ${
-                  task.completed 
-                    ? 'bg-green-50 border-green-200 opacity-75' 
-                    : 'bg-white border-gray-200 hover:border-indigo-300'
-                } animate-fade-in`}
-              >
-                <div className="flex items-start space-x-4">
-                  <button
-                    onClick={() => onToggleTask(task.id)}
-                    className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 hover:scale-110 ${
-                      task.completed
-                        ? 'bg-green-500 border-green-500 text-white'
-                        : 'border-gray-300 hover:border-indigo-500'
-                    }`}
+  // Group tasks by subject
+  const tasksBySubject = tasks.reduce((acc, task) => {
+    if (!acc[task.subject]) {
+      acc[task.subject] = [];
+    }
+    acc[task.subject].push(task);
+    return acc;
+  }, {});
+
+  return (
+    <div className="animate-fade-in">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
+        <h3 className={`text-xl sm:text-2xl font-bold ${themeColors.text}`}>{title}</h3>
+        <div className={`text-sm px-3 py-1 rounded-full ${themeColors.accent}`}>
+          {tasks.filter(t => t.completed).length} of {tasks.length} completed
+        </div>
+      </div>
+
+      <div className="space-y-6">
+        {Object.entries(tasksBySubject).map(([subject, subjectTasks]: [string, any[]]) => (
+          <div key={subject} className="space-y-3 animate-fade-in">
+            <div className="flex items-center space-x-2 flex-wrap">
+              <BookOpen className={`h-5 w-5 ${themeColors.text}`} />
+              <h4 className={`text-base sm:text-lg font-semibold ${themeColors.text}`}>{subject}</h4>
+              <Badge className={`${subjectColors[subject] || "bg-gray-100 text-gray-800"} text-xs`}>
+                {subjectTasks.length} task{subjectTasks.length !== 1 ? 's' : ''}
+              </Badge>
+            </div>
+            
+            <div className="space-y-3 ml-0 sm:ml-7">
+              {subjectTasks.map((task) => {
+                const isCompleting = completingTasks.has(task.id);
+                return (
+                  <div
+                    key={task.id}
+                    className={`group border-l-4 ${priorityColors[task.priority]} rounded-r-lg shadow-sm hover:shadow-lg transition-all duration-300 p-3 sm:p-4 bg-white transform hover:scale-[1.01] ${
+                      task.completed ? 'opacity-75' : ''
+                    } ${isCompleting ? 'animate-pulse bg-gradient-to-r from-green-100 to-emerald-100' : ''} ${theme === 'midnight' ? 'bg-gray-800 text-gray-100' : ''}`}
                   >
-                    {task.completed && <Check className="h-4 w-4" />}
-                  </button>
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                      <h3 className={`text-lg font-semibold ${
-                        task.completed ? 'line-through text-gray-500' : 'text-gray-900'
-                      }`}>
-                        {task.title}
-                      </h3>
-                      <div className="flex items-center space-x-2">
-                        <Badge className={`text-xs ${getPriorityColor(task.priority)}`}>
-                          {getPriorityEmoji(task.priority)} {task.priority}
-                        </Badge>
-                        {task.duration && (
-                          <Badge variant="outline" className="text-xs">
-                            <Clock className="h-3 w-3 mr-1" />
-                            {task.duration}min
-                          </Badge>
-                        )}
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <button
+                          onClick={() => handleToggleTask(task.id, task.completed)}
+                          className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+                            task.completed
+                              ? 'bg-green-500 border-green-500 text-white animate-bounce'
+                              : 'border-gray-300 hover:border-indigo-500 hover:bg-indigo-50'
+                          }`}
+                        >
+                          {task.completed && <Check className="h-4 w-4" />}
+                          {isCompleting && !task.completed && <Sparkles className="h-4 w-4 text-indigo-500" />}
+                        </button>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0">
+                              <h5 className={`font-semibold break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-100' : 'text-gray-800'}`}>
+                                {task.title}
+                              </h5>
+                              {task.chapter && (
+                                <p className={`text-sm break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-300' : 'text-gray-600'}`}>
+                                  Chapter: {task.chapter}
+                                </p>
+                              )}
+                              {task.description && (
+                                <p className={`mt-1 text-sm break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-300' : 'text-gray-600'}`}>
+                                  {task.description}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2 sm:space-x-3 mt-3 flex-wrap gap-2">
+                            <Badge variant="outline" className="text-xs">
+                              {priorityIcons[task.priority]} {task.priority} priority
+                            </Badge>
+                            
+                            {task.duration && (
+                              <div className={`flex items-center text-sm ${theme === 'midnight' ? 'text-gray-400' : 'text-gray-500'}`}>
+                                <Clock className="h-4 w-4 mr-1" />
+                                {task.duration} min
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300 ml-2">
+                        <button
+                          onClick={() => setEditingTask(task)}
+                          className="text-blue-500 hover:text-blue-700 p-1 hover:scale-110 transition-all duration-300"
+                          title="Edit task"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => setDeletingTaskId(task.id)}
+                          className="text-red-500 hover:text-red-700 p-1 hover:scale-110 transition-all duration-300"
+                          title="Delete task"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </div>
                     </div>
-
-                    {task.description && (
-                      <p className={`mt-2 text-sm ${
-                        task.completed ? 'text-gray-400' : 'text-gray-600'
-                      }`}>
-                        {task.description}
-                      </p>
-                    )}
-
-                    <div className="flex flex-wrap items-center gap-2 mt-3">
-                      <Badge variant="outline" className="text-xs">
-                        📚 {task.subject}
-                      </Badge>
-                      {task.chapter && (
-                        <Badge variant="outline" className="text-xs">
-                          📖 {task.chapter}
-                        </Badge>
-                      )}
-                    </div>
                   </div>
-
-                  <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    {onMoveTask && (
-                      <button
-                        onClick={() => setMovingTask(task)}
-                        className="text-blue-500 hover:text-blue-700 hover:scale-110 transition-all duration-200"
-                        title="Move to different date"
-                      >
-                        <MoveHorizontal className="h-4 w-4" />
-                      </button>
-                    )}
-                    <button
-                      onClick={() => setEditingTask(task)}
-                      className="text-indigo-500 hover:text-indigo-700 hover:scale-110 transition-all duration-200"
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => setDeletingTaskId(task.id)}
-                      className="text-red-500 hover:text-red-700 hover:scale-110 transition-all duration-200"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+                );
+              })}
+            </div>
           </div>
-        )}
+        ))}
+      </div>
+
+      <div className="mt-8 text-center">
+        <Button
+          onClick={onAddTask}
+          variant="outline"
+          className={`border-dashed border-2 transition-all duration-300 hover:scale-105 ${themeColors.border} ${themeColors.text} hover:${themeColors.accent.replace('bg-', 'bg-').replace('text-', 'hover:text-')}`}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Another Task
+        </Button>
       </div>
 
       {editingTask && (
         <EditTaskModal
           task={editingTask}
           onClose={() => setEditingTask(null)}
-          onSave={handleEditSave}
-        />
-      )}
-
-      {movingTask && (
-        <MoveTaskModal
-          task={movingTask}
-          onClose={() => setMovingTask(null)}
-          onMove={handleMove}
+          onSave={handleEditTask}
         />
       )}
 
       {deletingTaskId && (
         <DeleteConfirmDialog
-          isOpen={true}
-          onClose={() => setDeletingTaskId(null)}
-          onConfirm={handleDelete}
-          taskTitle={tasks.find(t => t.id === deletingTaskId)?.title || ""}
+          onConfirm={handleDeleteTask}
+          onCancel={() => setDeletingTaskId(null)}
         />
       )}
-    </>
+    </div>
   );
 };
