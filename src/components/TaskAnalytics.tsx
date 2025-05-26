@@ -3,7 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
-
 interface Task {
   id: string;
   title: string;
@@ -14,46 +13,55 @@ interface Task {
   scheduled_date: string;
   duration?: number;
 }
-
 interface TaskAnalyticsProps {
   tasks: Task[];
   onOpenWeeklyAnalytics: () => void;
 }
-
-export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsProps) => {
-  const { theme } = useTheme();
+export const TaskAnalytics = ({
+  tasks,
+  onOpenWeeklyAnalytics
+}: TaskAnalyticsProps) => {
+  const {
+    theme
+  } = useTheme();
   const themeColors = getThemeColors(theme);
 
   // Get today's date in YYYY-MM-DD format to match scheduled_date format
   const today = new Date().toISOString().split('T')[0];
-  
+
   // Filter tasks for today using scheduled_date
   const todayTasks = tasks.filter(task => task.scheduled_date === today);
-  
   console.log('Today:', today);
   console.log('All tasks:', tasks);
   console.log('Today tasks:', todayTasks);
-
-  const last7Days = Array.from({ length: 7 }, (_, i) => {
+  const last7Days = Array.from({
+    length: 7
+  }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() - i);
     return date.toISOString().split('T')[0];
   });
-
   const weeklyCompletion = last7Days.map(date => {
     const dayTasks = tasks.filter(task => task.scheduled_date === date);
     const completed = dayTasks.filter(task => task.completed).length;
     const total = dayTasks.length;
-    return { date, completed, total, percentage: total > 0 ? (completed / total) * 100 : 0 };
+    return {
+      date,
+      completed,
+      total,
+      percentage: total > 0 ? completed / total * 100 : 0
+    };
   }).reverse();
-
   const completedToday = todayTasks.filter(task => task.completed).length;
   const totalToday = todayTasks.length;
-  const progressPercentage = totalToday > 0 ? (completedToday / totalToday) * 100 : 0;
-
+  const progressPercentage = totalToday > 0 ? completedToday / totalToday * 100 : 0;
   const subjectStats = tasks.reduce((acc, task) => {
     if (!acc[task.subject]) {
-      acc[task.subject] = { completed: 0, total: 0, timeSpent: 0 };
+      acc[task.subject] = {
+        completed: 0,
+        total: 0,
+        timeSpent: 0
+      };
     }
     acc[task.subject].total++;
     if (task.completed) {
@@ -61,65 +69,56 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
       acc[task.subject].timeSpent += task.duration || 0;
     }
     return acc;
-  }, {} as Record<string, { completed: number; total: number; timeSpent: number }>);
-
+  }, {} as Record<string, {
+    completed: number;
+    total: number;
+    timeSpent: number;
+  }>);
   const totalTimeSpent = Object.values(subjectStats).reduce((sum, stat) => sum + stat.timeSpent, 0);
   const averageCompletion = weeklyCompletion.reduce((sum, day) => sum + day.percentage, 0) / 7;
-
   const highPriorityCompleted = tasks.filter(task => task.priority === 'high' && task.completed).length;
   const totalHighPriority = tasks.filter(task => task.priority === 'high').length;
-
   const getMotivationalContent = () => {
-    const motivationalQuotes = [
-      {
-        emoji: '💪',
-        title: 'BEAST MODE ON!',
-        message: 'Champions train when nobody is watching. Your dedication today builds tomorrow\'s success!',
-        gradient: 'from-red-600 via-orange-500 to-yellow-500',
-        animation: 'animate-pulse',
-        intensity: 'high'
-      },
-      {
-        emoji: '🔥',
-        title: 'GRIND NEVER STOPS!',
-        message: 'Every page you study, every problem you solve - you\'re building an unstoppable mind!',
-        gradient: 'from-purple-600 via-red-500 to-orange-500',
-        animation: 'animate-bounce',
-        intensity: 'high'
-      },
-      {
-        emoji: '⚡',
-        title: 'POWER THROUGH!',
-        message: 'The difference between ordinary and extraordinary is that little "EXTRA" - keep pushing!',
-        gradient: 'from-blue-600 via-purple-600 to-pink-600',
-        animation: 'animate-pulse',
-        intensity: 'high'
-      },
-      {
-        emoji: '🎯',
-        title: 'LOCKED AND LOADED!',
-        message: 'Focus like a laser, work like a warrior. Your goals are waiting for your action!',
-        gradient: 'from-green-600 via-blue-600 to-purple-600',
-        animation: 'animate-bounce',
-        intensity: 'high'
-      },
-      {
-        emoji: '🚀',
-        title: 'BLAST OFF TIME!',
-        message: 'Today\'s study session is your launchpad. Prepare for intellectual takeoff!',
-        gradient: 'from-indigo-600 via-purple-600 to-pink-600',
-        animation: 'animate-pulse',
-        intensity: 'high'
-      }
-    ];
-
+    const motivationalQuotes = [{
+      emoji: '💪',
+      title: 'BEAST MODE ON!',
+      message: 'Champions train when nobody is watching. Your dedication today builds tomorrow\'s success!',
+      gradient: 'from-red-600 via-orange-500 to-yellow-500',
+      animation: 'animate-pulse',
+      intensity: 'high'
+    }, {
+      emoji: '🔥',
+      title: 'GRIND NEVER STOPS!',
+      message: 'Every page you study, every problem you solve - you\'re building an unstoppable mind!',
+      gradient: 'from-purple-600 via-red-500 to-orange-500',
+      animation: 'animate-bounce',
+      intensity: 'high'
+    }, {
+      emoji: '⚡',
+      title: 'POWER THROUGH!',
+      message: 'The difference between ordinary and extraordinary is that little "EXTRA" - keep pushing!',
+      gradient: 'from-blue-600 via-purple-600 to-pink-600',
+      animation: 'animate-pulse',
+      intensity: 'high'
+    }, {
+      emoji: '🎯',
+      title: 'LOCKED AND LOADED!',
+      message: 'Focus like a laser, work like a warrior. Your goals are waiting for your action!',
+      gradient: 'from-green-600 via-blue-600 to-purple-600',
+      animation: 'animate-bounce',
+      intensity: 'high'
+    }, {
+      emoji: '🚀',
+      title: 'BLAST OFF TIME!',
+      message: 'Today\'s study session is your launchpad. Prepare for intellectual takeoff!',
+      gradient: 'from-indigo-600 via-purple-600 to-pink-600',
+      animation: 'animate-pulse',
+      intensity: 'high'
+    }];
     return motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
   };
-
   const motivationalContent = getMotivationalContent();
-
-  return (
-    <div className="space-y-4">
+  return <div className="space-y-4">
       <Card className={`bg-gradient-to-br from-indigo-50 to-purple-50 ${themeColors.border} ${themeColors.glow} shadow-lg`}>
         <CardHeader className="pb-3">
           <CardTitle className={`flex items-center space-x-2 ${themeColors.text}`}>
@@ -140,11 +139,7 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
             <p className="text-center text-sm text-gray-600">
               {Math.round(progressPercentage)}% of today's goals achieved
             </p>
-            {totalToday === 0 && (
-              <p className="text-center text-sm text-gray-500 italic">
-                No tasks scheduled for today. Add some tasks to get started!
-              </p>
-            )}
+            {totalToday === 0 && <p className="text-center text-sm text-gray-500 italic">No tasks scheduled for today</p>}
           </div>
         </CardContent>
       </Card>
@@ -173,8 +168,7 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {Object.entries(subjectStats).map(([subject, stats]) => (
-              <div key={subject} className="space-y-2">
+            {Object.entries(subjectStats).map(([subject, stats]) => <div key={subject} className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <div className="flex items-center space-x-2">
                     <BookOpen className="h-4 w-4 text-gray-500" />
@@ -184,12 +178,8 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
                     {stats.completed}/{stats.total} ({stats.timeSpent}min)
                   </span>
                 </div>
-                <Progress 
-                  value={stats.total > 0 ? (stats.completed / stats.total) * 100 : 0} 
-                  className="h-2" 
-                />
-              </div>
-            ))}
+                <Progress value={stats.total > 0 ? stats.completed / stats.total * 100 : 0} className="h-2" />
+              </div>)}
           </div>
         </CardContent>
       </Card>
@@ -211,7 +201,7 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
             </div>
             <div>
               <div className="text-xl font-bold text-green-700">
-                {totalHighPriority > 0 ? Math.round((highPriorityCompleted / totalHighPriority) * 100) : 0}%
+                {totalHighPriority > 0 ? Math.round(highPriorityCompleted / totalHighPriority * 100) : 0}%
               </div>
               <p className="text-xs text-gray-600">Priority focus</p>
             </div>
@@ -222,7 +212,9 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
       <Card className={`bg-gradient-to-br ${motivationalContent.gradient} text-white ${themeColors.glow} shadow-xl overflow-hidden relative`}>
         <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
         <div className="absolute top-2 right-2 opacity-30">
-          <Brain className="h-12 w-12 animate-spin" style={{ animationDuration: '4s' }} />
+          <Brain className="h-12 w-12 animate-spin" style={{
+          animationDuration: '4s'
+        }} />
         </div>
         <div className="absolute bottom-2 left-2 opacity-30">
           <Zap className="h-8 w-8 animate-bounce" />
@@ -249,8 +241,12 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
             </div>
             <div className="flex justify-center space-x-2">
               <div className="w-3 h-3 bg-white/80 rounded-full animate-bounce"></div>
-              <div className="w-3 h-3 bg-white/80 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-3 h-3 bg-white/80 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              <div className="w-3 h-3 bg-white/80 rounded-full animate-bounce" style={{
+              animationDelay: '0.1s'
+            }}></div>
+              <div className="w-3 h-3 bg-white/80 rounded-full animate-bounce" style={{
+              animationDelay: '0.2s'
+            }}></div>
             </div>
           </div>
         </CardContent>
@@ -265,31 +261,23 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-7 gap-2 text-center">
-            {weeklyCompletion.map((day, index) => (
-              <div key={index} className="space-y-1">
+            {weeklyCompletion.map((day, index) => <div key={index} className="space-y-1">
                 <div className="text-xs text-gray-500">
-                  {new Date(day.date).toLocaleDateString('en-US', { weekday: 'narrow' })}
+                  {new Date(day.date).toLocaleDateString('en-US', {
+                weekday: 'narrow'
+              })}
                 </div>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium mx-auto transition-all duration-300 ${
-                  day.percentage >= 80 ? 'bg-green-100 text-green-800 animate-pulse' :
-                  day.percentage >= 50 ? 'bg-yellow-100 text-yellow-800' :
-                  day.percentage > 0 ? 'bg-orange-100 text-orange-800' :
-                  'bg-gray-100 text-gray-400'
-                }`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium mx-auto transition-all duration-300 ${day.percentage >= 80 ? 'bg-green-100 text-green-800 animate-pulse' : day.percentage >= 50 ? 'bg-yellow-100 text-yellow-800' : day.percentage > 0 ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-400'}`}>
                   {day.total > 0 ? `${Math.round(day.percentage)}%` : '-'}
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </CardContent>
       </Card>
 
       <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg hover:shadow-xl transition-all duration-300`}>
         <CardContent className="p-6">
-          <Button 
-            onClick={onOpenWeeklyAnalytics}
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-4 rounded-xl transition-all duration-300 hover:scale-105"
-          >
+          <Button onClick={onOpenWeeklyAnalytics} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-4 rounded-xl transition-all duration-300 hover:scale-105">
             <div className="flex items-center justify-center space-x-3">
               <BarChart3 className="h-6 w-6" />
               <div className="text-left">
@@ -300,6 +288,5 @@ export const TaskAnalytics = ({ tasks, onOpenWeeklyAnalytics }: TaskAnalyticsPro
           </Button>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
