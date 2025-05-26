@@ -128,7 +128,7 @@ export const TaskAnalytics = ({
           <CardDescription>Keep building momentum!</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4 bg-cyan-200">
+          <div className="space-y-4 bg-slate-200">
             <div className="text-center">
               <div className={`text-3xl font-bold ${themeColors.text}`}>
                 {completedToday}/{totalToday}
