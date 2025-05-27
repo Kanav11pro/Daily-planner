@@ -25,6 +25,17 @@ const IndexContent = () => {
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
+  // Helper function to format date consistently for comparison
+  const formatDateForComparison = (date: Date | string): string => {
+    if (typeof date === 'string') {
+      return date.split('T')[0];
+    }
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   // Show loading spinner while checking auth
   if (authLoading) {
     return (
@@ -42,7 +53,7 @@ const IndexContent = () => {
   const handleAddTask = async (taskData: any) => {
     const newTask = {
       ...taskData,
-      scheduled_date: taskData.scheduledDate || selectedDate.toISOString().split('T')[0],
+      scheduled_date: taskData.scheduledDate || formatDateForComparison(selectedDate),
       completed: false
     };
     await addTask(newTask);
@@ -50,6 +61,10 @@ const IndexContent = () => {
   };
 
   const handleEditTask = async (taskId: string, updatedTask: any) => {
+    // Ensure the scheduled_date is properly formatted if it's being updated
+    if (updatedTask.scheduled_date) {
+      updatedTask.scheduled_date = formatDateForComparison(updatedTask.scheduled_date);
+    }
     await updateTask(taskId, updatedTask);
   };
 
@@ -67,10 +82,17 @@ const IndexContent = () => {
   };
 
   const getTasksForDate = (date: Date) => {
-    const dateString = date.toISOString().split('T')[0];
-    return tasks.filter(task => 
-      task.scheduled_date === dateString
-    );
+    const dateString = formatDateForComparison(date);
+    console.log('Filtering tasks for date:', dateString);
+    console.log('Available tasks:', tasks.map(t => ({ id: t.id, title: t.title, scheduled_date: t.scheduled_date })));
+    
+    const filteredTasks = tasks.filter(task => {
+      const taskDate = formatDateForComparison(task.scheduled_date);
+      return taskDate === dateString;
+    });
+    
+    console.log('Filtered tasks:', filteredTasks.length);
+    return filteredTasks;
   };
 
   const selectedDateTasks = getTasksForDate(selectedDate);

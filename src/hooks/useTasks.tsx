@@ -21,6 +21,18 @@ export interface Task {
   createdAt?: string;
 }
 
+// Helper function to format date consistently
+const formatDateForDB = (date: Date | string): string => {
+  if (typeof date === 'string') {
+    // If it's already a string, ensure it's in YYYY-MM-DD format
+    return date.split('T')[0];
+  }
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 export const useTasks = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +54,8 @@ export const useTasks = () => {
       const transformedTasks = (data || []).map(task => ({
         ...task,
         createdAt: task.created_at,
-        priority: task.priority as 'low' | 'medium' | 'high'
+        priority: task.priority as 'low' | 'medium' | 'high',
+        scheduled_date: formatDateForDB(task.scheduled_date) // Ensure consistent date format
       }));
       
       setTasks(transformedTasks);
@@ -62,12 +75,16 @@ export const useTasks = () => {
     if (!user) return;
 
     try {
+      // Ensure the scheduled_date is in the correct format
+      const formattedTaskData = {
+        ...taskData,
+        scheduled_date: formatDateForDB(taskData.scheduled_date),
+        user_id: user.id,
+      };
+
       const { data, error } = await supabase
         .from('tasks')
-        .insert([{
-          ...taskData,
-          user_id: user.id,
-        }])
+        .insert([formattedTaskData])
         .select()
         .single();
 
@@ -76,7 +93,8 @@ export const useTasks = () => {
       const transformedTask = {
         ...data,
         createdAt: data.created_at,
-        priority: data.priority as 'low' | 'medium' | 'high'
+        priority: data.priority as 'low' | 'medium' | 'high',
+        scheduled_date: formatDateForDB(data.scheduled_date)
       };
       
       setTasks(prev => [...prev, transformedTask]);
@@ -90,8 +108,13 @@ export const useTasks = () => {
 
   const updateTask = async (id: string, updates: Partial<Task>) => {
     try {
-      // Remove fields that don't exist in the database schema
+      // Remove fields that don't exist in the database schema and format dates
       const { createdAt, ...cleanUpdates } = updates;
+      
+      // If scheduled_date is being updated, format it properly
+      if (cleanUpdates.scheduled_date) {
+        cleanUpdates.scheduled_date = formatDateForDB(cleanUpdates.scheduled_date);
+      }
       
       const { data, error } = await supabase
         .from('tasks')
@@ -105,7 +128,8 @@ export const useTasks = () => {
       const transformedTask = {
         ...data,
         createdAt: data.created_at,
-        priority: data.priority as 'low' | 'medium' | 'high'
+        priority: data.priority as 'low' | 'medium' | 'high',
+        scheduled_date: formatDateForDB(data.scheduled_date)
       };
       
       setTasks(prev => prev.map(task => task.id === id ? transformedTask : task));
@@ -119,9 +143,11 @@ export const useTasks = () => {
 
   const moveTask = async (id: string, newDate: string) => {
     try {
+      const formattedDate = formatDateForDB(newDate);
+      
       const { data, error } = await supabase
         .from('tasks')
-        .update({ scheduled_date: newDate })
+        .update({ scheduled_date: formattedDate })
         .eq('id', id)
         .select()
         .single();
@@ -131,7 +157,8 @@ export const useTasks = () => {
       const transformedTask = {
         ...data,
         createdAt: data.created_at,
-        priority: data.priority as 'low' | 'medium' | 'high'
+        priority: data.priority as 'low' | 'medium' | 'high',
+        scheduled_date: formatDateForDB(data.scheduled_date)
       };
       
       setTasks(prev => prev.map(task => task.id === id ? transformedTask : task));

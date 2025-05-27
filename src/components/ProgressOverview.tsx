@@ -19,10 +19,27 @@ interface ProgressOverviewProps {
 }
 
 export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
-  const today = new Date().toISOString().split('T')[0];
-  const todayTasks = tasks.filter(task => 
-    task.scheduled_date === today
-  );
+  // Helper function to format date consistently
+  const formatDateForComparison = (date: Date | string): string => {
+    if (typeof date === 'string') {
+      return date.split('T')[0];
+    }
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const today = formatDateForComparison(new Date());
+  console.log('Today\'s date for progress:', today);
+  
+  const todayTasks = tasks.filter(task => {
+    const taskDate = formatDateForComparison(task.scheduled_date);
+    console.log('Comparing task date:', taskDate, 'with today:', today);
+    return taskDate === today;
+  });
+
+  console.log('Today\'s tasks count:', todayTasks.length);
 
   const completedToday = todayTasks.filter(task => task.completed).length;
   const totalToday = todayTasks.length;
@@ -43,11 +60,11 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() - i);
-    return date.toISOString().split('T')[0];
+    return formatDateForComparison(date);
   });
 
   const daysWithCompletedTasks = last7Days.filter(date => {
-    const dayTasks = tasks.filter(task => task.scheduled_date === date);
+    const dayTasks = tasks.filter(task => formatDateForComparison(task.scheduled_date) === date);
     return dayTasks.some(task => task.completed);
   }).length;
 
