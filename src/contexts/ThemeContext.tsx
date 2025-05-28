@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type Theme = 'default' | 'ocean' | 'sunset' | 'forest' | 'purple' | 'midnight';
+export type Theme = 'ocean' | 'forest' | 'midnight' | 'aurora' | 'cosmic' | 'royal';
 
 interface ThemeContextType {
   theme: Theme;
@@ -19,16 +19,6 @@ export const useTheme = () => {
 };
 
 const themes = {
-  default: {
-    primary: 'from-indigo-600 to-purple-600',
-    secondary: 'from-blue-50 via-indigo-50 to-purple-50',
-    background: 'from-slate-50 via-blue-50 to-indigo-100',
-    accent: 'bg-indigo-50 text-indigo-800',
-    card: 'bg-white/90 backdrop-blur-sm text-gray-900',
-    border: 'border-indigo-200',
-    text: 'text-indigo-900',
-    glow: 'shadow-indigo-200/50'
-  },
   ocean: {
     primary: 'from-cyan-500 to-blue-600',
     secondary: 'from-cyan-50 via-blue-50 to-teal-50',
@@ -38,16 +28,6 @@ const themes = {
     border: 'border-cyan-300',
     text: 'text-cyan-900',
     glow: 'shadow-cyan-300/60'
-  },
-  sunset: {
-    primary: 'from-orange-500 to-red-500',
-    secondary: 'from-orange-50 via-red-50 to-pink-50',
-    background: 'from-orange-200 via-red-200 to-pink-300',
-    accent: 'bg-orange-100 text-orange-900',
-    card: 'bg-white/95 backdrop-blur-md border border-orange-200 text-gray-900',
-    border: 'border-orange-300',
-    text: 'text-orange-900',
-    glow: 'shadow-orange-300/60'
   },
   forest: {
     primary: 'from-green-600 to-emerald-700',
@@ -59,25 +39,45 @@ const themes = {
     text: 'text-green-900',
     glow: 'shadow-green-300/60'
   },
-  purple: {
-    primary: 'from-purple-600 to-pink-600',
-    secondary: 'from-purple-50 via-pink-50 to-fuchsia-50',
-    background: 'from-purple-200 via-pink-300 to-fuchsia-400',
-    accent: 'bg-purple-100 text-purple-900',
-    card: 'bg-white/95 backdrop-blur-md border border-purple-200 text-gray-900',
-    border: 'border-purple-300',
-    text: 'text-purple-900',
-    glow: 'shadow-purple-300/60'
-  },
   midnight: {
-    primary: 'from-blue-400 to-purple-400',
-    secondary: 'from-gray-800 via-slate-800 to-zinc-900',
-    background: 'from-gray-900 via-slate-900 to-zinc-950',
-    accent: 'bg-gray-700 text-gray-100',
-    card: 'bg-gray-800/95 backdrop-blur-md border border-gray-600 text-gray-100',
-    border: 'border-gray-600',
-    text: 'text-gray-100',
-    glow: 'shadow-gray-800/60'
+    primary: 'from-slate-600 to-gray-700',
+    secondary: 'from-gray-100 via-slate-100 to-zinc-200',
+    background: 'from-gray-200 via-slate-300 to-zinc-400',
+    accent: 'bg-slate-200 text-slate-900',
+    card: 'bg-white/95 backdrop-blur-md border border-slate-300 text-gray-900',
+    border: 'border-slate-400',
+    text: 'text-slate-900',
+    glow: 'shadow-slate-400/60'
+  },
+  aurora: {
+    primary: 'from-pink-500 to-violet-600',
+    secondary: 'from-pink-50 via-purple-50 to-violet-50',
+    background: 'from-pink-200 via-purple-300 to-violet-400',
+    accent: 'bg-pink-100 text-pink-900',
+    card: 'bg-white/95 backdrop-blur-md border border-pink-200 text-gray-900',
+    border: 'border-pink-300',
+    text: 'text-pink-900',
+    glow: 'shadow-pink-300/60'
+  },
+  cosmic: {
+    primary: 'from-indigo-600 to-blue-700',
+    secondary: 'from-indigo-50 via-blue-50 to-sky-50',
+    background: 'from-indigo-200 via-blue-300 to-sky-400',
+    accent: 'bg-indigo-100 text-indigo-900',
+    card: 'bg-white/95 backdrop-blur-md border border-indigo-200 text-gray-900',
+    border: 'border-indigo-300',
+    text: 'text-indigo-900',
+    glow: 'shadow-indigo-300/60'
+  },
+  royal: {
+    primary: 'from-amber-500 to-orange-600',
+    secondary: 'from-amber-50 via-yellow-50 to-orange-50',
+    background: 'from-amber-200 via-yellow-300 to-orange-400',
+    accent: 'bg-amber-100 text-amber-900',
+    card: 'bg-white/95 backdrop-blur-md border border-amber-200 text-gray-900',
+    border: 'border-amber-300',
+    text: 'text-amber-900',
+    glow: 'shadow-amber-300/60'
   }
 };
 
@@ -86,7 +86,7 @@ export const getThemeColors = (theme: Theme) => themes[theme];
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
     const saved = localStorage.getItem('examPrepTheme');
-    return (saved as Theme) || 'default';
+    return (saved as Theme) || 'ocean';
   });
 
   useEffect(() => {

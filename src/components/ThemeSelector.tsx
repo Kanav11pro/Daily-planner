@@ -5,12 +5,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useTheme, type Theme, getThemeColors } from "@/contexts/ThemeContext";
 
 const themeOptions: { value: Theme; name: string; emoji: string }[] = [
-  { value: 'default', name: 'Default', emoji: '🔮' },
   { value: 'ocean', name: 'Ocean', emoji: '🌊' },
-  { value: 'sunset', name: 'Sunset', emoji: '🌅' },
   { value: 'forest', name: 'Forest', emoji: '🌲' },
-  { value: 'purple', name: 'Purple', emoji: '💜' },
-  { value: 'midnight', name: 'Midnight', emoji: '🌙' }
+  { value: 'midnight', name: 'Midnight', emoji: '🌙' },
+  { value: 'aurora', name: 'Aurora', emoji: '🌌' },
+  { value: 'cosmic', name: 'Cosmic', emoji: '🚀' },
+  { value: 'royal', name: 'Royal', emoji: '👑' }
 ];
 
 export const ThemeSelector = () => {
