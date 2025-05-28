@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type Theme = 'ocean' | 'forest' | 'midnight' | 'aurora' | 'cosmic' | 'royal';
+export type Theme = 'ocean' | 'forest' | 'aurora' | 'cosmic' | 'cyber' | 'neon';
 
 interface ThemeContextType {
   theme: Theme;
@@ -39,16 +39,6 @@ const themes = {
     text: 'text-green-900',
     glow: 'shadow-green-300/60'
   },
-  midnight: {
-    primary: 'from-indigo-600 to-purple-700',
-    secondary: 'from-indigo-50 via-purple-50 to-violet-50',
-    background: 'from-indigo-200 via-purple-300 to-violet-400',
-    accent: 'bg-indigo-100 text-indigo-900',
-    card: 'bg-white/95 backdrop-blur-md border border-indigo-200 text-gray-900',
-    border: 'border-indigo-300',
-    text: 'text-indigo-900',
-    glow: 'shadow-indigo-300/60'
-  },
   aurora: {
     primary: 'from-pink-500 to-violet-600',
     secondary: 'from-pink-50 via-purple-50 to-violet-50',
@@ -69,19 +59,29 @@ const themes = {
     text: 'text-indigo-900',
     glow: 'shadow-indigo-300/60'
   },
-  royal: {
-    primary: 'from-amber-500 to-orange-600',
-    secondary: 'from-amber-50 via-yellow-50 to-orange-50',
-    background: 'from-amber-200 via-yellow-300 to-orange-400',
-    accent: 'bg-amber-100 text-amber-900',
-    card: 'bg-white/95 backdrop-blur-md border border-amber-200 text-gray-900',
-    border: 'border-amber-300',
-    text: 'text-amber-900',
-    glow: 'shadow-amber-300/60'
+  cyber: {
+    primary: 'from-cyan-400 to-lime-400',
+    secondary: 'from-cyan-50 via-lime-50 to-green-50',
+    background: 'from-cyan-200 via-lime-300 to-green-400',
+    accent: 'bg-cyan-100 text-cyan-900',
+    card: 'bg-white/95 backdrop-blur-md border border-cyan-200 text-gray-900',
+    border: 'border-cyan-300',
+    text: 'text-cyan-900',
+    glow: 'shadow-cyan-300/60'
+  },
+  neon: {
+    primary: 'from-fuchsia-500 to-cyan-500',
+    secondary: 'from-fuchsia-50 via-pink-50 to-cyan-50',
+    background: 'from-fuchsia-200 via-pink-300 to-cyan-400',
+    accent: 'bg-fuchsia-100 text-fuchsia-900',
+    card: 'bg-white/95 backdrop-blur-md border border-fuchsia-200 text-gray-900',
+    border: 'border-fuchsia-300',
+    text: 'text-fuchsia-900',
+    glow: 'shadow-fuchsia-300/60'
   }
 };
 
-const validThemes: Theme[] = ['ocean', 'forest', 'midnight', 'aurora', 'cosmic', 'royal'];
+const validThemes: Theme[] = ['ocean', 'forest', 'aurora', 'cosmic', 'cyber', 'neon'];
 
 export const getThemeColors = (theme: Theme) => {
   const themeColors = themes[theme];

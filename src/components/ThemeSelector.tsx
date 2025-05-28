@@ -7,10 +7,10 @@ import { useTheme, type Theme, getThemeColors } from "@/contexts/ThemeContext";
 const themeOptions: { value: Theme; name: string; emoji: string }[] = [
   { value: 'ocean', name: 'Ocean', emoji: '🌊' },
   { value: 'forest', name: 'Forest', emoji: '🌲' },
-  { value: 'midnight', name: 'Midnight', emoji: '🌙' },
   { value: 'aurora', name: 'Aurora', emoji: '🌌' },
   { value: 'cosmic', name: 'Cosmic', emoji: '🚀' },
-  { value: 'royal', name: 'Royal', emoji: '👑' }
+  { value: 'cyber', name: 'Cyber', emoji: '🤖' },
+  { value: 'neon', name: 'Neon', emoji: '💎' }
 ];
 
 export const ThemeSelector = () => {

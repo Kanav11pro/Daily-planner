@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -146,9 +147,17 @@ const subjectsWithChapters = {
   ]
 };
 
+const taskTags = [
+  { value: 'hw', label: 'HW', emoji: '📝' },
+  { value: 'notes', label: 'Notes', emoji: '📔' },
+  { value: 'daily-questions', label: 'Daily Questions', emoji: '❓' },
+  { value: 'lecture-complete', label: 'Lecture Complete', emoji: '🎓' }
+];
+
 export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) => {
   const [step, setStep] = useState(1);
   const [chapterSearch, setChapterSearch] = useState('');
+  const [selectedTag, setSelectedTag] = useState('');
   const [formData, setFormData] = useState({
     subject: '',
     chapter: '',
@@ -163,6 +172,12 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
     if (step === 1 && formData.subject) setStep(2);
     else if (step === 2 && formData.chapter) setStep(3);
     else if (step === 3 && formData.title) setStep(4);
+  };
+
+  const handleTagSelect = (tag: string) => {
+    setSelectedTag(tag);
+    const tagLabel = taskTags.find(t => t.value === tag)?.label || '';
+    setFormData({ ...formData, title: `${tagLabel} - ${formData.chapter}` });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -263,6 +278,31 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
               <h3 className="text-lg font-semibold text-gray-800">Task Details</h3>
               <p className="text-sm text-gray-600">{formData.subject} - {formData.chapter}</p>
             </div>
+
+            <div>
+              <Label htmlFor="tags">Quick Tags (Optional)</Label>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                {taskTags.map(tag => (
+                  <button
+                    key={tag.value}
+                    type="button"
+                    onClick={() => handleTagSelect(tag.value)}
+                    className={`p-3 rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] ${
+                      selectedTag === tag.value
+                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                        : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="text-center">
+                      <div className="text-lg mb-1">{tag.emoji}</div>
+                      <div className="text-sm font-medium">{tag.label}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-2">Select a tag to auto-fill the title, or write your own below</p>
+            </div>
+
             <div>
               <Label htmlFor="title">Task Title</Label>
               <Input
