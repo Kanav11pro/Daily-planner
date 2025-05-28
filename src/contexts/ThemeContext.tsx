@@ -40,14 +40,14 @@ const themes = {
     glow: 'shadow-green-300/60'
   },
   midnight: {
-    primary: 'from-slate-600 to-gray-700',
-    secondary: 'from-gray-100 via-slate-100 to-zinc-200',
-    background: 'from-gray-200 via-slate-300 to-zinc-400',
-    accent: 'bg-slate-200 text-slate-900',
-    card: 'bg-white/95 backdrop-blur-md border border-slate-300 text-gray-900',
-    border: 'border-slate-400',
-    text: 'text-slate-900',
-    glow: 'shadow-slate-400/60'
+    primary: 'from-indigo-600 to-purple-700',
+    secondary: 'from-indigo-50 via-purple-50 to-violet-50',
+    background: 'from-indigo-200 via-purple-300 to-violet-400',
+    accent: 'bg-indigo-100 text-indigo-900',
+    card: 'bg-white/95 backdrop-blur-md border border-indigo-200 text-gray-900',
+    border: 'border-indigo-300',
+    text: 'text-indigo-900',
+    glow: 'shadow-indigo-300/60'
   },
   aurora: {
     primary: 'from-pink-500 to-violet-600',
@@ -81,15 +81,33 @@ const themes = {
   }
 };
 
-export const getThemeColors = (theme: Theme) => themes[theme];
+const validThemes: Theme[] = ['ocean', 'forest', 'midnight', 'aurora', 'cosmic', 'royal'];
+
+export const getThemeColors = (theme: Theme) => {
+  const themeColors = themes[theme];
+  if (!themeColors) {
+    console.warn(`Theme "${theme}" not found, falling back to ocean theme`);
+    return themes.ocean;
+  }
+  return themeColors;
+};
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('examPrepTheme');
-    return (saved as Theme) || 'ocean';
+    const saved = localStorage.getItem('examPrepTheme') as Theme;
+    // Check if the saved theme is valid, otherwise default to 'ocean'
+    if (saved && validThemes.includes(saved)) {
+      return saved;
+    }
+    return 'ocean';
   });
 
   useEffect(() => {
+    // Clear invalid theme from localStorage if it exists
+    const saved = localStorage.getItem('examPrepTheme') as Theme;
+    if (saved && !validThemes.includes(saved)) {
+      localStorage.removeItem('examPrepTheme');
+    }
     localStorage.setItem('examPrepTheme', theme);
   }, [theme]);
 
