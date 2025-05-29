@@ -11,11 +11,20 @@ interface TaskDashboardProps {
   selectedDate: Date;
 }
 
-export const TaskDashboard = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddTask, selectedDate }: TaskDashboardProps) => {
+export const TaskDashboard = ({ 
+  tasks, 
+  onToggleTask, 
+  onDeleteTask, 
+  onEditTask, 
+  onAddTask, 
+  selectedDate 
+}: TaskDashboardProps) => {
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
   const formatDateTitle = (date: Date) => {
+    if (!date) return "Study Plan";
+    
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -44,9 +53,12 @@ export const TaskDashboard = ({ tasks, onToggleTask, onDeleteTask, onEditTask, o
           tasks={tasks}
           onToggleTask={onToggleTask}
           onDeleteTask={onDeleteTask}
-          onEditTask={onEditTask}
-          onAddTask={onAddTask}
-          title={formatDateTitle(selectedDate)}
+          onUpdateTask={onEditTask}
+          onMoveTask={(taskId: string, newDate: string) => {
+            // Handle move task functionality here if needed
+            console.log('Moving task:', taskId, 'to:', newDate);
+          }}
+          selectedDate={selectedDate}
         />
       </div>
     </div>

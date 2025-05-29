@@ -46,6 +46,19 @@ export const TaskList = ({
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
   const [movingTask, setMovingTask] = useState<Task | null>(null);
 
+  // Add null safety check for selectedDate
+  if (!selectedDate) {
+    return (
+      <div className="text-center py-12">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
+          <Calendar className="h-8 w-8 text-gray-400" />
+        </div>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Loading...</h3>
+        <p className="text-gray-500">Please wait while we load your tasks.</p>
+      </div>
+    );
+  }
+
   const selectedDateStr = selectedDate.toISOString().split('T')[0];
   const dayTasks = tasks.filter(task => task.scheduled_date === selectedDateStr);
 
@@ -183,7 +196,10 @@ export const TaskList = ({
         <EditTaskModal
           task={editingTask}
           onClose={() => setEditingTask(null)}
-          onUpdateTask={onUpdateTask}
+          onSave={(updatedTask) => {
+            onUpdateTask(editingTask.id, updatedTask);
+            setEditingTask(null);
+          }}
         />
       )}
 
@@ -201,7 +217,10 @@ export const TaskList = ({
         <MoveTaskModal
           task={movingTask}
           onClose={() => setMovingTask(null)}
-          onMoveTask={onMoveTask}
+          onMove={(taskId, newDate) => {
+            onMoveTask(taskId, newDate);
+            setMovingTask(null);
+          }}
         />
       )}
     </div>
