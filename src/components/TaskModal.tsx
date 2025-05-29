@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { X, Search, Tag, Plus, Clock } from "lucide-react";
+import { X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -154,22 +154,10 @@ const taskTags = [
   { value: 'lecture-complete', label: 'Lecture Complete', emoji: '🎓' }
 ];
 
-const durationPresets = [
-  { value: 30, label: '30 min' },
-  { value: 60, label: '1 hour' },
-  { value: 90, label: '1.5 hours' },
-  { value: 120, label: '2 hours' },
-  { value: 180, label: '3 hours' }
-];
-
 export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) => {
   const [step, setStep] = useState(1);
   const [chapterSearch, setChapterSearch] = useState('');
   const [selectedTag, setSelectedTag] = useState('');
-  const [customTags, setCustomTags] = useState<{ value: string; label: string; emoji: string }[]>([]);
-  const [showAddTag, setShowAddTag] = useState(false);
-  const [newTagLabel, setNewTagLabel] = useState('');
-  const [newTagEmoji, setNewTagEmoji] = useState('🏷️');
   const [formData, setFormData] = useState({
     subject: '',
     chapter: '',
@@ -180,8 +168,6 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
     scheduled_date: selectedDate.toISOString().split('T')[0]
   });
 
-  const allTags = [...taskTags, ...customTags];
-
   const handleNext = () => {
     if (step === 1 && formData.subject) setStep(2);
     else if (step === 2 && formData.chapter) setStep(3);
@@ -190,27 +176,8 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
 
   const handleTagSelect = (tag: string) => {
     setSelectedTag(tag);
-    const tagData = allTags.find(t => t.value === tag);
-    const tagLabel = tagData?.label || '';
+    const tagLabel = taskTags.find(t => t.value === tag)?.label || '';
     setFormData({ ...formData, title: `${tagLabel} - ${formData.chapter}` });
-  };
-
-  const handleAddCustomTag = () => {
-    if (newTagLabel.trim()) {
-      const newTag = {
-        value: newTagLabel.toLowerCase().replace(/\s+/g, '-'),
-        label: newTagLabel,
-        emoji: newTagEmoji
-      };
-      setCustomTags([...customTags, newTag]);
-      setNewTagLabel('');
-      setNewTagEmoji('🏷️');
-      setShowAddTag(false);
-    }
-  };
-
-  const handleDurationSelect = (minutes: number) => {
-    setFormData({ ...formData, duration: minutes.toString() });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -313,49 +280,9 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <Label htmlFor="tags">Quick Tags (Optional)</Label>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowAddTag(!showAddTag)}
-                  className="h-8 px-2 text-xs"
-                >
-                  <Plus className="h-3 w-3 mr-1" />
-                  Add Tag
-                </Button>
-              </div>
-
-              {showAddTag && (
-                <div className="mb-4 p-3 border rounded-lg bg-gray-50">
-                  <div className="grid grid-cols-4 gap-2 mb-2">
-                    <Input
-                      placeholder="Tag name"
-                      value={newTagLabel}
-                      onChange={(e) => setNewTagLabel(e.target.value)}
-                      className="col-span-2"
-                    />
-                    <Input
-                      placeholder="Emoji"
-                      value={newTagEmoji}
-                      onChange={(e) => setNewTagEmoji(e.target.value)}
-                      className="col-span-1"
-                    />
-                    <Button
-                      type="button"
-                      onClick={handleAddCustomTag}
-                      size="sm"
-                      className="h-9"
-                    >
-                      Add
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 gap-2 mb-4">
-                {allTags.map(tag => (
+              <Label htmlFor="tags">Quick Tags (Optional)</Label>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                {taskTags.map(tag => (
                   <button
                     key={tag.value}
                     type="button"
@@ -373,7 +300,7 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-gray-500 mb-4">Select a tag to auto-fill the title, or write your own below</p>
+              <p className="text-xs text-gray-500 mt-2">Select a tag to auto-fill the title, or write your own below</p>
             </div>
 
             <div>
@@ -424,34 +351,15 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
                 </Select>
               </div>
               <div>
-                <Label htmlFor="duration">Duration</Label>
-                <div className="space-y-2">
-                  <div className="grid grid-cols-3 gap-1">
-                    {durationPresets.map(preset => (
-                      <button
-                        key={preset.value}
-                        type="button"
-                        onClick={() => handleDurationSelect(preset.value)}
-                        className={`p-2 rounded text-xs border transition-all duration-200 hover:scale-[1.02] ${
-                          formData.duration === preset.value.toString()
-                            ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                            : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
-                        }`}
-                      >
-                        <Clock className="h-3 w-3 mx-auto mb-1" />
-                        {preset.label}
-                      </button>
-                    ))}
-                  </div>
-                  <Input
-                    id="duration"
-                    type="number"
-                    value={formData.duration}
-                    onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                    placeholder="Custom duration (minutes)"
-                    className="transition-all duration-200 focus:scale-[1.01]"
-                  />
-                </div>
+                <Label htmlFor="duration">Duration (minutes)</Label>
+                <Input
+                  id="duration"
+                  type="number"
+                  value={formData.duration}
+                  onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                  placeholder="60"
+                  className="transition-all duration-200 focus:scale-[1.01]"
+                />
               </div>
             </div>
             <div className="bg-gradient-to-r from-gray-50 to-indigo-50 p-4 rounded-lg border border-indigo-100">

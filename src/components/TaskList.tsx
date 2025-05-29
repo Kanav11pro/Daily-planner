@@ -1,214 +1,245 @@
-
-import React, { useState } from 'react';
-import { Check, Clock, MoreVertical, Calendar, Tag, Trash2, Edit3, Move } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useTheme, getThemeColors } from '@/contexts/ThemeContext';
-import { Task } from '@/hooks/useTasks';
-import { EditTaskModal } from './EditTaskModal';
-import { DeleteConfirmDialog } from './DeleteConfirmDialog';
-import { MoveTaskModal } from './MoveTaskModal';
+import { Check, Clock, X, Plus, BookOpen, Sparkles, Edit, Trash2, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { EditTaskModal } from "./EditTaskModal";
+import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+import { MoveTaskModal } from "./MoveTaskModal";
+import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
 interface TaskListProps {
-  tasks: Task[];
-  onToggleTask: (id: string) => void;
-  onDeleteTask: (id: string) => void;
-  onUpdateTask: (id: string, updates: Partial<Task>) => void;
-  onMoveTask: (id: string, newDate: string) => void;
-  selectedDate: Date;
+  tasks: any[];
+  onToggleTask: (taskId: string) => void;
+  onDeleteTask: (taskId: string) => void;
+  onEditTask: (taskId: string, updatedTask: any) => void;
+  onAddTask: () => void;
+  title: string;
 }
 
+const subjectColors = {
+  Maths: "bg-blue-100 text-blue-800 border-blue-300",
+  Physics: "bg-green-100 text-green-800 border-green-300",
+  Chemistry: "bg-red-100 text-red-800 border-red-300",
+  "Mock Test": "bg-purple-100 text-purple-800 border-purple-300"
+};
+
 const priorityColors = {
-  high: 'bg-red-100 text-red-800 border-red-200',
-  medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  low: 'bg-green-100 text-green-800 border-green-200'
+  high: "border-l-red-500 bg-gradient-to-r from-red-50 to-pink-50",
+  medium: "border-l-yellow-500 bg-gradient-to-r from-yellow-50 to-orange-50",
+  low: "border-l-green-500 bg-gradient-to-r from-green-50 to-emerald-50"
 };
 
-const priorityEmojis = {
-  high: '🔴',
-  medium: '🟡',
-  low: '🟢'
+const priorityIcons = {
+  high: "🔴",
+  medium: "🟡", 
+  low: "🟢"
 };
 
-export const TaskList = ({ 
-  tasks, 
-  onToggleTask, 
-  onDeleteTask, 
-  onUpdateTask, 
-  onMoveTask,
-  selectedDate 
-}: TaskListProps) => {
-  const { theme } = useTheme();
-  const colors = getThemeColors(theme);
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
+export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddTask, title }: TaskListProps) => {
+  const [completingTasks, setCompletingTasks] = useState<Set<string>>(new Set());
+  const [editingTask, setEditingTask] = useState<any>(null);
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
-  const [movingTask, setMovingTask] = useState<Task | null>(null);
+  const [movingTask, setMovingTask] = useState<any>(null);
+  const { theme } = useTheme();
+  const themeColors = getThemeColors(theme);
 
-  // Add null safety check for selectedDate
-  if (!selectedDate) {
-    return (
-      <div className="text-center py-12">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-          <Calendar className="h-8 w-8 text-gray-400" />
-        </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">Loading...</h3>
-        <p className="text-gray-500">Please wait while we load your tasks.</p>
-      </div>
-    );
-  }
-
-  const selectedDateStr = selectedDate.toISOString().split('T')[0];
-  const dayTasks = tasks.filter(task => task.scheduled_date === selectedDateStr);
-
-  const completedTasks = dayTasks.filter(task => task.completed);
-  const pendingTasks = dayTasks.filter(task => !task.completed);
-
-  const formatDuration = (minutes: number | null) => {
-    if (!minutes) return null;
-    if (minutes < 60) return `${minutes}m`;
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
+  const handleToggleTask = (taskId: string, isCompleted: boolean) => {
+    if (!isCompleted) {
+      setCompletingTasks(prev => new Set(prev).add(taskId));
+      setTimeout(() => {
+        setCompletingTasks(prev => {
+          const next = new Set(prev);
+          next.delete(taskId);
+          return next;
+        });
+      }, 1000);
+    }
+    onToggleTask(taskId);
   };
 
-  const TaskCard = ({ task }: { task: Task }) => (
-    <Card className={`p-4 transition-all duration-200 hover:shadow-lg ${colors.card} ${colors.border}`}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-start space-x-3 flex-1">
-          <button
-            onClick={() => onToggleTask(task.id)}
-            className={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 hover:scale-110 ${
-              task.completed
-                ? `bg-gradient-to-r ${colors.primary} border-transparent`
-                : `border-gray-300 hover:${colors.border}`
-            }`}
-          >
-            {task.completed && <Check className="h-3 w-3 text-white" />}
-          </button>
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center space-x-2 mb-2">
-              <Badge className={`px-2 py-1 text-xs font-medium border ${colors.accent}`}>
-                {task.subject}
-              </Badge>
-              <Badge variant="outline" className={`px-2 py-1 text-xs ${
-                task.completed ? 'line-through opacity-60' : ''
-              }`}>
-                {priorityEmojis[task.priority]} {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-              </Badge>
-              {task.duration && (
-                <Badge variant="outline" className="px-2 py-1 text-xs">
-                  <Clock className="h-3 w-3 mr-1" />
-                  {formatDuration(task.duration)}
-                </Badge>
-              )}
-            </div>
-            
-            <h3 className={`font-medium text-gray-900 ${task.completed ? 'line-through opacity-60' : ''}`}>
-              {task.title}
-            </h3>
-            
-            {task.chapter && (
-              <p className={`text-sm text-gray-600 mt-1 ${task.completed ? 'line-through opacity-60' : ''}`}>
-                📖 {task.chapter}
-              </p>
-            )}
-            
-            {task.description && (
-              <p className={`text-sm text-gray-500 mt-2 ${task.completed ? 'line-through opacity-60' : ''}`}>
-                {task.description}
-              </p>
-            )}
-          </div>
-        </div>
+  const handleEditTask = (updatedTask: any) => {
+    // Remove any fields that don't exist in the database
+    const { createdAt, ...taskWithoutCreatedAt } = updatedTask;
+    onEditTask(editingTask.id, taskWithoutCreatedAt);
+    setEditingTask(null);
+  };
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <MoreVertical className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuItem onClick={() => setEditingTask(task)}>
-              <Edit3 className="h-4 w-4 mr-2" />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setMovingTask(task)}>
-              <Move className="h-4 w-4 mr-2" />
-              Move
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => setDeletingTaskId(task.id)}
-              className="text-red-600 focus:text-red-600"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </Card>
-  );
+  const handleDeleteTask = () => {
+    if (deletingTaskId) {
+      onDeleteTask(deletingTaskId);
+      setDeletingTaskId(null);
+    }
+  };
 
-  if (dayTasks.length === 0) {
+  const handleMoveTask = (taskId: string, newDate: string) => {
+    // Use onEditTask to update the scheduled_date
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      onEditTask(taskId, { ...task, scheduled_date: newDate });
+      setMovingTask(null);
+    }
+  };
+
+  if (tasks.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-          <Calendar className="h-8 w-8 text-gray-400" />
+      <div className="text-center py-8 sm:py-12">
+        <div className={`${themeColors.accent} rounded-xl p-6 sm:p-8 max-w-md mx-auto animate-fade-in`}>
+          <div className="text-4xl sm:text-6xl mb-4 animate-bounce">📚</div>
+          <h3 className={`text-lg sm:text-xl font-semibold mb-2 ${themeColors.text}`}>No tasks planned yet!</h3>
+          <p className={`text-sm sm:text-base mb-6 ${themeColors.text} opacity-70`}>Start planning your study session by adding your first task.</p>
+          <Button
+            onClick={onAddTask}
+            className={`bg-gradient-to-r ${themeColors.primary} hover:opacity-90 transition-all duration-300 hover:scale-105`}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Plan Your First Task
+          </Button>
         </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No tasks for this day</h3>
-        <p className="text-gray-500">Add a new task to get started with your study plan.</p>
       </div>
     );
   }
 
-  return (
-    <div className="space-y-6">
-      {pendingTasks.length > 0 && (
-        <div>
-          <h3 className={`text-lg font-semibold mb-4 ${colors.text}`}>
-            📋 Pending Tasks ({pendingTasks.length})
-          </h3>
-          <div className="space-y-3">
-            {pendingTasks.map(task => (
-              <TaskCard key={task.id} task={task} />
-            ))}
-          </div>
-        </div>
-      )}
+  // Group tasks by subject
+  const tasksBySubject = tasks.reduce((acc, task) => {
+    if (!acc[task.subject]) {
+      acc[task.subject] = [];
+    }
+    acc[task.subject].push(task);
+    return acc;
+  }, {});
 
-      {completedTasks.length > 0 && (
-        <div>
-          <h3 className={`text-lg font-semibold mb-4 ${colors.text}`}>
-            ✅ Completed Tasks ({completedTasks.length})
-          </h3>
-          <div className="space-y-3">
-            {completedTasks.map(task => (
-              <TaskCard key={task.id} task={task} />
-            ))}
-          </div>
+  return (
+    <div className="animate-fade-in">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
+        <h3 className={`text-xl sm:text-2xl font-bold ${themeColors.text}`}>{title}</h3>
+        <div className={`text-sm px-3 py-1 rounded-full ${themeColors.accent}`}>
+          {tasks.filter(t => t.completed).length} of {tasks.length} completed
         </div>
-      )}
+      </div>
+
+      <div className="space-y-6">
+        {Object.entries(tasksBySubject).map(([subject, subjectTasks]: [string, any[]]) => (
+          <div key={subject} className="space-y-3 animate-fade-in">
+            <div className="flex items-center space-x-2 flex-wrap">
+              <BookOpen className={`h-5 w-5 ${themeColors.text}`} />
+              <h4 className={`text-base sm:text-lg font-semibold ${themeColors.text}`}>{subject}</h4>
+              <Badge className={`${subjectColors[subject] || "bg-gray-100 text-gray-800"} text-xs`}>
+                {subjectTasks.length} task{subjectTasks.length !== 1 ? 's' : ''}
+              </Badge>
+            </div>
+            
+            <div className="space-y-3 ml-0 sm:ml-7">
+              {subjectTasks.map((task) => {
+                const isCompleting = completingTasks.has(task.id);
+                return (
+                  <div
+                    key={task.id}
+                    className={`group border-l-4 ${priorityColors[task.priority]} rounded-r-lg shadow-sm hover:shadow-lg transition-all duration-300 p-3 sm:p-4 bg-white transform hover:scale-[1.01] ${
+                      task.completed ? 'opacity-75' : ''
+                    } ${isCompleting ? 'animate-pulse bg-gradient-to-r from-green-100 to-emerald-100' : ''} ${theme === 'midnight' ? 'bg-gray-800 text-gray-100' : ''}`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <button
+                          onClick={() => handleToggleTask(task.id, task.completed)}
+                          className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+                            task.completed
+                              ? 'bg-green-500 border-green-500 text-white animate-bounce'
+                              : 'border-gray-300 hover:border-indigo-500 hover:bg-indigo-50'
+                          }`}
+                        >
+                          {task.completed && <Check className="h-4 w-4" />}
+                          {isCompleting && !task.completed && <Sparkles className="h-4 w-4 text-indigo-500" />}
+                        </button>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0">
+                              <h5 className={`font-semibold break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-100' : 'text-gray-800'}`}>
+                                {task.title}
+                              </h5>
+                              {task.chapter && (
+                                <p className={`text-sm break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-300' : 'text-gray-600'}`}>
+                                  Chapter: {task.chapter}
+                                </p>
+                              )}
+                              {task.description && (
+                                <p className={`mt-1 text-sm break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-300' : 'text-gray-600'}`}>
+                                  {task.description}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center space-x-2 sm:space-x-3 mt-3 flex-wrap gap-2">
+                            <Badge variant="outline" className="text-xs">
+                              {priorityIcons[task.priority]} {task.priority} priority
+                            </Badge>
+                            
+                            {task.duration && (
+                              <div className={`flex items-center text-sm ${theme === 'midnight' ? 'text-gray-400' : 'text-gray-500'}`}>
+                                <Clock className="h-4 w-4 mr-1" />
+                                {task.duration} min
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300 ml-2">
+                        <button
+                          onClick={() => setMovingTask(task)}
+                          className="text-purple-500 hover:text-purple-700 p-1 hover:scale-110 transition-all duration-300"
+                          title="Move to different date"
+                        >
+                          <Calendar className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => setEditingTask(task)}
+                          className="text-blue-500 hover:text-blue-700 p-1 hover:scale-110 transition-all duration-300"
+                          title="Edit task"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => setDeletingTaskId(task.id)}
+                          className="text-red-500 hover:text-red-700 p-1 hover:scale-110 transition-all duration-300"
+                          title="Delete task"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-8 text-center">
+        <Button
+          onClick={onAddTask}
+          variant="outline"
+          className={`border-dashed border-2 transition-all duration-300 hover:scale-105 ${themeColors.border} ${themeColors.text} hover:${themeColors.accent.replace('bg-', 'bg-').replace('text-', 'hover:text-')}`}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Another Task
+        </Button>
+      </div>
 
       {editingTask && (
         <EditTaskModal
           task={editingTask}
           onClose={() => setEditingTask(null)}
-          onSave={(updatedTask) => {
-            onUpdateTask(editingTask.id, updatedTask);
-            setEditingTask(null);
-          }}
+          onSave={handleEditTask}
         />
       )}
 
       {deletingTaskId && (
         <DeleteConfirmDialog
-          onConfirm={() => {
-            onDeleteTask(deletingTaskId);
-            setDeletingTaskId(null);
-          }}
+          onConfirm={handleDeleteTask}
           onCancel={() => setDeletingTaskId(null)}
         />
       )}
@@ -217,10 +248,7 @@ export const TaskList = ({
         <MoveTaskModal
           task={movingTask}
           onClose={() => setMovingTask(null)}
-          onMove={(taskId, newDate) => {
-            onMoveTask(taskId, newDate);
-            setMovingTask(null);
-          }}
+          onMove={handleMoveTask}
         />
       )}
     </div>
