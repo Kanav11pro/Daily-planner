@@ -1,4 +1,3 @@
-
 import { Check, Clock, X, Plus, BookOpen, Sparkles, Edit, Trash2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -83,9 +82,12 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
   };
 
   const handleCopyTask = (task: any, newDate: string) => {
+    console.log('Copying task:', task, 'to date:', newDate);
     if (onCopyTask) {
       onCopyTask(task, newDate);
       setMovingTask(null);
+    } else {
+      console.error('onCopyTask prop is not available');
     }
   };
 
