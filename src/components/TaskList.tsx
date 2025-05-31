@@ -13,7 +13,6 @@ interface TaskListProps {
   onDeleteTask: (taskId: string) => void;
   onEditTask: (taskId: string, updatedTask: any) => void;
   onAddTask: () => void;
-  onCopyTask?: (task: any, newDate: string) => void;
   title: string;
 }
 
@@ -36,7 +35,7 @@ const priorityIcons = {
   low: "🟢"
 };
 
-export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddTask, onCopyTask, title }: TaskListProps) => {
+export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddTask, title }: TaskListProps) => {
   const [completingTasks, setCompletingTasks] = useState<Set<string>>(new Set());
   const [editingTask, setEditingTask] = useState<any>(null);
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
@@ -81,16 +80,6 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
     }
   };
 
-  const handleCopyTask = (task: any, newDate: string) => {
-    console.log('Copying task:', task, 'to date:', newDate);
-    if (onCopyTask) {
-      onCopyTask(task, newDate);
-      setMovingTask(null);
-    } else {
-      console.error('onCopyTask prop is not available');
-    }
-  };
-
   if (tasks.length === 0) {
     return (
       <div className="text-center py-8 sm:py-12">
@@ -108,7 +97,7 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
         </div>
       </div>
     );
-  };
+  }
 
   // Group tasks by subject
   const tasksBySubject = tasks.reduce((acc, task) => {
@@ -147,7 +136,7 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
                     key={task.id}
                     className={`group border-l-4 ${priorityColors[task.priority]} rounded-r-lg shadow-sm hover:shadow-lg transition-all duration-300 p-3 sm:p-4 bg-white transform hover:scale-[1.01] ${
                       task.completed ? 'opacity-75' : ''
-                    } ${isCompleting ? 'animate-pulse bg-gradient-to-r from-green-100 to-emerald-100' : ''}`}
+                    } ${isCompleting ? 'animate-pulse bg-gradient-to-r from-green-100 to-emerald-100' : ''} ${theme === 'midnight' ? 'bg-gray-800 text-gray-100' : ''}`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-3 flex-1">
@@ -166,16 +155,16 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between">
                             <div className="flex-1 min-w-0">
-                              <h5 className={`font-semibold break-words ${task.completed ? 'line-through' : ''} text-gray-800`}>
+                              <h5 className={`font-semibold break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-100' : 'text-gray-800'}`}>
                                 {task.title}
                               </h5>
                               {task.chapter && (
-                                <p className={`text-sm break-words ${task.completed ? 'line-through' : ''} text-gray-600`}>
+                                <p className={`text-sm break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-300' : 'text-gray-600'}`}>
                                   Chapter: {task.chapter}
                                 </p>
                               )}
                               {task.description && (
-                                <p className={`mt-1 text-sm break-words ${task.completed ? 'line-through' : ''} text-gray-600`}>
+                                <p className={`mt-1 text-sm break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-300' : 'text-gray-600'}`}>
                                   {task.description}
                                 </p>
                               )}
@@ -188,7 +177,7 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
                             </Badge>
                             
                             {task.duration && (
-                              <div className={`flex items-center text-sm text-gray-500`}>
+                              <div className={`flex items-center text-sm ${theme === 'midnight' ? 'text-gray-400' : 'text-gray-500'}`}>
                                 <Clock className="h-4 w-4 mr-1" />
                                 {task.duration} min
                               </div>
@@ -201,7 +190,7 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
                         <button
                           onClick={() => setMovingTask(task)}
                           className="text-purple-500 hover:text-purple-700 p-1 hover:scale-110 transition-all duration-300"
-                          title="Move or copy to different date"
+                          title="Move to different date"
                         >
                           <Calendar className="h-4 w-4" />
                         </button>
@@ -260,7 +249,6 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
           task={movingTask}
           onClose={() => setMovingTask(null)}
           onMove={handleMoveTask}
-          onCopy={handleCopyTask}
         />
       )}
     </div>
