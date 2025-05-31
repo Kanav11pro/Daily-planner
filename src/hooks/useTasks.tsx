@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -193,6 +192,43 @@ export const useTasks = () => {
     await updateTask(id, { completed: !task.completed });
   };
 
+  const copyTask = async (task: Task, newDate: string) => {
+    if (!user) return;
+
+    try {
+      // Create a new task with the same data but different date and without id
+      const { id, created_at, updated_at, user_id, createdAt, ...taskData } = task;
+      const newTaskData = {
+        ...taskData,
+        scheduled_date: formatDateForDB(newDate),
+        completed: false, // Reset completion status for copied task
+        user_id: user.id,
+      };
+
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert([newTaskData])
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      const transformedTask = {
+        ...data,
+        createdAt: data.created_at,
+        priority: data.priority as 'low' | 'medium' | 'high',
+        scheduled_date: formatDateForDB(data.scheduled_date)
+      };
+      
+      setTasks(prev => [...prev, transformedTask]);
+      toast.success('Task copied successfully!');
+      return transformedTask;
+    } catch (error: any) {
+      toast.error('Failed to copy task');
+      console.error('Error copying task:', error);
+    }
+  };
+
   return {
     tasks,
     loading,
@@ -201,6 +237,7 @@ export const useTasks = () => {
     deleteTask,
     toggleTask,
     moveTask,
+    copyTask,
     refetch: fetchTasks,
   };
 };

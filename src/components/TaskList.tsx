@@ -13,6 +13,7 @@ interface TaskListProps {
   onDeleteTask: (taskId: string) => void;
   onEditTask: (taskId: string, updatedTask: any) => void;
   onAddTask: () => void;
+  onCopyTask?: (task: any, newDate: string) => void;
   title: string;
 }
 
@@ -35,7 +36,7 @@ const priorityIcons = {
   low: "🟢"
 };
 
-export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddTask, title }: TaskListProps) => {
+export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddTask, onCopyTask, title }: TaskListProps) => {
   const [completingTasks, setCompletingTasks] = useState<Set<string>>(new Set());
   const [editingTask, setEditingTask] = useState<any>(null);
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
@@ -76,6 +77,13 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
     const task = tasks.find(t => t.id === taskId);
     if (task) {
       onEditTask(taskId, { ...task, scheduled_date: newDate });
+      setMovingTask(null);
+    }
+  };
+
+  const handleCopyTask = (task: any, newDate: string) => {
+    if (onCopyTask) {
+      onCopyTask(task, newDate);
       setMovingTask(null);
     }
   };
@@ -190,7 +198,7 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
                         <button
                           onClick={() => setMovingTask(task)}
                           className="text-purple-500 hover:text-purple-700 p-1 hover:scale-110 transition-all duration-300"
-                          title="Move to different date"
+                          title="Move or copy to different date"
                         >
                           <Calendar className="h-4 w-4" />
                         </button>
@@ -249,6 +257,7 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
           task={movingTask}
           onClose={() => setMovingTask(null)}
           onMove={handleMoveTask}
+          onCopy={handleCopyTask}
         />
       )}
     </div>
