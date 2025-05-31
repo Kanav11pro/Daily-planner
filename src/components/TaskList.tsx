@@ -1,3 +1,4 @@
+
 import { Check, Clock, X, Plus, BookOpen, Sparkles, Edit, Trash2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -105,7 +106,7 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
         </div>
       </div>
     );
-  }
+  };
 
   // Group tasks by subject
   const tasksBySubject = tasks.reduce((acc, task) => {
@@ -144,7 +145,7 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
                     key={task.id}
                     className={`group border-l-4 ${priorityColors[task.priority]} rounded-r-lg shadow-sm hover:shadow-lg transition-all duration-300 p-3 sm:p-4 bg-white transform hover:scale-[1.01] ${
                       task.completed ? 'opacity-75' : ''
-                    } ${isCompleting ? 'animate-pulse bg-gradient-to-r from-green-100 to-emerald-100' : ''} ${theme === 'midnight' ? 'bg-gray-800 text-gray-100' : ''}`}
+                    } ${isCompleting ? 'animate-pulse bg-gradient-to-r from-green-100 to-emerald-100' : ''}`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-3 flex-1">
@@ -163,16 +164,16 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between">
                             <div className="flex-1 min-w-0">
-                              <h5 className={`font-semibold break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-100' : 'text-gray-800'}`}>
+                              <h5 className={`font-semibold break-words ${task.completed ? 'line-through' : ''} text-gray-800`}>
                                 {task.title}
                               </h5>
                               {task.chapter && (
-                                <p className={`text-sm break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-300' : 'text-gray-600'}`}>
+                                <p className={`text-sm break-words ${task.completed ? 'line-through' : ''} text-gray-600`}>
                                   Chapter: {task.chapter}
                                 </p>
                               )}
                               {task.description && (
-                                <p className={`mt-1 text-sm break-words ${task.completed ? 'line-through' : ''} ${theme === 'midnight' ? 'text-gray-300' : 'text-gray-600'}`}>
+                                <p className={`mt-1 text-sm break-words ${task.completed ? 'line-through' : ''} text-gray-600`}>
                                   {task.description}
                                 </p>
                               )}
@@ -185,7 +186,7 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
                             </Badge>
                             
                             {task.duration && (
-                              <div className={`flex items-center text-sm ${theme === 'midnight' ? 'text-gray-400' : 'text-gray-500'}`}>
+                              <div className={`flex items-center text-sm text-gray-500`}>
                                 <Clock className="h-4 w-4 mr-1" />
                                 {task.duration} min
                               </div>
