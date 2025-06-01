@@ -56,14 +56,58 @@ export const useAuth = () => {
   };
 
   const updateUserMetadata = async (metadata: any) => {
-    const { data, error } = await supabase.auth.updateUser({
-      data: metadata
-    });
-    return { data, error };
+    console.log('Updating user metadata with:', metadata);
+    
+    try {
+      // Update auth metadata
+      const { data: authData, error: authError } = await supabase.auth.updateUser({
+        data: metadata
+      });
+      
+      if (authError) {
+        console.error('Auth metadata update error:', authError);
+        return { data: authData, error: authError };
+      }
+
+      // Also update the profiles table if it exists
+      if (user?.id) {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: user.id,
+            full_name: user.user_metadata?.full_name || metadata.full_name,
+            // Add onboarding data to profiles table
+            exam: metadata.exam,
+            exam_other: metadata.exam_other,
+            institute: metadata.institute,
+            institute_other: metadata.institute_other,
+            study_hours: metadata.study_hours,
+            challenge: metadata.challenge,
+            onboarding_completed: metadata.onboarding_completed,
+            updated_at: new Date().toISOString()
+          })
+          .select();
+
+        if (profileError) {
+          console.error('Profile update error:', profileError);
+          // Don't return error here as auth update succeeded
+        } else {
+          console.log('Profile updated successfully:', profileData);
+        }
+      }
+
+      console.log('User metadata updated successfully');
+      return { data: authData, error: null };
+    } catch (error) {
+      console.error('Error updating user metadata:', error);
+      return { data: null, error };
+    }
   };
 
   const isOnboardingCompleted = () => {
-    return user?.user_metadata?.onboarding_completed === true;
+    const completed = user?.user_metadata?.onboarding_completed === true;
+    console.log('Checking onboarding completion:', completed, user?.user_metadata);
+    return completed;
   };
 
   return {

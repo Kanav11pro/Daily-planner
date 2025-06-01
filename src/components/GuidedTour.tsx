@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useTheme, getThemeColors } from '@/contexts/ThemeContext';
 import { 
   X, 
@@ -112,122 +113,118 @@ export const GuidedTour = ({ onComplete }: GuidedTourProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      {/* Highlight overlay */}
-      {currentStepData.highlight && (
-        <div className="absolute inset-0 pointer-events-none">
-          <div 
-            className="absolute bg-white/20 border-4 border-yellow-400 rounded-lg animate-pulse"
-            style={{
-              // This would need to be dynamically positioned based on the highlighted element
-              // For now, we'll just show the modal without specific highlighting
-            }}
-          />
-        </div>
-      )}
-
-      <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 max-w-lg w-full mx-4 relative animate-scale-in border border-gray-200">
-        {/* Close button */}
-        <button
-          onClick={handleSkip}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          <X className="h-5 w-5" />
-        </button>
-
-        {/* Header */}
-        <div className="text-center mb-6">
-          <div className="flex justify-center mb-4">
-            <div className={`w-16 h-16 bg-gradient-to-r ${currentStepData.color} rounded-2xl flex items-center justify-center animate-wiggle shadow-lg`}>
-              <currentStepData.icon className="h-8 w-8 text-white" />
-            </div>
-          </div>
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
-            {currentStepData.title}
-          </h3>
-        </div>
-
-        {/* Progress */}
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-600">
-              Step {currentStep + 1} of {tourSteps.length}
-            </span>
-            <span className="text-sm font-medium text-indigo-600">
-              {Math.round(((currentStep + 1) / tourSteps.length) * 100)}%
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className={`h-full bg-gradient-to-r ${currentStepData.color} transition-all duration-500 ease-out rounded-full`}
-              style={{ width: `${((currentStep + 1) / tourSteps.length) * 100}%` }}
-            />
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="mb-6">
-          <p className="text-gray-600 leading-relaxed mb-4">
-            {currentStepData.description}
-          </p>
-
-          {currentStepData.features && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-              {currentStepData.features.map((feature, index) => (
-                <div key={index} className="flex items-center text-sm text-gray-600 bg-gray-50 rounded-lg p-2">
-                  <span>{feature}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {currentStepData.tip && (
-            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-3 text-sm text-gray-700">
-              {currentStepData.tip}
-            </div>
-          )}
-
-          {currentStepData.cta && (
-            <div className="text-center bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-4 mt-4">
-              <p className="text-lg font-semibold text-indigo-700 mb-2">{currentStepData.cta}</p>
-              <p className="text-sm text-gray-600">Ready to start your exam preparation journey?</p>
-            </div>
-          )}
-        </div>
-
-        {/* Navigation */}
-        <div className="flex justify-between items-center">
-          <Button
-            onClick={handlePrevious}
-            disabled={currentStep === 0}
-            variant="outline"
-            className="flex items-center space-x-2 disabled:opacity-50"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            <span>Previous</span>
-          </Button>
-
-          <div className="flex space-x-2">
-            {currentStep < tourSteps.length - 1 && (
-              <Button
-                onClick={handleSkip}
-                variant="ghost"
-                className="text-gray-500 hover:text-gray-700"
-              >
-                Skip Tour
-              </Button>
-            )}
-            
-            <Button
-              onClick={handleNext}
-              className={`bg-gradient-to-r ${currentStepData.color} hover:opacity-90 transition-all duration-300 hover:scale-105 text-white font-semibold px-6`}
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overflow-hidden">
+      <div className="h-screen overflow-y-auto flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 relative border border-gray-200 my-8">
+          
+          {/* Fixed Header */}
+          <div className="p-6 sm:p-8 border-b border-gray-200">
+            {/* Close button */}
+            <button
+              onClick={handleSkip}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
             >
-              <span>{currentStep === tourSteps.length - 1 ? "Get Started!" : "Next"}</span>
-              {currentStep === tourSteps.length - 1 ? 
-                <Trophy className="h-4 w-4 ml-2" /> : 
-                <ChevronRight className="h-4 w-4 ml-2" />
-              }
-            </Button>
+              <X className="h-5 w-5" />
+            </button>
+
+            <div className="text-center">
+              <div className="flex justify-center mb-4">
+                <div className={`w-16 h-16 bg-gradient-to-r ${currentStepData.color} rounded-2xl flex items-center justify-center shadow-lg`}>
+                  <currentStepData.icon className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
+                {currentStepData.title}
+              </h3>
+            </div>
+
+            {/* Progress */}
+            <div className="mt-6">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-gray-600">
+                  Step {currentStep + 1} of {tourSteps.length}
+                </span>
+                <span className="text-sm font-medium text-indigo-600">
+                  {Math.round(((currentStep + 1) / tourSteps.length) * 100)}%
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className={`h-full bg-gradient-to-r ${currentStepData.color} transition-all duration-500 ease-out rounded-full`}
+                  style={{ width: `${((currentStep + 1) / tourSteps.length) * 100}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Scrollable Content */}
+          <ScrollArea className="max-h-[50vh] p-6 sm:p-8">
+            <div className="space-y-4">
+              <p className="text-gray-600 leading-relaxed">
+                {currentStepData.description}
+              </p>
+
+              {currentStepData.features && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {currentStepData.features.map((feature, index) => (
+                    <div key={index} className="flex items-center text-sm text-gray-600 bg-gray-50 rounded-lg p-2">
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {currentStepData.tip && (
+                <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-3 text-sm text-gray-700">
+                  {currentStepData.tip}
+                </div>
+              )}
+
+              {currentStepData.cta && (
+                <div className="text-center bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-4">
+                  <p className="text-lg font-semibold text-indigo-700 mb-2">{currentStepData.cta}</p>
+                  <p className="text-sm text-gray-600">Ready to start your exam preparation journey?</p>
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+
+          {/* Fixed Footer */}
+          <div className="p-6 sm:p-8 border-t border-gray-200">
+            <div className="flex justify-between items-center">
+              <Button
+                onClick={handlePrevious}
+                disabled={currentStep === 0}
+                variant="outline"
+                className="flex items-center space-x-2 disabled:opacity-50"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span>Previous</span>
+              </Button>
+
+              <div className="flex space-x-2">
+                {currentStep < tourSteps.length - 1 && (
+                  <Button
+                    onClick={handleSkip}
+                    variant="ghost"
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    Skip Tour
+                  </Button>
+                )}
+                
+                <Button
+                  onClick={handleNext}
+                  className={`bg-gradient-to-r ${currentStepData.color} hover:opacity-90 transition-all duration-300 text-white font-semibold px-6`}
+                >
+                  <span>{currentStep === tourSteps.length - 1 ? "Get Started!" : "Next"}</span>
+                  {currentStep === tourSteps.length - 1 ? 
+                    <Trophy className="h-4 w-4 ml-2" /> : 
+                    <ChevronRight className="h-4 w-4 ml-2" />
+                  }
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
