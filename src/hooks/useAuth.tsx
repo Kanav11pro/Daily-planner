@@ -35,6 +35,7 @@ export const useAuth = () => {
       options: {
         data: {
           full_name: fullName,
+          onboarding_completed: false,
         },
       },
     });
@@ -54,6 +55,17 @@ export const useAuth = () => {
     return { error };
   };
 
+  const updateUserMetadata = async (metadata: any) => {
+    const { data, error } = await supabase.auth.updateUser({
+      data: metadata
+    });
+    return { data, error };
+  };
+
+  const isOnboardingCompleted = () => {
+    return user?.user_metadata?.onboarding_completed === true;
+  };
+
   return {
     user,
     session,
@@ -61,5 +73,7 @@ export const useAuth = () => {
     signUp,
     signIn,
     signOut,
+    updateUserMetadata,
+    isOnboardingCompleted,
   };
 };
