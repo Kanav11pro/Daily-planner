@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { QuoteSection } from "@/components/QuoteSection";
 import { TaskDashboard } from "@/components/TaskDashboard";
@@ -30,15 +30,6 @@ const IndexContent = () => {
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
-  // Check if user needs onboarding
-  React.useEffect(() => {
-    if (user && !authLoading) {
-      if (!isOnboardingCompleted()) {
-        setShowOnboarding(true);
-      }
-    }
-  }, [user, authLoading, isOnboardingCompleted]);
-
   // Helper function to format date consistently for comparison
   const formatDateForComparison = (date: Date | string): string => {
     if (typeof date === 'string') {
@@ -49,6 +40,60 @@ const IndexContent = () => {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
+
+  const handleAddTask = async (taskData: any) => {
+    const newTask = {
+      ...taskData,
+      scheduled_date: taskData.scheduledDate || formatDateForComparison(selectedDate),
+      completed: false
+    };
+    await addTask(newTask);
+    setShowTaskModal(false);
+  };
+
+  const handleEditTask = async (taskId: string, updatedTask: any) => {
+    // Ensure the scheduled_date is properly formatted if it's being updated
+    if (updatedTask.scheduled_date) {
+      updatedTask.scheduled_date = formatDateForComparison(updatedTask.scheduled_date);
+    }
+    await updateTask(taskId, updatedTask);
+  };
+
+  const handleToggleTask = async (taskId: string) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (task && !task.completed) {
+      setShowCelebration(true);
+      setTimeout(() => setShowCelebration(false), 4000);
+    }
+    await toggleTask(taskId);
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    await deleteTask(taskId);
+  };
+
+  const getTasksForDate = (date: Date) => {
+    const dateString = formatDateForComparison(date);
+    console.log('Filtering tasks for date:', dateString);
+    console.log('Available tasks:', tasks.map(t => ({ id: t.id, title: t.title, scheduled_date: t.scheduled_date })));
+    
+    const filteredTasks = tasks.filter(task => {
+      const taskDate = formatDateForComparison(task.scheduled_date);
+      return taskDate === dateString;
+    });
+    
+    console.log('Filtered tasks:', filteredTasks.length);
+    return filteredTasks;
+  };
+
+  // Check if user needs onboarding
+  React.useEffect(() => {
+    if (user && !authLoading) {
+      if (!isOnboardingCompleted()) {
+        setShowOnboarding(true);
+      }
+    }
+  }, [user, authLoading, isOnboardingCompleted]);
 
   // Show loading spinner while checking auth
   if (authLoading) {
@@ -139,51 +184,6 @@ const IndexContent = () => {
       </>
     );
   }
-
-  const handleAddTask = async (taskData: any) => {
-    const newTask = {
-      ...taskData,
-      scheduled_date: taskData.scheduledDate || formatDateForComparison(selectedDate),
-      completed: false
-    };
-    await addTask(newTask);
-    setShowTaskModal(false);
-  };
-
-  const handleEditTask = async (taskId: string, updatedTask: any) => {
-    // Ensure the scheduled_date is properly formatted if it's being updated
-    if (updatedTask.scheduled_date) {
-      updatedTask.scheduled_date = formatDateForComparison(updatedTask.scheduled_date);
-    }
-    await updateTask(taskId, updatedTask);
-  };
-
-  const handleToggleTask = async (taskId: string) => {
-    const task = tasks.find(t => t.id === taskId);
-    if (task && !task.completed) {
-      setShowCelebration(true);
-      setTimeout(() => setShowCelebration(false), 4000);
-    }
-    await toggleTask(taskId);
-  };
-
-  const handleDeleteTask = async (taskId: string) => {
-    await deleteTask(taskId);
-  };
-
-  const getTasksForDate = (date: Date) => {
-    const dateString = formatDateForComparison(date);
-    console.log('Filtering tasks for date:', dateString);
-    console.log('Available tasks:', tasks.map(t => ({ id: t.id, title: t.title, scheduled_date: t.scheduled_date })));
-    
-    const filteredTasks = tasks.filter(task => {
-      const taskDate = formatDateForComparison(task.scheduled_date);
-      return taskDate === dateString;
-    });
-    
-    console.log('Filtered tasks:', filteredTasks.length);
-    return filteredTasks;
-  };
 
   const selectedDateTasks = getTasksForDate(selectedDate);
 
