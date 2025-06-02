@@ -102,7 +102,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
     { value: "Problem-solving speed", label: "Problem-solving speed", emoji: "⚡" },
     { value: "Staying motivated", label: "Staying motivated", emoji: "❤️" },
     { value: "Too much syllabus to cover", label: "Too much syllabus to cover, don't know where to start", emoji: "📚" },
-    { value: "Time management - school + coaching + self-study", label: "Time management – can't balance school + coaching + self-study", emoji: "🕒" },
+    { value: "Time management - school +- coaching + self-study", label: "Time management – can't balance school + coaching + self-study", emoji: "🕒" },
     { value: "Procrastination", label: "Procrastination / Lack of motivation", emoji: "❌" },
     { value: "Revision and retention", label: "Not able to revise or retain what I study", emoji: "📝" },
     { value: "Low mock test scores", label: "Low mock test scores / poor accuracy", emoji: "📉" },
@@ -160,58 +160,76 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
   const currentStepData = steps[currentStep - 1];
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-violet-900 via-purple-900 to-fuchsia-900 z-50">
+    <div className="fixed inset-0 bg-gradient-to-br from-violet-900 via-purple-900 to-fuchsia-900 z-50 flex flex-col">
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -left-40 w-80 h-80 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-gradient-to-r from-pink-500/15 to-violet-500/15 rounded-full blur-3xl animate-bounce" style={{ animationDelay: '1s' }}></div>
       </div>
 
-      {/* Main Container - Full height with proper scrolling */}
-      <div className="relative z-10 h-full flex flex-col">
-        
-        {/* Header - Fixed */}
-        <div className="flex-shrink-0 bg-white/95 backdrop-blur-xl border-b border-gray-200 p-4 sm:p-6">
-          <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="relative">
-                <div className={`w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r ${currentStepData.color} rounded-2xl flex items-center justify-center shadow-2xl`}>
-                  <currentStepData.icon className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
+      {/* Main Container - Using flex to optimize space */}
+      <div className="relative z-10 flex flex-col h-full">
+        {/* Header - Compact on larger screens */}
+        <div className="flex-shrink-0 bg-white/95 backdrop-blur-xl border-b border-gray-200 p-4 md:py-3">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-center md:justify-between">
+              {/* Logo and title */}
+              <div className="flex items-center space-x-3">
+                <div className="relative hidden md:block">
+                  <div className={`w-12 h-12 bg-gradient-to-r ${currentStepData.color} rounded-xl flex items-center justify-center shadow-xl`}>
+                    <currentStepData.icon className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center animate-bounce shadow-lg">
+                    <Sparkles className="h-2 w-2 text-white" />
+                  </div>
                 </div>
-                <div className="absolute -top-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center animate-bounce shadow-lg">
-                  <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    Welcome to Exam Ace! 🚀
+                  </h2>
+                  <p className="text-xs md:text-sm text-gray-600 hidden md:block">Let's personalize your study experience</p>
+                </div>
+              </div>
+              
+              {/* Progress tracker */}
+              <div className="hidden md:block">
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm font-medium text-gray-600">Step {currentStep} of 4</span>
+                  <div className="w-32 bg-gray-200 rounded-full h-2 overflow-hidden">
+                    <div 
+                      className={`h-full bg-gradient-to-r ${currentStepData.color} transition-all duration-500 ease-out rounded-full`}
+                      style={{ width: `${(currentStep / 4) * 100}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-sm font-medium text-indigo-600">{Math.round((currentStep / 4) * 100)}%</span>
                 </div>
               </div>
             </div>
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
-              Welcome to Exam Ace! 🚀
-            </h2>
-            <p className="text-sm sm:text-base text-gray-600">Let's personalize your study experience</p>
-          </div>
 
-          {/* Progress Bar */}
-          <div className="mt-4 sm:mt-6">
-            <div className="flex justify-between items-center mb-2 sm:mb-4">
-              <span className="text-xs sm:text-sm font-medium text-gray-600">Step {currentStep} of 4</span>
-              <span className="text-xs sm:text-sm font-medium text-indigo-600">{Math.round((currentStep / 4) * 100)}% Complete</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3 overflow-hidden">
-              <div 
-                className={`h-full bg-gradient-to-r ${currentStepData.color} transition-all duration-500 ease-out rounded-full`}
-                style={{ width: `${(currentStep / 4) * 100}%` }}
-              ></div>
+            {/* Mobile Progress Bar - Only show on small screens */}
+            <div className="mt-2 md:hidden">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-xs font-medium text-gray-600">Step {currentStep} of 4</span>
+                <span className="text-xs font-medium text-indigo-600">{Math.round((currentStep / 4) * 100)}% Complete</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div 
+                  className={`h-full bg-gradient-to-r ${currentStepData.color} transition-all duration-500 ease-out rounded-full`}
+                  style={{ width: `${(currentStep / 4) * 100}%` }}
+                ></div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-4 sm:p-6 lg:p-8 max-w-2xl mx-auto">
-            <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-white text-center mb-6 sm:mb-8">
+        {/* Content - Expanded flex area */}
+        <div className="flex-1 overflow-y-auto py-4 md:py-6">
+          <div className="max-w-4xl mx-auto px-4">
+            <h3 className="text-xl md:text-2xl font-semibold text-white text-center mb-4 md:mb-6">
               {currentStepData.title}
             </h3>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Step 1: Exam Selection */}
               {currentStep === 1 && (
                 <div className="space-y-3">
@@ -221,11 +239,11 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
                     className="space-y-3"
                   >
                     {examOptions.map((option) => (
-                      <div key={option.value} className="flex items-center space-x-3 p-3 sm:p-4 rounded-xl border-2 border-white/20 hover:border-indigo-300 hover:bg-white/10 transition-all duration-300 group bg-white/5 backdrop-blur-sm">
+                      <div key={option.value} className="flex items-center space-x-3 p-3 rounded-xl border-2 border-white/20 hover:border-indigo-300 hover:bg-white/10 transition-all duration-300 group bg-white/5 backdrop-blur-sm">
                         <RadioGroupItem value={option.value} id={option.value} className="border-white/50 text-white" />
                         <Label htmlFor={option.value} className="flex-1 flex items-center space-x-3 cursor-pointer">
                           <span className="text-xl sm:text-2xl">{option.emoji}</span>
-                          <span className="font-medium text-white group-hover:text-indigo-200 transition-colors text-sm sm:text-base">{option.label}</span>
+                          <span className="font-medium text-white group-hover:text-indigo-200 transition-colors">{option.label}</span>
                         </Label>
                       </div>
                     ))}
@@ -252,11 +270,11 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
                     className="space-y-3"
                   >
                     {instituteOptions.map((option) => (
-                      <div key={option.value} className="flex items-center space-x-3 p-3 sm:p-4 rounded-xl border-2 border-white/20 hover:border-purple-300 hover:bg-white/10 transition-all duration-300 group bg-white/5 backdrop-blur-sm">
+                      <div key={option.value} className="flex items-center space-x-3 p-3 rounded-xl border-2 border-white/20 hover:border-purple-300 hover:bg-white/10 transition-all duration-300 group bg-white/5 backdrop-blur-sm">
                         <RadioGroupItem value={option.value} id={option.value} className="border-white/50 text-white" />
                         <Label htmlFor={option.value} className="flex-1 flex items-center space-x-3 cursor-pointer">
                           <span className="text-xl sm:text-2xl">{option.emoji}</span>
-                          <span className="font-medium text-white group-hover:text-purple-200 transition-colors text-sm sm:text-base">{option.label}</span>
+                          <span className="font-medium text-white group-hover:text-purple-200 transition-colors">{option.label}</span>
                         </Label>
                       </div>
                     ))}
@@ -283,11 +301,11 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
                     className="space-y-3"
                   >
                     {studyHoursOptions.map((option) => (
-                      <div key={option.value} className="flex items-center space-x-3 p-3 sm:p-4 rounded-xl border-2 border-white/20 hover:border-green-300 hover:bg-white/10 transition-all duration-300 group bg-white/5 backdrop-blur-sm">
+                      <div key={option.value} className="flex items-center space-x-3 p-3 rounded-xl border-2 border-white/20 hover:border-green-300 hover:bg-white/10 transition-all duration-300 group bg-white/5 backdrop-blur-sm">
                         <RadioGroupItem value={option.value} id={option.value} className="border-white/50 text-white" />
                         <Label htmlFor={option.value} className="flex-1 flex items-center space-x-3 cursor-pointer">
                           <span className="text-xl sm:text-2xl">{option.emoji}</span>
-                          <span className="font-medium text-white group-hover:text-green-200 transition-colors text-sm sm:text-base">{option.label}</span>
+                          <span className="font-medium text-white group-hover:text-green-200 transition-colors">{option.label}</span>
                         </Label>
                       </div>
                     ))}
@@ -298,12 +316,12 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
               {/* Step 4: Challenge Selection */}
               {currentStep === 4 && (
                 <div className="space-y-3">
-                  <div className="text-center mb-4">
+                  <div className="text-center mb-3">
                     <p className="text-sm text-white/80">You can select multiple challenges</p>
                   </div>
-                  <div className="space-y-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {challengeOptions.map((option) => (
-                      <div key={option.value} className="flex items-center space-x-3 p-3 sm:p-4 rounded-xl border-2 border-white/20 hover:border-orange-300 hover:bg-white/10 transition-all duration-300 group bg-white/5 backdrop-blur-sm">
+                      <div key={option.value} className="flex items-center space-x-3 p-3 rounded-xl border-2 border-white/20 hover:border-orange-300 hover:bg-white/10 transition-all duration-300 group bg-white/5 backdrop-blur-sm">
                         <Checkbox
                           id={option.value}
                           checked={answers.challenge?.includes(option.value) || false}
@@ -311,8 +329,8 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
                           className="border-white/50 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
                         />
                         <Label htmlFor={option.value} className="flex-1 flex items-center space-x-3 cursor-pointer">
-                          <span className="text-lg sm:text-xl">{option.emoji}</span>
-                          <span className="font-medium text-white group-hover:text-orange-200 transition-colors text-sm sm:text-base">{option.label}</span>
+                          <span className="text-lg">{option.emoji}</span>
+                          <span className="font-medium text-white group-hover:text-orange-200 transition-colors text-sm">{option.label}</span>
                         </Label>
                       </div>
                     ))}
@@ -323,9 +341,9 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
           </div>
         </div>
 
-        {/* Footer - Fixed */}
-        <div className="flex-shrink-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-4 sm:p-6">
-          <div className="flex justify-between max-w-2xl mx-auto">
+        {/* Footer - Compact with fixed height */}
+        <div className="flex-shrink-0 bg-white/95 backdrop-blur-xl border-t border-gray-200 p-4">
+          <div className="flex justify-between max-w-4xl mx-auto">
             <Button
               onClick={handlePrevious}
               disabled={currentStep === 1}
@@ -333,13 +351,13 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
               className="flex items-center space-x-2 disabled:opacity-50"
             >
               <ChevronLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Previous</span>
+              <span>Previous</span>
             </Button>
 
             <Button
               onClick={handleNext}
               disabled={!isStepValid()}
-              className={`bg-gradient-to-r ${currentStepData.color} hover:opacity-90 transition-all duration-300 text-white font-semibold px-4 sm:px-6 disabled:opacity-50 disabled:cursor-not-allowed`}
+              className={`bg-gradient-to-r ${currentStepData.color} hover:opacity-90 transition-all duration-300 text-white font-semibold px-6 disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <span>{currentStep === 4 ? "Complete Setup" : "Next"}</span>
               {currentStep === 4 ? <Trophy className="h-4 w-4 ml-2" /> : <ChevronRight className="h-4 w-4 ml-2" />}

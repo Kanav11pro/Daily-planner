@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -70,6 +71,14 @@ export const useAuth = () => {
 
       // Update the profiles table with onboarding data
       if (user?.id) {
+        // Process the challenge array properly
+        let challengeValue = '';
+        if (Array.isArray(metadata.challenge)) {
+          challengeValue = metadata.challenge.join(', ');
+        } else if (typeof metadata.challenge === 'string') {
+          challengeValue = metadata.challenge;
+        }
+
         const profileUpdateData = {
           id: user.id,
           full_name: user.user_metadata?.full_name || metadata.full_name,
@@ -78,7 +87,7 @@ export const useAuth = () => {
           institute: metadata.institute,
           institute_other: metadata.institute_other,
           study_hours: metadata.study_hours,
-          challenge: Array.isArray(metadata.challenge) ? metadata.challenge.join(', ') : metadata.challenge,
+          challenge: challengeValue,
           onboarding_completed: metadata.onboarding_completed,
           updated_at: new Date().toISOString()
         };
