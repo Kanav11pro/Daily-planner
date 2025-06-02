@@ -145,18 +145,8 @@ export const TaskAnalytics = ({
       </Card>
 
       <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg`}>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center space-x-2">
-            <Clock className="h-5 w-5 text-blue-600" />
-            <span>Focus Time</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-700">{totalTimeSpent} min</div>
-            <p className="text-sm text-gray-600">Deep study sessions completed</p>
-          </div>
-        </CardContent>
+        
+        
       </Card>
 
       <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg`}>

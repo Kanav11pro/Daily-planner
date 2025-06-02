@@ -20,9 +20,7 @@ export const Header = ({
               <Target className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
             </div>
             <div className="min-w-0">
-              <h1 className={`text-xl sm:text-3xl font-bold bg-gradient-to-r ${themeColors.primary} bg-clip-text text-transparent truncate`}>
-                ExamAce Planner
-              </h1>
+              <h1 className={`text-xl sm:text-3xl font-bold bg-gradient-to-r ${themeColors.primary} bg-clip-text text-transparent truncate`}>ExamAce</h1>
               <p className="text-sm sm:text-base text-gray-600 font-medium hidden sm:block">Your JEE Success Journey</p>
             </div>
           </div>
