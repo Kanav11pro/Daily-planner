@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { useTheme, getThemeColors } from '@/contexts/ThemeContext';
 import { 
@@ -32,12 +33,14 @@ export interface OnboardingAnswers {
   institute: string;
   instituteOther?: string;
   studyHours: string;
-  challenge: string;
+  challenge: string[];
 }
 
 export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [answers, setAnswers] = useState<Partial<OnboardingAnswers>>({});
+  const [answers, setAnswers] = useState<Partial<OnboardingAnswers>>({
+    challenge: []
+  });
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
@@ -62,7 +65,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
     },
     {
       id: 4,
-      title: "💪 What's your biggest current challenge?",
+      title: "💪 What are your biggest current challenges? (Select all that apply)",
       icon: Brain,
       color: "from-orange-500 to-red-500"
     }
@@ -94,10 +97,20 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
   ];
 
   const challengeOptions = [
-    { value: "Time management", label: "Time management", emoji: "⏰", icon: Timer },
-    { value: "Memorizing formulas", label: "Memorizing formulas", emoji: "🧠", icon: Brain },
-    { value: "Problem-solving speed", label: "Problem-solving speed", emoji: "⚡", icon: Timer },
-    { value: "Staying motivated", label: "Staying motivated", emoji: "❤️", icon: Heart }
+    { value: "Time management", label: "Time management", emoji: "⏰" },
+    { value: "Memorizing formulas", label: "Memorizing formulas", emoji: "🧠" },
+    { value: "Problem-solving speed", label: "Problem-solving speed", emoji: "⚡" },
+    { value: "Staying motivated", label: "Staying motivated", emoji: "❤️" },
+    { value: "Too much syllabus to cover", label: "Too much syllabus to cover, don't know where to start", emoji: "📚" },
+    { value: "Time management - school + coaching + self-study", label: "Time management – can't balance school + coaching + self-study", emoji: "🕒" },
+    { value: "Procrastination", label: "Procrastination / Lack of motivation", emoji: "❌" },
+    { value: "Revision and retention", label: "Not able to revise or retain what I study", emoji: "📝" },
+    { value: "Low mock test scores", label: "Low mock test scores / poor accuracy", emoji: "📉" },
+    { value: "Understanding tough concepts", label: "Can't understand tough concepts / weak in some topics", emoji: "🧠" },
+    { value: "Backlogs", label: "Backlogs – couldn't complete previous chapters", emoji: "🔁" },
+    { value: "Stress and burnout", label: "Stress, burnout or pressure to perform", emoji: "🤯" },
+    { value: "Distractions", label: "Distractions – phone, social media, etc.", emoji: "🛑" },
+    { value: "No proper routine", label: "Not able to follow a proper routine / daily plan", emoji: "📆" }
   ];
 
   const handleNext = () => {
@@ -114,6 +127,21 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
     }
   };
 
+  const handleChallengeChange = (challengeValue: string, checked: boolean) => {
+    const currentChallenges = answers.challenge || [];
+    if (checked) {
+      setAnswers({
+        ...answers,
+        challenge: [...currentChallenges, challengeValue]
+      });
+    } else {
+      setAnswers({
+        ...answers,
+        challenge: currentChallenges.filter(c => c !== challengeValue)
+      });
+    }
+  };
+
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
@@ -123,7 +151,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
       case 3:
         return answers.studyHours;
       case 4:
-        return answers.challenge;
+        return answers.challenge && answers.challenge.length > 0;
       default:
         return false;
     }
@@ -270,22 +298,25 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
               {/* Step 4: Challenge Selection */}
               {currentStep === 4 && (
                 <div className="space-y-3">
-                  <RadioGroup 
-                    value={answers.challenge} 
-                    onValueChange={(value) => setAnswers({...answers, challenge: value})}
-                    className="space-y-3"
-                  >
+                  <div className="text-center mb-4">
+                    <p className="text-sm text-white/80">You can select multiple challenges</p>
+                  </div>
+                  <div className="space-y-3">
                     {challengeOptions.map((option) => (
                       <div key={option.value} className="flex items-center space-x-3 p-3 sm:p-4 rounded-xl border-2 border-white/20 hover:border-orange-300 hover:bg-white/10 transition-all duration-300 group bg-white/5 backdrop-blur-sm">
-                        <RadioGroupItem value={option.value} id={option.value} className="border-white/50 text-white" />
+                        <Checkbox
+                          id={option.value}
+                          checked={answers.challenge?.includes(option.value) || false}
+                          onCheckedChange={(checked) => handleChallengeChange(option.value, checked as boolean)}
+                          className="border-white/50 data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
+                        />
                         <Label htmlFor={option.value} className="flex-1 flex items-center space-x-3 cursor-pointer">
-                          <span className="text-xl sm:text-2xl">{option.emoji}</span>
+                          <span className="text-lg sm:text-xl">{option.emoji}</span>
                           <span className="font-medium text-white group-hover:text-orange-200 transition-colors text-sm sm:text-base">{option.label}</span>
-                          <option.icon className="h-4 w-4 sm:h-5 sm:w-5 text-white/40 group-hover:text-orange-200 transition-colors" />
                         </Label>
                       </div>
                     ))}
-                  </RadioGroup>
+                  </div>
                 </div>
               )}
             </div>

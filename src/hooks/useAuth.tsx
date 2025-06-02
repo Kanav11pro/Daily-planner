@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -79,7 +78,7 @@ export const useAuth = () => {
           institute: metadata.institute,
           institute_other: metadata.institute_other,
           study_hours: metadata.study_hours,
-          challenge: metadata.challenge,
+          challenge: Array.isArray(metadata.challenge) ? metadata.challenge.join(', ') : metadata.challenge,
           onboarding_completed: metadata.onboarding_completed,
           updated_at: new Date().toISOString()
         };
