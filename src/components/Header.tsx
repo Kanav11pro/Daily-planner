@@ -21,7 +21,7 @@ export const Header = ({
             </div>
             <div className="min-w-0">
               <h1 className={`text-xl sm:text-3xl font-bold bg-gradient-to-r ${themeColors.primary} bg-clip-text text-transparent truncate`}>ExamAce</h1>
-              <p className="text-sm sm:text-base text-gray-600 font-medium hidden sm:block">Your JEE Success Journey</p>
+              <p className="text-sm sm:text-base text-gray-600 font-medium hidden sm:block">Your JEE Success Journey Starts Here</p>
             </div>
           </div>
           
