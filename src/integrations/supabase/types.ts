@@ -12,23 +12,44 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          challenge: string | null
           created_at: string
+          exam: string | null
+          exam_other: string | null
           full_name: string | null
           id: string
+          institute: string | null
+          institute_other: string | null
+          onboarding_completed: boolean | null
+          study_hours: string | null
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
+          challenge?: string | null
           created_at?: string
+          exam?: string | null
+          exam_other?: string | null
           full_name?: string | null
           id: string
+          institute?: string | null
+          institute_other?: string | null
+          onboarding_completed?: boolean | null
+          study_hours?: string | null
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
+          challenge?: string | null
           created_at?: string
+          exam?: string | null
+          exam_other?: string | null
           full_name?: string | null
           id?: string
+          institute?: string | null
+          institute_other?: string | null
+          onboarding_completed?: boolean | null
+          study_hours?: string | null
           updated_at?: string
         }
         Relationships: []

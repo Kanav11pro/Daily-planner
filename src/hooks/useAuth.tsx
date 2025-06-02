@@ -69,23 +69,26 @@ export const useAuth = () => {
         return { data: authData, error: authError };
       }
 
-      // Also update the profiles table if it exists
+      // Update the profiles table with onboarding data
       if (user?.id) {
+        const profileUpdateData = {
+          id: user.id,
+          full_name: user.user_metadata?.full_name || metadata.full_name,
+          exam: metadata.exam,
+          exam_other: metadata.exam_other,
+          institute: metadata.institute,
+          institute_other: metadata.institute_other,
+          study_hours: metadata.study_hours,
+          challenge: metadata.challenge,
+          onboarding_completed: metadata.onboarding_completed,
+          updated_at: new Date().toISOString()
+        };
+
+        console.log('Updating profiles table with:', profileUpdateData);
+
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .upsert({
-            id: user.id,
-            full_name: user.user_metadata?.full_name || metadata.full_name,
-            // Add onboarding data to profiles table
-            exam: metadata.exam,
-            exam_other: metadata.exam_other,
-            institute: metadata.institute,
-            institute_other: metadata.institute_other,
-            study_hours: metadata.study_hours,
-            challenge: metadata.challenge,
-            onboarding_completed: metadata.onboarding_completed,
-            updated_at: new Date().toISOString()
-          })
+          .upsert(profileUpdateData)
           .select();
 
         if (profileError) {
