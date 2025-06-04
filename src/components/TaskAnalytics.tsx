@@ -199,48 +199,7 @@ export const TaskAnalytics = ({
         </CardContent>
       </Card>
 
-      <Card className={`bg-gradient-to-br ${motivationalContent.gradient} text-white ${themeColors.glow} shadow-xl overflow-hidden relative`}>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
-        <div className="absolute top-2 right-2 opacity-30">
-          <Brain className="h-12 w-12 animate-spin" style={{
-          animationDuration: '4s'
-        }} />
-        </div>
-        <div className="absolute bottom-2 left-2 opacity-30">
-          <Zap className="h-8 w-8 animate-bounce" />
-        </div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-10">
-          <Sparkles className="h-32 w-32 animate-pulse" />
-        </div>
-        <CardHeader className="pb-3 relative z-10">
-          <CardTitle className="flex items-center space-x-2 text-white">
-            <Zap className="h-5 w-5" />
-            <span>MOTIVATION ENGINE</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="relative z-10">
-          <div className="text-center space-y-4">
-            <div className={`text-5xl ${motivationalContent.animation}`}>
-              {motivationalContent.emoji}
-            </div>
-            <div>
-              <h3 className="text-xl font-bold mb-2 tracking-wide uppercase">{motivationalContent.title}</h3>
-              <p className="text-sm opacity-90 leading-relaxed font-medium">
-                {motivationalContent.message}
-              </p>
-            </div>
-            <div className="flex justify-center space-x-2">
-              <div className="w-3 h-3 bg-white/80 rounded-full animate-bounce"></div>
-              <div className="w-3 h-3 bg-white/80 rounded-full animate-bounce" style={{
-              animationDelay: '0.1s'
-            }}></div>
-              <div className="w-3 h-3 bg-white/80 rounded-full animate-bounce" style={{
-              animationDelay: '0.2s'
-            }}></div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      
 
       <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg`}>
         <CardHeader className="pb-3">
@@ -267,7 +226,7 @@ export const TaskAnalytics = ({
 
       <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg hover:shadow-xl transition-all duration-300`}>
         <CardContent className="p-6">
-          <Button onClick={onOpenWeeklyAnalytics} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-4 rounded-xl transition-all duration-300 hover:scale-105">
+          <Button onClick={onOpenWeeklyAnalytics} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl transition-all duration-300 hover:scale-105 font-normal px-0 py-[22px]">
             <div className="flex items-center justify-center space-x-3">
               <BarChart3 className="h-6 w-6" />
               <div className="text-left">
