@@ -1,55 +1,43 @@
+
 import { useState } from "react";
 import { Calendar } from "lucide-react";
 import { Calendar as CalendarDatepicker } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useTasks } from "@/hooks/useTasks";
 import { TaskList } from "./TaskList";
 import { Header } from "./Header";
 import { TaskModalNew } from "./TaskModalNew";
 import { PersonalizationSettings } from "./PersonalizationSettings";
 
-export const TaskDashboard = () => {
-  const [date, setDate] = useState<Date>(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const { tasks, loading, addTask, updateTask, deleteTask, toggleTask, moveTask, refetch } = useTasks();
-  
-  const [showNewModal, setShowNewModal] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
+interface TaskDashboardProps {
+  tasks: any[];
+  onToggleTask: (taskId: string) => void;
+  onDeleteTask: (taskId: string) => void;
+  onEditTask: (taskId: string, updatedTask: any) => void;
+  onAddTask: () => void;
+  selectedDate: Date;
+}
 
-  const filteredTasks = tasks?.filter(task => {
-    const taskDate = new Date(task.scheduled_date);
-    return (
-      taskDate.getFullYear() === selectedDate.getFullYear() &&
-      taskDate.getMonth() === selectedDate.getMonth() &&
-      taskDate.getDate() === selectedDate.getDate()
-    );
-  });
+export const TaskDashboard = ({ 
+  tasks, 
+  onToggleTask, 
+  onDeleteTask, 
+  onEditTask, 
+  onAddTask, 
+  selectedDate 
+}: TaskDashboardProps) => {
+  const [date, setDate] = useState<Date>(selectedDate);
+  const [showSettings, setShowSettings] = useState(false);
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
       setDate(date);
-      setSelectedDate(date);
     }
-  };
-
-  const handleMoveTask = async (taskId: string, newDate: Date) => {
-    const formattedDate = newDate.toISOString().split('T')[0];
-    await moveTask(taskId, formattedDate);
-  };
-
-  const handleAddTask = async (taskData: any) => {
-    await addTask(taskData);
-    setShowNewModal(false);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      <Header 
-        onAddTask={() => setShowNewModal(true)} 
-        onOpenSettings={() => setShowSettings(true)}
-      />
-      
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-gray-800">
@@ -92,32 +80,19 @@ export const TaskDashboard = () => {
           </Popover>
         </div>
 
-        {loading ? (
-          <div className="text-center text-gray-500">Loading tasks...</div>
-        ) : (
-          <TaskList
-            tasks={filteredTasks}
-            onUpdateTask={updateTask}
-            onDeleteTask={deleteTask}
-            onToggleTask={toggleTask}
-            onMoveTask={handleMoveTask}
-          />
-        )}
-      </div>
-
-      {showNewModal && (
-        <TaskModalNew
-          onClose={() => setShowNewModal(false)}
-          onAddTask={handleAddTask}
-          selectedDate={selectedDate}
+        <TaskList
+          tasks={tasks}
+          onToggleTask={onToggleTask}
+          onDeleteTask={onDeleteTask}
+          onEditTask={onEditTask}
+          onAddTask={onAddTask}
+          title="Today's Tasks"
         />
-      )}
+      </div>
 
       {showSettings && (
         <PersonalizationSettings onClose={() => setShowSettings(false)} />
       )}
-
-      {/* Edit Task Modal */}
     </div>
   );
 };
