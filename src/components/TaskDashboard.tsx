@@ -6,9 +6,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { TaskList } from "./TaskList";
-import { Header } from "./Header";
-import { TaskModalNew } from "./TaskModalNew";
-import { PersonalizationSettings } from "./PersonalizationSettings";
 
 interface TaskDashboardProps {
   tasks: any[];
@@ -28,7 +25,6 @@ export const TaskDashboard = ({
   selectedDate 
 }: TaskDashboardProps) => {
   const [date, setDate] = useState<Date>(selectedDate);
-  const [showSettings, setShowSettings] = useState(false);
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
@@ -89,10 +85,6 @@ export const TaskDashboard = ({
           title="Today's Tasks"
         />
       </div>
-
-      {showSettings && (
-        <PersonalizationSettings onClose={() => setShowSettings(false)} />
-      )}
     </div>
   );
 };

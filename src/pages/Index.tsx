@@ -5,7 +5,8 @@ import { QuoteSection } from "@/components/QuoteSection";
 import { TaskDashboard } from "@/components/TaskDashboard";
 import { TaskAnalytics } from "@/components/TaskAnalytics";
 import { WeeklyAnalytics } from "@/components/WeeklyAnalytics";
-import { TaskModal } from "@/components/TaskModal";
+import { TaskModalNew } from "@/components/TaskModalNew";
+import { PersonalizationSettings } from "@/components/PersonalizationSettings";
 import { Celebration } from "@/components/Celebration";
 import { DateSelector } from "@/components/DateSelector";
 import { ProfileSection } from "@/components/ProfileSection";
@@ -23,6 +24,7 @@ const IndexContent = () => {
   const [showWeeklyAnalytics, setShowWeeklyAnalytics] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showGuidedTour, setShowGuidedTour] = useState(false);
+  const [showPersonalizationSettings, setShowPersonalizationSettings] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   
   const { user, loading: authLoading, updateUserMetadata, isOnboardingCompleted } = useAuth();
@@ -141,7 +143,10 @@ const IndexContent = () => {
         <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} relative overflow-hidden`}>
           <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
           <div className="relative z-10">
-            <Header onAddTask={() => setShowTaskModal(true)} />
+            <Header 
+              onAddTask={() => setShowTaskModal(true)} 
+              onOpenSettings={() => setShowPersonalizationSettings(true)}
+            />
             
             <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
               <ProfileSection />
@@ -191,7 +196,10 @@ const IndexContent = () => {
     <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} relative overflow-hidden`}>
       <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
       <div className="relative z-10">
-        <Header onAddTask={() => setShowTaskModal(true)} />
+        <Header 
+          onAddTask={() => setShowTaskModal(true)} 
+          onOpenSettings={() => setShowPersonalizationSettings(true)}
+        />
         
         <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
           <ProfileSection />
@@ -224,10 +232,16 @@ const IndexContent = () => {
         </main>
 
         {showTaskModal && (
-          <TaskModal
+          <TaskModalNew
             onClose={() => setShowTaskModal(false)}
             onAddTask={handleAddTask}
             selectedDate={selectedDate}
+          />
+        )}
+
+        {showPersonalizationSettings && (
+          <PersonalizationSettings
+            onClose={() => setShowPersonalizationSettings(false)}
           />
         )}
 
