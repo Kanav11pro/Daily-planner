@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,28 +5,34 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { useTheme, getThemeColors } from '@/contexts/ThemeContext';
 import { BookOpen, Brain, GraduationCap, Target, Trophy, Calendar, CheckCircle, BarChart3, Clock, PenTool, Award, Rocket, Lightbulb, Sparkles, TrendingUp, Shield } from 'lucide-react';
-
 export const AuthForm = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signUp, signIn } = useAuth();
-  const { theme } = useTheme();
+  const {
+    signUp,
+    signIn
+  } = useAuth();
+  const {
+    theme
+  } = useTheme();
   const themeColors = getThemeColors(theme);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       if (isSignUp) {
-        const { error } = await signUp(email, password, fullName);
+        const {
+          error
+        } = await signUp(email, password, fullName);
         if (error) throw error;
         toast.success('Account created successfully! Please check your email to verify your account.');
       } else {
-        const { error } = await signIn(email, password);
+        const {
+          error
+        } = await signIn(email, password);
         if (error) throw error;
         toast.success('Welcome back to Exam Ace!');
       }
@@ -42,39 +47,59 @@ export const AuthForm = () => {
   const studyIcons = [BookOpen, Brain, GraduationCap, Target, Trophy, Calendar];
 
   // Updated features to show only what exists in the app
-  const features = [
-    { icon: Calendar, title: "Smart Scheduling", desc: "Plan your daily study sessions", color: "from-blue-500 to-cyan-500" },
-    { icon: Target, title: "Task Management", desc: "Track your study goals", color: "from-purple-500 to-pink-500" },
-    { icon: BarChart3, title: "Progress Analytics", desc: "Monitor your performance", color: "from-green-500 to-emerald-500" },
-    { icon: Trophy, title: "Achievement System", desc: "Celebrate your progress", color: "from-yellow-500 to-orange-500" },
-    { icon: Clock, title: "Time Tracking", desc: "Optimize study duration", color: "from-red-500 to-pink-500" },
-    { icon: PenTool, title: "Subject Organization", desc: "Organize by chapters", color: "from-indigo-500 to-purple-500" }
-  ];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+  const features = [{
+    icon: Calendar,
+    title: "Smart Scheduling",
+    desc: "Plan your daily study sessions",
+    color: "from-blue-500 to-cyan-500"
+  }, {
+    icon: Target,
+    title: "Task Management",
+    desc: "Track your study goals",
+    color: "from-purple-500 to-pink-500"
+  }, {
+    icon: BarChart3,
+    title: "Progress Analytics",
+    desc: "Monitor your performance",
+    color: "from-green-500 to-emerald-500"
+  }, {
+    icon: Trophy,
+    title: "Achievement System",
+    desc: "Celebrate your progress",
+    color: "from-yellow-500 to-orange-500"
+  }, {
+    icon: Clock,
+    title: "Time Tracking",
+    desc: "Optimize study duration",
+    color: "from-red-500 to-pink-500"
+  }, {
+    icon: PenTool,
+    title: "Subject Organization",
+    desc: "Organize by chapters",
+    color: "from-indigo-500 to-purple-500"
+  }];
+  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
       {/* Enhanced Background */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Animated gradient orbs */}
         <div className="absolute -top-40 -left-40 w-80 h-80 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/3 right-1/4 w-60 h-60 bg-gradient-to-r from-pink-500/15 to-violet-500/15 rounded-full blur-2xl animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}></div>
-        <div className="absolute bottom-1/4 left-1/3 w-48 h-48 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/3 right-1/4 w-60 h-60 bg-gradient-to-r from-pink-500/15 to-violet-500/15 rounded-full blur-2xl animate-bounce" style={{
+        animationDelay: '1s',
+        animationDuration: '4s'
+      }}></div>
+        <div className="absolute bottom-1/4 left-1/3 w-48 h-48 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-2xl animate-pulse" style={{
+        animationDelay: '2s'
+      }}></div>
         
         {/* Floating study icons */}
-        {studyIcons.map((Icon, index) => (
-          <div
-            key={index}
-            className="absolute text-white/10 animate-bounce"
-            style={{
-              left: `${15 + (index * 12)}%`,
-              top: `${10 + (index * 8)}%`,
-              animationDelay: `${index * 0.8}s`,
-              animationDuration: `${3 + Math.random()}s`
-            }}
-          >
-            <Icon size={16 + (index * 4)} />
-          </div>
-        ))}
+        {studyIcons.map((Icon, index) => <div key={index} className="absolute text-white/10 animate-bounce" style={{
+        left: `${15 + index * 12}%`,
+        top: `${10 + index * 8}%`,
+        animationDelay: `${index * 0.8}s`,
+        animationDuration: `${3 + Math.random()}s`
+      }}>
+            <Icon size={16 + index * 4} />
+          </div>)}
         
         {/* Grid pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
@@ -103,7 +128,7 @@ export const AuthForm = () => {
                   </h1>
                   <div className="flex items-center mt-2">
                     <Shield className="h-5 w-5 text-emerald-400 mr-2" />
-                    <span className="text-base sm:text-lg text-emerald-200 font-semibold">Your Study Companion</span>
+                    <span className="text-base sm:text-lg text-emerald-200 font-semibold">Your Smart Study Companion</span>
                   </div>
                 </div>
               </div>
@@ -122,36 +147,11 @@ export const AuthForm = () => {
 
           {/* Enhanced Features Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-8 lg:mb-12 max-w-lg mx-auto lg:max-w-none lg:mx-0">
-            {features.map((feature, index) => (
-              <div 
-                key={index}
-                className="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/20 hover:bg-white/20 hover:border-white/30 transition-all duration-300 group shadow-lg hover:shadow-2xl transform hover:scale-105"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className={`h-10 w-10 sm:h-12 sm:w-12 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-3 sm:mb-4 shadow-lg group-hover:shadow-xl transition-shadow duration-300`}>
-                  <feature.icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                </div>
-                <h3 className="font-bold text-white mb-2 text-base sm:text-lg">{feature.title}</h3>
-                <p className="text-sm sm:text-base text-gray-300 leading-relaxed">{feature.desc}</p>
-              </div>
-            ))}
+            {features.map((feature, index) => {})}
           </div>
 
           {/* Enhanced Success Stats */}
-          <div className="flex justify-center lg:justify-start space-x-8 sm:space-x-12 text-center max-w-lg mx-auto lg:max-w-none lg:mx-0">
-            <div className="group">
-              <div className="text-3xl sm:text-4xl font-bold text-emerald-400 group-hover:text-emerald-300 transition-colors">98%</div>
-              <div className="text-sm sm:text-base text-gray-300">Success Rate</div>
-            </div>
-            <div className="group">
-              <div className="text-3xl sm:text-4xl font-bold text-blue-400 group-hover:text-blue-300 transition-colors">10K+</div>
-              <div className="text-sm sm:text-base text-gray-300">Students</div>
-            </div>
-            <div className="group">
-              <div className="text-3xl sm:text-4xl font-bold text-purple-400 group-hover:text-purple-300 transition-colors">500K+</div>
-              <div className="text-sm sm:text-base text-gray-300">Tasks Completed</div>
-            </div>
-          </div>
+          
         </div>
 
         {/* Right Side - Enhanced Auth Form */}
@@ -167,45 +167,27 @@ export const AuthForm = () => {
                   <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl blur-xl opacity-20 animate-pulse"></div>
                 </div>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">
-                Welcome to Exam Ace
-              </h2>
+              <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">Welcome to Exam Ace</h2>
               <p className="text-base sm:text-lg text-gray-600 font-medium">
                 {isSignUp ? '🚀 Start your journey to exam success' : '🎯 Continue your path to excellence'}
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {isSignUp && (
-                <div>
+              {isSignUp && <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-3">
                     <Brain className="inline h-4 w-4 mr-2 text-purple-600" />
                     Full Name
                   </label>
-                  <Input
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    required
-                    placeholder="Enter your full name"
-                    className="border-2 focus:border-indigo-500 hover:border-purple-300 h-12 text-base rounded-xl"
-                  />
-                </div>
-              )}
+                  <Input type="text" value={fullName} onChange={e => setFullName(e.target.value)} required placeholder="Enter your full name" className="border-2 focus:border-indigo-500 hover:border-purple-300 h-12 text-base rounded-xl" />
+                </div>}
               
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                   <Target className="inline h-4 w-4 mr-2 text-blue-600" />
                   Email
                 </label>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="Enter your email"
-                  className="border-2 focus:border-indigo-500 hover:border-purple-300 h-12 text-base rounded-xl"
-                />
+                <Input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="Enter your email" className="border-2 focus:border-indigo-500 hover:border-purple-300 h-12 text-base rounded-xl" />
               </div>
 
               <div>
@@ -213,41 +195,22 @@ export const AuthForm = () => {
                   <Shield className="inline h-4 w-4 mr-2 text-green-600" />
                   Password
                 </label>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="Enter your password"
-                  minLength={6}
-                  className="border-2 focus:border-indigo-500 hover:border-purple-300 h-12 text-base rounded-xl"
-                />
+                <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Enter your password" minLength={6} className="border-2 focus:border-indigo-500 hover:border-purple-300 h-12 text-base rounded-xl" />
               </div>
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 rounded-xl relative overflow-hidden group shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center">
+              <Button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 rounded-xl relative overflow-hidden group shadow-lg hover:shadow-xl transition-all duration-300">
+                {loading ? <div className="flex items-center justify-center">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
                     Processing...
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center">
+                  </div> : <div className="flex items-center justify-center">
                     {isSignUp ? <Rocket className="h-5 w-5 mr-3" /> : <Trophy className="h-5 w-5 mr-3" />}
                     {isSignUp ? 'Start Your Journey' : 'Continue Learning'}
-                  </div>
-                )}
+                  </div>}
               </Button>
             </form>
 
             <div className="mt-8 text-center">
-              <button
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-base text-indigo-600 hover:text-indigo-800 font-semibold transition-colors duration-200"
-              >
+              <button onClick={() => setIsSignUp(!isSignUp)} className="text-base text-indigo-600 hover:text-indigo-800 font-semibold transition-colors duration-200">
                 {isSignUp ? '✨ Already have an account? Sign in' : "🎯 Don't have an account? Join Exam Ace"}
               </button>
             </div>
@@ -266,6 +229,5 @@ export const AuthForm = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
