@@ -1,10 +1,9 @@
 
 import { useState } from "react";
-import { X, Search } from "lucide-react";
+import { X, Search, BookOpen, FileText, GraduationCap, RotateCcw, Package, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
 interface TaskModalProps {
@@ -148,16 +147,32 @@ const subjectsWithChapters = {
 };
 
 const taskTags = [
-  { value: 'hw', label: 'HW', emoji: '📝' },
-  { value: 'notes', label: 'Notes', emoji: '📔' },
-  { value: 'daily-questions', label: 'Daily Questions', emoji: '❓' },
-  { value: 'lecture-complete', label: 'Lecture Complete', emoji: '🎓' }
+  { value: 'hw', label: 'HW', emoji: '📝', icon: ClipboardList },
+  { value: 'notes', label: 'Notes', emoji: '📔', icon: FileText },
+  { value: 'lecture', label: 'Lecture', emoji: '🎓', icon: GraduationCap },
+  { value: 'revision', label: 'Revision', emoji: '🔄', icon: RotateCcw },
+  { value: 'module', label: 'Module', emoji: '📦', icon: Package },
+  { value: 'dpps', label: 'DPPs', emoji: '📊', icon: BookOpen }
+];
+
+const priorityOptions = [
+  { value: 'high', label: 'High', color: 'bg-red-100 border-red-300 text-red-700 hover:bg-red-200', emoji: '🔴' },
+  { value: 'medium', label: 'Medium', color: 'bg-yellow-100 border-yellow-300 text-yellow-700 hover:bg-yellow-200', emoji: '🟡' },
+  { value: 'low', label: 'Low', color: 'bg-green-100 border-green-300 text-green-700 hover:bg-green-200', emoji: '🟢' }
+];
+
+const durationOptions = [
+  { value: 30, label: '30 mins' },
+  { value: 45, label: '45 mins' },
+  { value: 60, label: '1 hr' },
+  { value: 90, label: '1 hr 30 mins' },
+  { value: 120, label: '2 hrs' }
 ];
 
 export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) => {
   const [step, setStep] = useState(1);
   const [chapterSearch, setChapterSearch] = useState('');
-  const [selectedTag, setSelectedTag] = useState('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     subject: '',
     chapter: '',
@@ -174,10 +189,22 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
     else if (step === 3 && formData.title) setStep(4);
   };
 
-  const handleTagSelect = (tag: string) => {
-    setSelectedTag(tag);
-    const tagLabel = taskTags.find(t => t.value === tag)?.label || '';
-    setFormData({ ...formData, title: `${tagLabel} - ${formData.chapter}` });
+  const handleTagToggle = (tagValue: string) => {
+    setSelectedTags(prev => {
+      const newTags = prev.includes(tagValue)
+        ? prev.filter(tag => tag !== tagValue)
+        : [...prev, tagValue];
+      
+      // Update title based on selected tags
+      if (newTags.length > 0) {
+        const tagLabels = newTags.map(tag => taskTags.find(t => t.value === tag)?.label).join(' + ');
+        setFormData({ ...formData, title: tagLabels });
+      } else {
+        setFormData({ ...formData, title: '' });
+      }
+      
+      return newTags;
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -273,38 +300,42 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
 
       case 3:
         return (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="text-center mb-6">
               <h3 className="text-lg font-semibold text-gray-800">Task Details</h3>
               <p className="text-sm text-gray-600">{formData.subject} - {formData.chapter}</p>
             </div>
 
             <div>
-              <Label htmlFor="tags">Quick Tags (Optional)</Label>
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                {taskTags.map(tag => (
-                  <button
-                    key={tag.value}
-                    type="button"
-                    onClick={() => handleTagSelect(tag.value)}
-                    className={`p-3 rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] ${
-                      selectedTag === tag.value
-                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                        : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    <div className="text-center">
-                      <div className="text-lg mb-1">{tag.emoji}</div>
-                      <div className="text-sm font-medium">{tag.label}</div>
-                    </div>
-                  </button>
-                ))}
+              <Label htmlFor="tags" className="text-base font-medium mb-3 block">Quick Tags</Label>
+              <div className="grid grid-cols-2 gap-3">
+                {taskTags.map(tag => {
+                  const IconComponent = tag.icon;
+                  const isSelected = selectedTags.includes(tag.value);
+                  return (
+                    <button
+                      key={tag.value}
+                      type="button"
+                      onClick={() => handleTagToggle(tag.value)}
+                      className={`p-4 rounded-xl border-2 transition-all duration-200 hover:scale-[1.02] ${
+                        isSelected
+                          ? 'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-md'
+                          : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex flex-col items-center space-y-2">
+                        <IconComponent className="h-6 w-6" />
+                        <div className="text-sm font-medium">{tag.label}</div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
-              <p className="text-xs text-gray-500 mt-2">Select a tag to auto-fill the title, or write your own below</p>
+              <p className="text-xs text-gray-500 mt-3">Select one or more tags to auto-fill the title, or write your own below</p>
             </div>
 
             <div>
-              <Label htmlFor="title">Task Title</Label>
+              <Label htmlFor="title" className="text-base font-medium">Task Title</Label>
               <Input
                 id="title"
                 value={formData.title}
@@ -312,18 +343,19 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
                 placeholder="e.g., Complete Exercise 5.1"
                 required
                 autoFocus
-                className="transition-all duration-200 focus:scale-[1.01]"
+                className="mt-2 transition-all duration-200 focus:scale-[1.01]"
               />
             </div>
+
             <div>
-              <Label htmlFor="description">Description (Optional)</Label>
+              <Label htmlFor="description" className="text-base font-medium">Description (Optional)</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Add any additional details..."
                 rows={3}
-                className="transition-all duration-200 focus:scale-[1.01]"
+                className="mt-2 transition-all duration-200 focus:scale-[1.01]"
               />
             </div>
           </div>
@@ -331,37 +363,64 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
 
       case 4:
         return (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="text-center mb-6">
               <h3 className="text-lg font-semibold text-gray-800">Final Details</h3>
               <p className="text-sm text-gray-600">Set priority and duration</p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="priority">Priority</Label>
-                <Select value={formData.priority} onValueChange={(value) => setFormData({ ...formData, priority: value })}>
-                  <SelectTrigger className="transition-all duration-200 hover:scale-[1.01]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="high">🔴 High</SelectItem>
-                    <SelectItem value="medium">🟡 Medium</SelectItem>
-                    <SelectItem value="low">🟢 Low</SelectItem>
-                  </SelectContent>
-                </Select>
+
+            <div>
+              <Label className="text-base font-medium mb-3 block">Priority</Label>
+              <div className="grid grid-cols-3 gap-3">
+                {priorityOptions.map(option => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, priority: option.value })}
+                    className={`p-4 rounded-xl border-2 transition-all duration-200 hover:scale-[1.02] ${
+                      formData.priority === option.value
+                        ? `${option.color} border-opacity-70 shadow-md`
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center space-y-2">
+                      <span className="text-xl">{option.emoji}</span>
+                      <span className="text-sm font-medium">{option.label}</span>
+                    </div>
+                  </button>
+                ))}
               </div>
-              <div>
-                <Label htmlFor="duration">Duration (minutes)</Label>
+            </div>
+
+            <div>
+              <Label className="text-base font-medium mb-3 block">Duration</Label>
+              <div className="grid grid-cols-2 gap-3">
+                {durationOptions.map(option => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setFormData({ ...formData, duration: option.value.toString() })}
+                    className={`p-3 rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] ${
+                      formData.duration === option.value.toString()
+                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                        : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="text-sm font-medium">{option.label}</div>
+                  </button>
+                ))}
+              </div>
+              <div className="mt-3">
                 <Input
-                  id="duration"
                   type="number"
                   value={formData.duration}
                   onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                  placeholder="60"
+                  placeholder="Custom duration (minutes)"
                   className="transition-all duration-200 focus:scale-[1.01]"
                 />
               </div>
             </div>
+
             <div className="bg-gradient-to-r from-gray-50 to-indigo-50 p-4 rounded-lg border border-indigo-100">
               <h4 className="font-medium text-gray-800 mb-2">Task Summary:</h4>
               <p className="text-sm text-gray-600">
@@ -371,6 +430,16 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
               {formData.description && (
                 <p className="text-xs text-gray-600 mt-1">{formData.description}</p>
               )}
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-xs px-2 py-1 rounded-full bg-indigo-100 text-indigo-700">
+                  {priorityOptions.find(p => p.value === formData.priority)?.label} Priority
+                </span>
+                {formData.duration && (
+                  <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
+                    {formData.duration} mins
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         );
