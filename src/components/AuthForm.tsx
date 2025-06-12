@@ -165,7 +165,7 @@ export const AuthForm = () => {
                   <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl blur-xl opacity-20 animate-pulse"></div>
                 </div>
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">Welcome to Exam Ace</h2>
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3 sm:text-3xl">Welcome to Daily Planner</h2>
               <p className="text-base sm:text-lg text-gray-600 font-medium">
                 {isSignUp ? '🚀 Start your journey to exam success' : '🎯 Continue your path to excellence'}
               </p>
