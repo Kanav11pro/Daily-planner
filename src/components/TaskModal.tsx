@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { X, Search, BookOpen, FileText, GraduationCap, RotateCcw, Package, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -342,7 +341,6 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="e.g., Complete Exercise 5.1"
                 required
-                autoFocus
                 className="mt-2 transition-all duration-200 focus:scale-[1.01]"
               />
             </div>
