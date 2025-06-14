@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -108,10 +107,6 @@ export const GuidedTour = ({ onComplete }: GuidedTourProps) => {
     }
   };
 
-  const handleSkip = () => {
-    onComplete();
-  };
-
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overflow-hidden">
       <div className="h-screen overflow-y-auto flex items-center justify-center p-4">
@@ -119,14 +114,6 @@ export const GuidedTour = ({ onComplete }: GuidedTourProps) => {
           
           {/* Fixed Header */}
           <div className="p-6 sm:p-8 border-b border-gray-200">
-            {/* Close button */}
-            <button
-              onClick={handleSkip}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-
             <div className="text-center">
               <div className="flex justify-center mb-4">
                 <div className={`w-16 h-16 bg-gradient-to-r ${currentStepData.color} rounded-2xl flex items-center justify-center shadow-lg`}>
@@ -202,28 +189,16 @@ export const GuidedTour = ({ onComplete }: GuidedTourProps) => {
                 <span>Previous</span>
               </Button>
 
-              <div className="flex space-x-2">
-                {currentStep < tourSteps.length - 1 && (
-                  <Button
-                    onClick={handleSkip}
-                    variant="ghost"
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    Skip Tour
-                  </Button>
-                )}
-                
-                <Button
-                  onClick={handleNext}
-                  className={`bg-gradient-to-r ${currentStepData.color} hover:opacity-90 transition-all duration-300 text-white font-semibold px-6`}
-                >
-                  <span>{currentStep === tourSteps.length - 1 ? "Get Started!" : "Next"}</span>
-                  {currentStep === tourSteps.length - 1 ? 
-                    <Trophy className="h-4 w-4 ml-2" /> : 
-                    <ChevronRight className="h-4 w-4 ml-2" />
-                  }
-                </Button>
-              </div>
+              <Button
+                onClick={handleNext}
+                className={`bg-gradient-to-r ${currentStepData.color} hover:opacity-90 transition-all duration-300 text-white font-semibold px-6`}
+              >
+                <span>{currentStep === tourSteps.length - 1 ? "Get Started!" : "Next"}</span>
+                {currentStep === tourSteps.length - 1 ? 
+                  <Trophy className="h-4 w-4 ml-2" /> : 
+                  <ChevronRight className="h-4 w-4 ml-2" />
+                }
+              </Button>
             </div>
           </div>
         </div>
