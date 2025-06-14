@@ -24,7 +24,7 @@ export const useTheme = () => {
   return context;
 };
 
-// Improved theme palettes
+// Improved theme palettes (replacing everything but ocean with much more visually on-brand colors)
 const themes = {
   ocean: {
     primary: "from-cyan-500 to-blue-600",
@@ -36,71 +36,77 @@ const themes = {
     text: "text-cyan-900",
     glow: "shadow-cyan-300/60"
   },
-  // Cosmic: Deep purple, blue, and pink gradients for a "space" vibe
+
+  // Cosmic: Deep violet-black background, prominent purple/pink, neon stars
   cosmic: {
-    primary: "from-purple-700 via-indigo-600 to-pink-500",
-    secondary: "from-purple-100 via-indigo-100 to-pink-100",
-    background: "from-purple-900 via-indigo-800 to-pink-700",
-    accent: "bg-purple-100 text-purple-900",
-    card: "bg-white/95 backdrop-blur-md border border-purple-200 text-gray-900",
-    border: "border-purple-300",
-    text: "text-purple-900",
-    glow: "shadow-purple-400/50"
+    primary: "from-[#8743ff] via-[#4528e8] to-[#ed1cff]",
+    secondary: "from-[#23102a] to-[#1a112a]",
+    background: "from-[#17101f] via-[#1e1430] to-[#1b1023]",
+    accent: "bg-[#8743ff]/90 text-white",
+    card: "bg-[#23102a]/90 border border-[#8743ff]/30 text-white/90 backdrop-blur-sm",
+    border: "border-[#8743ff]/40",
+    text: "text-purple-100",
+    glow: "shadow-[#d175fc]/30"
   },
-  // Aurora: Green, yellow, violet—bright and uplifting
+
+  // Aurora: Bright neon rainbow, but on a deep dark base
   aurora: {
-    primary: "from-green-400 via-yellow-500 to-fuchsia-500",
-    secondary: "from-green-100 via-yellow-100 to-pink-100",
-    background: "from-green-300 via-yellow-200 to-fuchsia-300",
-    accent: "bg-lime-100 text-lime-900",
-    card: "bg-white/95 backdrop-blur-md border border-lime-200 text-gray-900",
-    border: "border-lime-300",
-    text: "text-lime-900",
-    glow: "shadow-lime-300/50"
+    primary: "from-[#ff42e6] via-[#00ddff] to-[#f9fd50]",
+    secondary: "from-[#222835] via-[#29366a] to-[#34ecb8]",
+    background: "from-[#14172b] via-[#18243a] to-[#1e2b38]",
+    accent: "bg-gradient-to-r from-[#ff42e6] to-[#f9fd50] text-black font-bold",
+    card: "bg-[#161a2a]/90 border border-[#f9fd50]/20 text-white/95 backdrop-blur-sm",
+    border: "border-[#34ecb8]/40",
+    text: "text-white",
+    glow: "shadow-[#00ddff]/30"
   },
-  // Sunset: Peach, orange, pink, for a warm sunset gradient
+
+  // Sunset: Deep magenta, pink and golden orange 
   sunset: {
-    primary: "from-orange-500 via-pink-500 to-yellow-400",
-    secondary: "from-orange-100 via-pink-100 to-yellow-100",
-    background: "from-yellow-200 via-orange-200 to-pink-200",
-    accent: "bg-orange-100 text-orange-900",
-    card: "bg-white/95 backdrop-blur-md border border-orange-200 text-gray-900",
-    border: "border-orange-300",
-    text: "text-orange-900",
-    glow: "shadow-orange-300/50"
+    primary: "from-[#ff61b6] via-[#ff6e60] to-[#fee140]",
+    secondary: "from-[#291422] via-[#472a29] to-[#4c361e]",
+    background: "from-[#1f1120] via-[#1b1423] to-[#281312]",
+    accent: "bg-gradient-to-r from-[#ff6e60] to-[#fee140] text-[#311119] font-bold",
+    card: "bg-[#291422]/95 border border-[#ff6e60]/30 text-white/95 backdrop-blur-sm",
+    border: "border-[#ff61b6]/40",
+    text: "text-white",
+    glow: "shadow-[#ff6e60]/20"
   },
-  // Emerald: Lush teals, mint and green, calming for study
+
+  // Emerald: Deep teal/cyan/green, luxurious emerald-glow
   emerald: {
-    primary: "from-emerald-500 via-teal-500 to-lime-400",
-    secondary: "from-emerald-50 via-teal-100 to-lime-100",
-    background: "from-emerald-200 via-lime-200 to-teal-200",
-    accent: "bg-emerald-100 text-emerald-900",
-    card: "bg-white/95 backdrop-blur-md border border-emerald-200 text-gray-900",
-    border: "border-emerald-300",
-    text: "text-emerald-900",
-    glow: "shadow-emerald-300/50"
+    primary: "from-[#43e97b] via-[#38f9d7] to-[#007991]",
+    secondary: "from-[#153231] via-[#224340] to-[#072928]",
+    background: "from-[#0e181d] via-[#1e3838] to-[#12261e]",
+    accent: "bg-gradient-to-r from-[#43e97b] to-[#007991] text-black font-bold",
+    card: "bg-[#153231]/90 border border-[#43e97b]/30 text-white/90 backdrop-blur-sm",
+    border: "border-[#43e97b]/40",
+    text: "text-white",
+    glow: "shadow-[#43e97b]/25"
   },
-  // Neon: Modern blue and magenta with a nightlife vibe
+
+  // Neon: True dark base, magenta/blue/purple glow and gradients
   neon: {
-    primary: "from-fuchsia-600 via-cyan-500 to-indigo-500",
-    secondary: "from-fuchsia-50 via-cyan-50 to-indigo-50",
-    background: "from-fuchsia-200 via-cyan-200 to-indigo-200",
-    accent: "bg-fuchsia-100 text-fuchsia-900",
-    card: "bg-white/95 backdrop-blur-md border border-fuchsia-200 text-gray-900",
-    border: "border-fuchsia-300",
-    text: "text-fuchsia-900",
-    glow: "shadow-fuchsia-400/50"
+    primary: "from-[#ff4edd] via-[#30cfff] to-[#838cff]",
+    secondary: "from-[#17091c] via-[#07405f] to-[#2e1d45]",
+    background: "from-[#080911] via-[#181435] to-[#1c122a]",
+    accent: "bg-gradient-to-r from-[#30cfff] to-[#ff4edd] text-black font-bold",
+    card: "bg-[#17091c]/90 border border-[#ff4edd]/20 text-white/95 backdrop-blur-sm",
+    border: "border-[#30cfff]/25",
+    text: "text-white",
+    glow: "shadow-[#30cfff]/20"
   },
-  // True dark theme
+
+  // Dark (true dark mode, high contrast)
   dark: {
-    primary: "from-slate-900 via-gray-900 to-neutral-800",
-    secondary: "from-gray-800 via-gray-700 to-gray-600",
-    background: "from-gray-900 via-neutral-900 to-zinc-900",
-    accent: "bg-slate-700 text-gray-200",
-    card: "bg-gray-900/95 backdrop-blur-md border border-gray-700 text-gray-100",
-    border: "border-gray-800",
-    text: "text-gray-100",
-    glow: "shadow-cyan-600/40"
+    primary: "from-[#232946] via-[#181823] to-[#121212]",
+    secondary: "from-[#21212b] via-[#222232] to-[#171724]",
+    background: "from-[#11111b] via-[#191926] to-[#15151d]",
+    accent: "bg-[#353570] text-[#f2f2f2] font-bold",
+    card: "bg-[#181823]/95 border border-[#232946]/50 text-[#f7f7fa] backdrop-blur-md",
+    border: "border-[#353570]/25",
+    text: "text-[#f7f7fa]",
+    glow: "shadow-[#232946]/20"
   }
 };
 
