@@ -94,16 +94,16 @@ export const EditTaskModal = ({ task, onClose, onSave }: EditTaskModalProps) => 
   const currentPriority = priorityOptions.find(p => p.value === formData.priority);
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-scale-in">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-purple-50">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[95vh] sm:h-auto sm:max-h-[90vh] flex flex-col overflow-hidden animate-scale-in">
+        {/* Header - Fixed */}
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-purple-50 flex-shrink-0">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
               <Save className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <h2 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 Edit Task
               </h2>
               <p className="text-sm text-gray-600">{task.subject} - {task.chapter}</p>
@@ -111,15 +111,15 @@ export const EditTaskModal = ({ task, onClose, onSave }: EditTaskModalProps) => 
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg"
+            className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg flex-shrink-0"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-140px)]">
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        {/* Content - Scrollable */}
+        <div className="flex-1 overflow-y-auto">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-6">
             {/* Task Title */}
             <div className="space-y-2">
               <Label htmlFor="title" className="text-sm font-medium text-gray-700">
@@ -157,7 +157,7 @@ export const EditTaskModal = ({ task, onClose, onSave }: EditTaskModalProps) => 
             </div>
 
             {/* Priority and Duration Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Priority */}
               <div className="space-y-3">
                 <Label className="text-sm font-medium text-gray-700">Priority Level</Label>
@@ -227,7 +227,7 @@ export const EditTaskModal = ({ task, onClose, onSave }: EditTaskModalProps) => 
                 <span>Task Summary</span>
               </h4>
               <div className="space-y-2">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 flex-wrap gap-1">
                   <Badge variant="outline" className="text-xs">
                     {formData.subject}
                   </Badge>
@@ -241,7 +241,7 @@ export const EditTaskModal = ({ task, onClose, onSave }: EditTaskModalProps) => 
                 {formData.description && (
                   <p className="text-sm text-gray-600">{formData.description}</p>
                 )}
-                <div className="flex items-center space-x-3 pt-2">
+                <div className="flex items-center space-x-3 pt-2 flex-wrap gap-2">
                   {currentPriority && (
                     <div className={`px-2 py-1 rounded-full text-xs font-medium ${currentPriority.color}`}>
                       {currentPriority.emoji} {currentPriority.label}
@@ -259,8 +259,8 @@ export const EditTaskModal = ({ task, onClose, onSave }: EditTaskModalProps) => 
           </form>
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-gray-100 bg-gray-50">
+        {/* Footer - Fixed */}
+        <div className="flex items-center justify-between p-4 sm:p-6 border-t border-gray-100 bg-gray-50 flex-shrink-0">
           <Button
             type="button"
             variant="outline"
