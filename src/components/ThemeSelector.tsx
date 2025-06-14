@@ -1,5 +1,4 @@
-
-import { Palette, Check, MoonStar, Star, Sunset, Aurora, Sparkles, CloudSun } from "lucide-react";
+import { Palette, Check, MoonStar, Star, Sunset, Rainbow, Sparkles, CloudSun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useTheme, type Theme, getThemeColors } from "@/contexts/ThemeContext";
@@ -7,7 +6,7 @@ import { useTheme, type Theme, getThemeColors } from "@/contexts/ThemeContext";
 const themeOptions: { value: Theme; name: string; emoji: React.ReactNode }[] = [
   { value: "ocean", name: "Ocean", emoji: "🌊" },
   { value: "cosmic", name: "Cosmic", emoji: <Star className="inline h-4 w-4 text-purple-400" /> },
-  { value: "aurora", name: "Aurora", emoji: <Aurora className="inline h-4 w-4 text-green-400" /> },
+  { value: "aurora", name: "Aurora", emoji: <Rainbow className="inline h-4 w-4 text-green-400" /> },
   { value: "sunset", name: "Sunset", emoji: <Sunset className="inline h-4 w-4 text-orange-400" /> },
   { value: "emerald", name: "Emerald", emoji: <CloudSun className="inline h-4 w-4 text-emerald-400" /> },
   { value: "neon", name: "Neon", emoji: <Sparkles className="inline h-4 w-4 text-fuchsia-400" /> },
