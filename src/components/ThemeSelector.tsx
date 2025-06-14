@@ -9,8 +9,8 @@ const themeOptions: { value: Theme; name: string; emoji: string }[] = [
   { value: 'forest', name: 'Forest', emoji: '🌲' },
   { value: 'aurora', name: 'Aurora', emoji: '🌌' },
   { value: 'cosmic', name: 'Cosmic', emoji: '🚀' },
-  { value: 'cyber', name: 'Cyber', emoji: '🤖' },
-  { value: 'neon', name: 'Neon', emoji: '💎' }
+  { value: 'midnight', name: 'Midnight', emoji: '🌙' },
+  { value: 'obsidian', name: 'Obsidian', emoji: '🖤' }
 ];
 
 export const ThemeSelector = () => {
