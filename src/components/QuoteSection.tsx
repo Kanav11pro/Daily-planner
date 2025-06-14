@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Star } from "lucide-react";
+import { Star, Flame, Zap, Target, Trophy } from "lucide-react";
 import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
 const motivationalQuotes = [
@@ -68,32 +68,66 @@ export const QuoteSection = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentQuote((prev) => (prev + 1) % motivationalQuotes.length);
-    }, 12000); // Changed to 12 seconds
+    }, 12000);
 
     return () => clearInterval(interval);
   }, []);
 
+  const motivationIcons = [Flame, Zap, Target, Trophy, Star];
+  const currentIcon = motivationIcons[currentQuote % motivationIcons.length];
+  const IconComponent = currentIcon;
+
   return (
-    <div className={`relative bg-gradient-to-r ${themeColors.primary} rounded-2xl p-8 text-white overflow-hidden`}>
-      <div className="absolute inset-0 bg-black/10"></div>
+    <div className={`relative bg-gradient-to-r ${themeColors.primary} rounded-3xl p-8 text-white overflow-hidden group hover:scale-[1.02] transition-all duration-300`}>
+      {/* Enhanced background effects */}
+      <div className="absolute inset-0 bg-black/20"></div>
+      <div className="absolute -top-16 -right-16 w-48 h-48 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-white/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute top-1/2 right-1/4 w-24 h-24 bg-white/5 rounded-full blur-xl animate-bounce" style={{ animationDelay: '2s' }}></div>
+      
+      {/* Floating particles */}
+      <div className="absolute top-8 right-8 w-2 h-2 bg-yellow-300 rounded-full animate-bounce opacity-70" style={{ animationDelay: '0.5s' }}></div>
+      <div className="absolute bottom-12 right-16 w-1.5 h-1.5 bg-yellow-200 rounded-full animate-bounce opacity-60" style={{ animationDelay: '1.5s' }}></div>
+      <div className="absolute top-16 left-1/3 w-1 h-1 bg-white rounded-full animate-bounce opacity-50" style={{ animationDelay: '0.8s' }}></div>
+
       <div className="relative z-10">
-        <div className="flex items-center space-x-2 mb-4">
-          <Star className="h-6 w-6 text-yellow-300 animate-pulse" />
-          <h2 className="text-xl font-semibold">Daily Motivation</h2>
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="relative">
+            <IconComponent className="h-8 w-8 text-yellow-300 animate-pulse" />
+            <div className="absolute inset-0 h-8 w-8 text-yellow-300 animate-ping opacity-20"></div>
+          </div>
+          <h2 className="text-2xl font-bold tracking-wide">🔥 DAILY MOTIVATION</h2>
+          <div className="flex space-x-1">
+            <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce"></div>
+            <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+            <div className="w-2 h-2 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+          </div>
         </div>
         
-        <div className="animate-fade-in">
-          <blockquote className="text-2xl font-medium mb-4 leading-relaxed">
-            "{motivationalQuotes[currentQuote].text}"
-          </blockquote>
-          <cite className="text-lg text-white/80">
-            — {motivationalQuotes[currentQuote].author}
-          </cite>
+        <div className="animate-fade-in key={currentQuote}">
+          <div className="relative">
+            <div className="text-6xl font-bold text-yellow-300/20 absolute -top-4 -left-2">"</div>
+            <blockquote className="text-2xl sm:text-3xl font-bold mb-6 leading-relaxed relative pl-8 text-shadow-lg">
+              {motivationalQuotes[currentQuote].text}
+            </blockquote>
+          </div>
+          <div className="flex items-center justify-between">
+            <cite className="text-xl font-semibold text-yellow-100 flex items-center">
+              <Target className="h-5 w-5 mr-2" />
+              — {motivationalQuotes[currentQuote].author}
+            </cite>
+            <div className="flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-full">
+              <Zap className="h-4 w-4 text-yellow-300" />
+              <span className="text-sm font-bold">IGNITE YOUR POTENTIAL</span>
+            </div>
+          </div>
         </div>
       </div>
       
-      <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
-      <div className="absolute -left-8 -bottom-8 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+      {/* Call to action element */}
+      <div className="absolute bottom-4 right-4 bg-yellow-400 text-black px-4 py-2 rounded-full text-sm font-bold animate-bounce opacity-90">
+        🚀 LET'S GO!
+      </div>
     </div>
   );
 };

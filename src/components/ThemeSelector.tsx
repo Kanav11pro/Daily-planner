@@ -6,11 +6,11 @@ import { useTheme, type Theme, getThemeColors } from "@/contexts/ThemeContext";
 
 const themeOptions: { value: Theme; name: string; emoji: string }[] = [
   { value: 'ocean', name: 'Ocean', emoji: '🌊' },
-  { value: 'forest', name: 'Forest', emoji: '🌲' },
-  { value: 'aurora', name: 'Aurora', emoji: '🌌' },
-  { value: 'cosmic', name: 'Cosmic', emoji: '🚀' },
-  { value: 'cyber', name: 'Cyber', emoji: '🤖' },
-  { value: 'neon', name: 'Neon', emoji: '💎' }
+  { value: 'cosmic', name: 'Cosmic', emoji: '🌌' },
+  { value: 'aurora', name: 'Aurora', emoji: '✨' },
+  { value: 'neon', name: 'Neon', emoji: '⚡' },
+  { value: 'sunset', name: 'Sunset', emoji: '🌅' },
+  { value: 'emerald', name: 'Emerald', emoji: '💎' }
 ];
 
 export const ThemeSelector = () => {
@@ -24,28 +24,28 @@ export const ThemeSelector = () => {
           Theme
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-60 p-3">
-        <div className="grid grid-cols-2 gap-2">
+      <PopoverContent className="w-80 p-4">
+        <div className="grid grid-cols-2 gap-3">
           {themeOptions.map((option) => {
             const colors = getThemeColors(option.value);
             return (
               <button
                 key={option.value}
                 onClick={() => setTheme(option.value)}
-                className={`p-3 rounded-lg border-2 transition-all duration-200 text-left ${
+                className={`p-4 rounded-xl border-2 transition-all duration-300 text-left hover:scale-105 ${
                   theme === option.value
-                    ? 'border-indigo-500 bg-indigo-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-indigo-500 bg-indigo-50 shadow-lg'
+                    : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
                 }`}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-lg">{option.emoji}</span>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-2xl">{option.emoji}</span>
                   {theme === option.value && (
-                    <Check className="h-4 w-4 text-indigo-600" />
+                    <Check className="h-5 w-5 text-indigo-600" />
                   )}
                 </div>
-                <div className="text-sm font-medium text-gray-800">{option.name}</div>
-                <div className={`h-2 rounded-full mt-2 bg-gradient-to-r ${colors.primary}`} />
+                <div className="text-sm font-bold text-gray-800 mb-2">{option.name}</div>
+                <div className={`h-3 rounded-full bg-gradient-to-r ${colors.primary} shadow-sm`} />
               </button>
             );
           })}

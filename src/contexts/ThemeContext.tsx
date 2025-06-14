@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type Theme = 'ocean' | 'forest' | 'aurora' | 'cosmic' | 'cyber' | 'neon';
+export type Theme = 'ocean' | 'cosmic' | 'aurora' | 'neon' | 'sunset' | 'emerald';
 
 interface ThemeContextType {
   theme: Theme;
@@ -29,59 +29,59 @@ const themes = {
     text: 'text-cyan-900',
     glow: 'shadow-cyan-300/60'
   },
-  forest: {
-    primary: 'from-green-600 to-emerald-700',
-    secondary: 'from-green-50 via-emerald-50 to-teal-50',
-    background: 'from-green-200 via-emerald-300 to-teal-400',
-    accent: 'bg-green-100 text-green-900',
-    card: 'bg-white/95 backdrop-blur-md border border-green-200 text-gray-900',
-    border: 'border-green-300',
-    text: 'text-green-900',
-    glow: 'shadow-green-300/60'
+  cosmic: {
+    primary: 'from-purple-600 via-blue-600 to-indigo-700',
+    secondary: 'from-purple-50 via-blue-50 to-indigo-50',
+    background: 'from-slate-900 via-purple-900 to-slate-900',
+    accent: 'bg-purple-100 text-purple-900',
+    card: 'bg-white/95 backdrop-blur-md border border-purple-200 text-gray-900',
+    border: 'border-purple-300',
+    text: 'text-purple-900',
+    glow: 'shadow-purple-400/60'
   },
   aurora: {
-    primary: 'from-pink-500 to-violet-600',
-    secondary: 'from-pink-50 via-purple-50 to-violet-50',
-    background: 'from-pink-200 via-purple-300 to-violet-400',
+    primary: 'from-pink-500 via-purple-500 to-cyan-500',
+    secondary: 'from-pink-50 via-purple-50 to-cyan-50',
+    background: 'from-violet-200 via-purple-300 to-pink-400',
     accent: 'bg-pink-100 text-pink-900',
     card: 'bg-white/95 backdrop-blur-md border border-pink-200 text-gray-900',
     border: 'border-pink-300',
     text: 'text-pink-900',
     glow: 'shadow-pink-300/60'
   },
-  cosmic: {
-    primary: 'from-indigo-600 to-blue-700',
-    secondary: 'from-indigo-50 via-blue-50 to-sky-50',
-    background: 'from-indigo-200 via-blue-300 to-sky-400',
-    accent: 'bg-indigo-100 text-indigo-900',
-    card: 'bg-white/95 backdrop-blur-md border border-indigo-200 text-gray-900',
-    border: 'border-indigo-300',
-    text: 'text-indigo-900',
-    glow: 'shadow-indigo-300/60'
-  },
-  cyber: {
-    primary: 'from-cyan-400 to-lime-400',
-    secondary: 'from-cyan-50 via-lime-50 to-green-50',
-    background: 'from-cyan-200 via-lime-300 to-green-400',
-    accent: 'bg-cyan-100 text-cyan-900',
-    card: 'bg-white/95 backdrop-blur-md border border-cyan-200 text-gray-900',
-    border: 'border-cyan-300',
-    text: 'text-cyan-900',
-    glow: 'shadow-cyan-300/60'
-  },
   neon: {
-    primary: 'from-fuchsia-500 to-cyan-500',
-    secondary: 'from-fuchsia-50 via-pink-50 to-cyan-50',
-    background: 'from-fuchsia-200 via-pink-300 to-cyan-400',
+    primary: 'from-fuchsia-500 via-cyan-400 to-lime-400',
+    secondary: 'from-fuchsia-50 via-cyan-50 to-lime-50',
+    background: 'from-slate-800 via-purple-900 to-slate-900',
     accent: 'bg-fuchsia-100 text-fuchsia-900',
     card: 'bg-white/95 backdrop-blur-md border border-fuchsia-200 text-gray-900',
     border: 'border-fuchsia-300',
     text: 'text-fuchsia-900',
-    glow: 'shadow-fuchsia-300/60'
+    glow: 'shadow-fuchsia-400/60'
+  },
+  sunset: {
+    primary: 'from-orange-400 via-pink-500 to-purple-600',
+    secondary: 'from-orange-50 via-pink-50 to-purple-50',
+    background: 'from-orange-200 via-pink-300 to-purple-400',
+    accent: 'bg-orange-100 text-orange-900',
+    card: 'bg-white/95 backdrop-blur-md border border-orange-200 text-gray-900',
+    border: 'border-orange-300',
+    text: 'text-orange-900',
+    glow: 'shadow-orange-300/60'
+  },
+  emerald: {
+    primary: 'from-emerald-400 via-teal-500 to-green-600',
+    secondary: 'from-emerald-50 via-teal-50 to-green-50',
+    background: 'from-emerald-200 via-teal-300 to-green-400',
+    accent: 'bg-emerald-100 text-emerald-900',
+    card: 'bg-white/95 backdrop-blur-md border border-emerald-200 text-gray-900',
+    border: 'border-emerald-300',
+    text: 'text-emerald-900',
+    glow: 'shadow-emerald-300/60'
   }
 };
 
-const validThemes: Theme[] = ['ocean', 'forest', 'aurora', 'cosmic', 'cyber', 'neon'];
+const validThemes: Theme[] = ['ocean', 'cosmic', 'aurora', 'neon', 'sunset', 'emerald'];
 
 export const getThemeColors = (theme: Theme) => {
   const themeColors = themes[theme];
@@ -95,7 +95,6 @@ export const getThemeColors = (theme: Theme) => {
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
     const saved = localStorage.getItem('examPrepTheme') as Theme;
-    // Check if the saved theme is valid, otherwise default to 'ocean'
     if (saved && validThemes.includes(saved)) {
       return saved;
     }
@@ -103,7 +102,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   useEffect(() => {
-    // Clear invalid theme from localStorage if it exists
     const saved = localStorage.getItem('examPrepTheme') as Theme;
     if (saved && !validThemes.includes(saved)) {
       localStorage.removeItem('examPrepTheme');
