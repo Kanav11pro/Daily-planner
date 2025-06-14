@@ -74,7 +74,7 @@ export const EditTaskModal = ({ task, onClose, onSave }: EditTaskModalProps) => 
         duration: formData.duration ? parseInt(formData.duration) : null
       };
       
-      await onSave(task.id, updatedTask);
+      await onSave(updatedTask);
       onClose();
     } catch (error) {
       console.error('Error updating task:', error);
