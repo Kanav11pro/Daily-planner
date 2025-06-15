@@ -153,8 +153,10 @@ const IndexContent = () => {
                 onAddTask={() => setShowTaskModal(true)}
               />
               
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-                <div className="lg:col-span-2">
+              {/* Mobile Layout */}
+              <div className="block xl:hidden">
+                <div className="space-y-6">
+                  <ProgressOverview tasks={tasks} />
                   <TaskDashboard 
                     tasks={getTasksForDate(selectedDate)}
                     onToggleTask={handleToggleTask}
@@ -163,13 +165,40 @@ const IndexContent = () => {
                     onAddTask={() => setShowTaskModal(true)}
                     selectedDate={selectedDate}
                   />
-                </div>
-                <div className="space-y-6">
-                  <ProgressOverview tasks={tasks} />
                   <TaskAnalytics 
                     tasks={tasks} 
                     onOpenWeeklyAnalytics={() => setShowWeeklyAnalytics(true)}
                   />
+                </div>
+              </div>
+
+              {/* Desktop Layout */}
+              <div className="hidden xl:block">
+                <div className="grid grid-cols-12 gap-8">
+                  {/* Today's Progress - Full Width */}
+                  <div className="col-span-12">
+                    <ProgressOverview tasks={tasks} />
+                  </div>
+                  
+                  {/* Main Dashboard - Left Side */}
+                  <div className="col-span-8">
+                    <TaskDashboard 
+                      tasks={getTasksForDate(selectedDate)}
+                      onToggleTask={handleToggleTask}
+                      onDeleteTask={handleDeleteTask}
+                      onEditTask={handleEditTask}
+                      onAddTask={() => setShowTaskModal(true)}
+                      selectedDate={selectedDate}
+                    />
+                  </div>
+                  
+                  {/* Analytics - Right Side */}
+                  <div className="col-span-4">
+                    <TaskAnalytics 
+                      tasks={tasks} 
+                      onOpenWeeklyAnalytics={() => setShowWeeklyAnalytics(true)}
+                    />
+                  </div>
                 </div>
               </div>
             </main>
@@ -204,8 +233,10 @@ const IndexContent = () => {
             onAddTask={() => setShowTaskModal(true)}
           />
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-            <div className="lg:col-span-2">
+          {/* Mobile Layout */}
+          <div className="block xl:hidden">
+            <div className="space-y-6">
+              <ProgressOverview tasks={tasks} />
               <TaskDashboard 
                 tasks={selectedDateTasks}
                 onToggleTask={handleToggleTask}
@@ -214,13 +245,40 @@ const IndexContent = () => {
                 onAddTask={() => setShowTaskModal(true)}
                 selectedDate={selectedDate}
               />
-            </div>
-            <div className="space-y-6">
-              <ProgressOverview tasks={tasks} />
               <TaskAnalytics 
                 tasks={tasks} 
                 onOpenWeeklyAnalytics={() => setShowWeeklyAnalytics(true)}
               />
+            </div>
+          </div>
+
+          {/* Desktop Layout */}
+          <div className="hidden xl:block">
+            <div className="grid grid-cols-12 gap-8">
+              {/* Today's Progress - Full Width */}
+              <div className="col-span-12">
+                <ProgressOverview tasks={tasks} />
+              </div>
+              
+              {/* Main Dashboard - Left Side */}
+              <div className="col-span-8">
+                <TaskDashboard 
+                  tasks={selectedDateTasks}
+                  onToggleTask={handleToggleTask}
+                  onDeleteTask={handleDeleteTask}
+                  onEditTask={handleEditTask}
+                  onAddTask={() => setShowTaskModal(true)}
+                  selectedDate={selectedDate}
+                />
+              </div>
+              
+              {/* Analytics - Right Side */}
+              <div className="col-span-4">
+                <TaskAnalytics 
+                  tasks={tasks} 
+                  onOpenWeeklyAnalytics={() => setShowWeeklyAnalytics(true)}
+                />
+              </div>
             </div>
           </div>
         </main>
