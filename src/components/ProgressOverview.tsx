@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { format } from "date-fns";
 import { formatInTimeZone, toZonedTime } from "date-fns-tz";
+
 interface Task {
   id: string;
   title: string;
@@ -13,12 +14,12 @@ interface Task {
   created_at: string;
   duration?: number;
 }
+
 interface ProgressOverviewProps {
   tasks: Task[];
 }
-export const ProgressOverview = ({
-  tasks
-}: ProgressOverviewProps) => {
+
+export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
   const IST_TIMEZONE = 'Asia/Kolkata';
 
   // Helper function to get current IST date
@@ -33,18 +34,23 @@ export const ProgressOverview = ({
     }
     return formatInTimeZone(date, IST_TIMEZONE, 'yyyy-MM-dd');
   };
+
   const today = getCurrentISTDate();
   const currentTime = formatInTimeZone(new Date(), IST_TIMEZONE, 'hh:mm a');
+
   console.log('Today\'s IST date for progress:', today);
+
   const todayTasks = tasks.filter(task => {
     const taskDate = formatDateForComparison(task.scheduled_date);
     console.log('Comparing task date:', taskDate, 'with today:', today);
     return taskDate === today;
   });
+
   console.log('Today\'s tasks count:', todayTasks.length);
+
   const completedToday = todayTasks.filter(task => task.completed).length;
   const totalToday = todayTasks.length;
-  const progressPercentage = totalToday > 0 ? completedToday / totalToday * 100 : 0;
+  const progressPercentage = totalToday > 0 ? (completedToday / totalToday) * 100 : 0;
 
   // Calculate total duration and completed duration
   const totalDuration = todayTasks.reduce((acc, task) => acc + (task.duration || 0), 0);
@@ -55,35 +61,30 @@ export const ProgressOverview = ({
     acc[task.priority] = (acc[task.priority] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
+
   const subjectProgress = tasks.reduce((acc, task) => {
     if (!acc[task.subject]) {
-      acc[task.subject] = {
-        completed: 0,
-        total: 0
-      };
+      acc[task.subject] = { completed: 0, total: 0 };
     }
     acc[task.subject].total++;
     if (task.completed) {
       acc[task.subject].completed++;
     }
     return acc;
-  }, {} as Record<string, {
-    completed: number;
-    total: number;
-  }>);
+  }, {} as Record<string, { completed: number; total: number }>);
 
   // Calculate study streak (simplified - count days with completed tasks in last 7 days)
-  const last7Days = Array.from({
-    length: 7
-  }, (_, i) => {
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() - i);
     return formatDateForComparison(date);
   });
+
   const daysWithCompletedTasks = last7Days.filter(date => {
     const dayTasks = tasks.filter(task => formatDateForComparison(task.scheduled_date) === date);
     return dayTasks.some(task => task.completed);
   }).length;
+
   const weeklyStreak = daysWithCompletedTasks;
 
   // Get motivational message based on progress
@@ -95,71 +96,83 @@ export const ProgressOverview = ({
     if (progressPercentage > 0) return "✨ Every step counts! You've got this!";
     return "🎯 Ready to conquer today? Let's start!";
   };
-  return <div className="space-y-6">
-      {/* Enhanced Today's Progress Card */}
+
+  return (
+    <div className="space-y-4 sm:space-y-6">
+      {/* Enhanced Today's Progress Card - Mobile Optimized */}
       <Card className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 border-indigo-200 shadow-lg relative overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute inset-0">
-          <div className="absolute -right-8 -top-8 w-32 h-32 bg-indigo-200/30 rounded-full blur-2xl"></div>
-          <div className="absolute -left-8 -bottom-8 w-28 h-28 bg-purple-200/30 rounded-full blur-xl"></div>
-          <div className="absolute right-1/3 top-1/4 w-20 h-20 bg-pink-200/20 rounded-full blur-lg"></div>
+          <div className="absolute -right-4 -top-4 sm:-right-8 sm:-top-8 w-20 h-20 sm:w-32 sm:h-32 bg-indigo-200/30 rounded-full blur-2xl"></div>
+          <div className="absolute -left-4 -bottom-4 sm:-left-8 sm:-bottom-8 w-16 h-16 sm:w-28 sm:h-28 bg-purple-200/30 rounded-full blur-xl"></div>
+          <div className="absolute right-1/3 top-1/4 w-12 h-12 sm:w-20 sm:h-20 bg-pink-200/20 rounded-full blur-lg"></div>
         </div>
         
-        <CardHeader className="relative z-10">
+        <CardHeader className="relative z-10 p-4 sm:p-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 sm:space-x-3">
               <div className="relative">
-                <Target className="h-6 w-6 text-indigo-600" />
-                {progressPercentage > 0 && <div className="absolute -top-1 -right-1">
-                    <Flame className="h-4 w-4 text-orange-500 animate-pulse" />
-                  </div>}
+                <Target className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-600" />
+                {progressPercentage > 0 && (
+                  <div className="absolute -top-1 -right-1">
+                    <Flame className="h-3 w-3 sm:h-4 sm:w-4 text-orange-500 animate-pulse" />
+                  </div>
+                )}
               </div>
               <div>
-                <CardTitle className="text-indigo-800 text-xl">Today's Progress</CardTitle>
-                <CardDescription className="text-indigo-600 font-medium">
-                  {format(toZonedTime(new Date(), IST_TIMEZONE), 'EEEE, MMMM do, yyyy')} • {currentTime} IST
+                <CardTitle className="text-indigo-800 text-lg sm:text-xl">Today's Progress</CardTitle>
+                <CardDescription className="text-indigo-600 font-medium text-xs sm:text-sm">
+                  <div className="hidden sm:block">
+                    {format(toZonedTime(new Date(), IST_TIMEZONE), 'EEEE, MMMM do, yyyy')} • {currentTime} IST
+                  </div>
+                  <div className="sm:hidden">
+                    {format(toZonedTime(new Date(), IST_TIMEZONE), 'EEE, MMM do')} • {currentTime} IST
+                  </div>
                 </CardDescription>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-indigo-700">{Math.round(progressPercentage)}%</div>
-              <div className="text-sm text-indigo-600">Complete</div>
+              <div className="text-xl sm:text-2xl font-bold text-indigo-700">{Math.round(progressPercentage)}%</div>
+              <div className="text-xs sm:text-sm text-indigo-600">Complete</div>
             </div>
           </div>
         </CardHeader>
 
-        <CardContent className="relative z-10">
-          <div className="space-y-6">
-            {/* Main Progress Section */}
-            <div className="text-center space-y-4">
-              <div className="flex items-center justify-center space-x-8">
+        <CardContent className="relative z-10 p-4 sm:p-6 pt-0">
+          <div className="space-y-4 sm:space-y-6">
+            {/* Main Progress Section - Mobile Optimized */}
+            <div className="text-center space-y-3 sm:space-y-4">
+              <div className="flex items-center justify-center space-x-4 sm:space-x-8">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
-                    <CheckCircle2 className="h-6 w-6 text-green-600" />
+                  <div className="text-2xl sm:text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
+                    <CheckCircle2 className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
                     <span>{completedToday}</span>
                   </div>
-                  <p className="text-sm text-gray-600 font-medium">Completed</p>
+                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Completed</p>
                 </div>
-                <div className="w-px h-12 bg-indigo-200"></div>
+                <div className="w-px h-8 sm:h-12 bg-indigo-200"></div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
-                    <Circle className="h-6 w-6 text-gray-400" />
+                  <div className="text-2xl sm:text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
+                    <Circle className="h-4 w-4 sm:h-6 sm:w-6 text-gray-400" />
                     <span>{totalToday - completedToday}</span>
                   </div>
-                  <p className="text-sm text-gray-600 font-medium">Remaining</p>
+                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Remaining</p>
                 </div>
-                <div className="w-px h-12 bg-indigo-200"></div>
+                <div className="w-px h-8 sm:h-12 bg-indigo-200"></div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
-                    <Clock className="h-6 w-6 text-blue-600" />
-                    <span>{Math.floor(completedDuration / 60)}h {completedDuration % 60}m</span>
+                  <div className="text-lg sm:text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
+                    <Clock className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
+                    <div className="flex flex-col sm:flex-row sm:space-x-1">
+                      <span className="text-base sm:text-3xl">{Math.floor(completedDuration / 60)}h</span>
+                      <span className="text-base sm:text-3xl">{completedDuration % 60}m</span>
+                    </div>
                   </div>
-                  <p className="text-sm text-gray-600 font-medium">Studied</p>
+                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Studied</p>
                 </div>
               </div>
               
               <div className="space-y-2">
-                <Progress value={progressPercentage} className="h-4 bg-white/50" />
+                <Progress value={progressPercentage} className="h-3 sm:h-4 bg-white/50" />
                 <div className="flex justify-between text-xs text-gray-600">
                   <span>0%</span>
                   <span className="font-bold text-indigo-700">{completedToday}/{totalToday} tasks</span>
@@ -168,77 +181,84 @@ export const ProgressOverview = ({
               </div>
             </div>
 
-            {/* Motivational Message */}
-            <div className="text-center p-4 bg-gradient-to-r from-indigo-100/50 to-purple-100/50 rounded-xl border border-indigo-200/50">
-              <p className="text-lg font-semibold text-indigo-800">{getMotivationalMessage()}</p>
+            {/* Motivational Message - Mobile Optimized */}
+            <div className="text-center p-3 sm:p-4 bg-gradient-to-r from-indigo-100/50 to-purple-100/50 rounded-xl border border-indigo-200/50">
+              <p className="text-base sm:text-lg font-semibold text-indigo-800">{getMotivationalMessage()}</p>
             </div>
 
-            {/* Today's Task Breakdown */}
-            {totalToday > 0 && <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-3 bg-white/50 rounded-lg border border-indigo-100">
-                  <div className="text-lg font-bold text-red-600">{priorityBreakdown.high || 0}</div>
+            {/* Today's Task Breakdown - Mobile Optimized */}
+            {totalToday > 0 && (
+              <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                <div className="text-center p-2 sm:p-3 bg-white/50 rounded-lg border border-indigo-100">
+                  <div className="text-base sm:text-lg font-bold text-red-600">{priorityBreakdown.high || 0}</div>
                   <div className="text-xs text-gray-600">High Priority</div>
                 </div>
-                <div className="text-center p-3 bg-white/50 rounded-lg border border-indigo-100">
-                  <div className="text-lg font-bold text-yellow-600">{priorityBreakdown.medium || 0}</div>
+                <div className="text-center p-2 sm:p-3 bg-white/50 rounded-lg border border-indigo-100">
+                  <div className="text-base sm:text-lg font-bold text-yellow-600">{priorityBreakdown.medium || 0}</div>
                   <div className="text-xs text-gray-600">Medium Priority</div>
                 </div>
-                <div className="text-center p-3 bg-white/50 rounded-lg border border-indigo-100">
-                  <div className="text-lg font-bold text-green-600">{priorityBreakdown.low || 0}</div>
+                <div className="text-center p-2 sm:p-3 bg-white/50 rounded-lg border border-indigo-100">
+                  <div className="text-base sm:text-lg font-bold text-green-600">{priorityBreakdown.low || 0}</div>
                   <div className="text-xs text-gray-600">Low Priority</div>
                 </div>
-              </div>}
+              </div>
+            )}
 
-            {/* Quick Actions */}
-            {totalToday === 0 && <div className="text-center p-6 bg-white/30 rounded-xl border border-indigo-200/50">
-                <Zap className="h-12 w-12 text-indigo-400 mx-auto mb-2" />
-                <p className="text-indigo-700 font-medium">No tasks scheduled for today</p>
-                <p className="text-sm text-indigo-600 mt-1">Add some tasks to start your productive day!</p>
-              </div>}
+            {/* Quick Actions - No Tasks State */}
+            {totalToday === 0 && (
+              <div className="text-center p-4 sm:p-6 bg-white/30 rounded-xl border border-indigo-200/50">
+                <Zap className="h-8 w-8 sm:h-12 sm:w-12 text-indigo-400 mx-auto mb-2" />
+                <p className="text-sm sm:text-base text-indigo-700 font-medium">No tasks scheduled for today</p>
+                <p className="text-xs sm:text-sm text-indigo-600 mt-1">Add some tasks to start your productive day!</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
 
       {/* Subject Progress Card */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <TrendingUp className="h-5 w-5 text-green-600" />
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
+            <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
             <span>Subject Progress</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-6 pt-0">
           <div className="space-y-3">
-            {Object.entries(subjectProgress).map(([subject, progress]) => <div key={subject} className="space-y-2">
+            {Object.entries(subjectProgress).map(([subject, progress]) => (
+              <div key={subject} className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="font-medium">{subject}</span>
                   <span className="text-gray-600">
                     {progress.completed}/{progress.total}
                   </span>
                 </div>
-                <Progress value={progress.total > 0 ? progress.completed / progress.total * 100 : 0} className="h-2" />
-              </div>)}
+                <Progress 
+                  value={progress.total > 0 ? (progress.completed / progress.total) * 100 : 0} 
+                  className="h-2" 
+                />
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>
 
       {/* Study Streak Card */}
       <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-yellow-800">
-            <Trophy className="h-5 w-5" />
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="flex items-center space-x-2 text-yellow-800 text-base sm:text-lg">
+            <Trophy className="h-4 w-4 sm:h-5 sm:w-5" />
             <span>Study Streak</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-6 pt-0">
           <div className="text-center">
-            <div className="text-2xl font-bold text-yellow-700">{weeklyStreak} days</div>
+            <div className="text-xl sm:text-2xl font-bold text-yellow-700">{weeklyStreak} days</div>
             <p className="text-sm text-gray-600">Keep it going! 🔥</p>
           </div>
         </CardContent>
       </Card>
-
-      {/* Weekly Summary */}
-      
-    </div>;
+    </div>
+  );
 };
