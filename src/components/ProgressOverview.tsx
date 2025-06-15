@@ -100,28 +100,28 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Enhanced Today's Progress Card - Improved Desktop Layout */}
+      {/* Enhanced Today's Progress Card - Better Sizing for Desktop */}
       <Card className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 border-indigo-200 shadow-lg relative overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute inset-0">
-          <div className="absolute -right-4 -top-4 sm:-right-8 sm:-top-8 w-20 h-20 sm:w-32 sm:h-32 bg-indigo-200/30 rounded-full blur-2xl"></div>
-          <div className="absolute -left-4 -bottom-4 sm:-left-8 sm:-bottom-8 w-16 h-16 sm:w-28 sm:h-28 bg-purple-200/30 rounded-full blur-xl"></div>
-          <div className="absolute right-1/3 top-1/4 w-12 h-12 sm:w-20 sm:h-20 bg-pink-200/20 rounded-full blur-lg"></div>
+          <div className="absolute -right-4 -top-4 sm:-right-6 sm:-top-6 w-16 h-16 sm:w-24 sm:h-24 bg-indigo-200/30 rounded-full blur-2xl"></div>
+          <div className="absolute -left-4 -bottom-4 sm:-left-6 sm:-bottom-6 w-12 h-12 sm:w-20 sm:h-20 bg-purple-200/30 rounded-full blur-xl"></div>
+          <div className="absolute right-1/3 top-1/4 w-8 h-8 sm:w-12 sm:h-12 bg-pink-200/20 rounded-full blur-lg"></div>
         </div>
         
-        <CardHeader className="relative z-10 p-4 sm:p-6">
+        <CardHeader className="relative z-10 p-4 sm:p-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
             <div className="flex items-center space-x-2 sm:space-x-3">
               <div className="relative">
-                <Target className="h-5 w-5 sm:h-7 sm:w-7 text-indigo-600" />
+                <Target className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-600" />
                 {progressPercentage > 0 && (
                   <div className="absolute -top-1 -right-1">
-                    <Flame className="h-3 w-3 sm:h-4 sm:w-4 text-orange-500 animate-pulse" />
+                    <Flame className="h-3 w-3 text-orange-500 animate-pulse" />
                   </div>
                 )}
               </div>
               <div>
-                <CardTitle className="text-indigo-800 text-lg sm:text-2xl font-bold">Today's Progress</CardTitle>
+                <CardTitle className="text-indigo-800 text-lg sm:text-xl font-bold">Today's Progress</CardTitle>
                 <CardDescription className="text-indigo-600 font-medium text-xs sm:text-sm">
                   <div className="hidden sm:block">
                     {format(toZonedTime(new Date(), IST_TIMEZONE), 'EEEE, MMMM do, yyyy')} • {currentTime} IST
@@ -133,49 +133,49 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
               </div>
             </div>
             <div className="text-center sm:text-right">
-              <div className="text-3xl sm:text-4xl font-bold text-indigo-700">{Math.round(progressPercentage)}%</div>
-              <div className="text-sm sm:text-base text-indigo-600 font-medium">Complete</div>
+              <div className="text-2xl sm:text-3xl font-bold text-indigo-700">{Math.round(progressPercentage)}%</div>
+              <div className="text-sm text-indigo-600 font-medium">Complete</div>
             </div>
           </div>
         </CardHeader>
 
-        <CardContent className="relative z-10 p-4 sm:p-6 pt-0">
-          <div className="space-y-4 sm:space-y-6">
-            {/* Main Progress Section - Better Desktop Layout */}
-            <div className="text-center space-y-4 sm:space-y-6">
-              <div className="grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto">
-                <div className="text-center p-3 sm:p-4 bg-white/40 rounded-xl border border-indigo-100 backdrop-blur-sm">
-                  <div className="flex items-center justify-center space-x-1 mb-2">
-                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+        <CardContent className="relative z-10 p-4 sm:p-5 pt-0">
+          <div className="space-y-4 sm:space-y-5">
+            {/* Main Progress Section - Smaller Text for Desktop */}
+            <div className="text-center space-y-3 sm:space-y-4">
+              <div className="grid grid-cols-3 gap-3 sm:gap-6 max-w-lg mx-auto">
+                <div className="text-center p-3 bg-white/40 rounded-xl border border-indigo-100 backdrop-blur-sm">
+                  <div className="flex items-center justify-center space-x-1 mb-1">
+                    <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
                   </div>
-                  <div className="text-2xl sm:text-4xl font-bold text-indigo-700">{completedToday}</div>
-                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Completed</p>
+                  <div className="text-xl sm:text-2xl font-bold text-indigo-700">{completedToday}</div>
+                  <p className="text-xs text-gray-600 font-medium">Completed</p>
                 </div>
                 
-                <div className="text-center p-3 sm:p-4 bg-white/40 rounded-xl border border-indigo-100 backdrop-blur-sm">
-                  <div className="flex items-center justify-center space-x-1 mb-2">
-                    <Circle className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
+                <div className="text-center p-3 bg-white/40 rounded-xl border border-indigo-100 backdrop-blur-sm">
+                  <div className="flex items-center justify-center space-x-1 mb-1">
+                    <Circle className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                   </div>
-                  <div className="text-2xl sm:text-4xl font-bold text-indigo-700">{totalToday - completedToday}</div>
-                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Remaining</p>
+                  <div className="text-xl sm:text-2xl font-bold text-indigo-700">{totalToday - completedToday}</div>
+                  <p className="text-xs text-gray-600 font-medium">Remaining</p>
                 </div>
                 
-                <div className="text-center p-3 sm:p-4 bg-white/40 rounded-xl border border-indigo-100 backdrop-blur-sm">
-                  <div className="flex items-center justify-center space-x-1 mb-2">
-                    <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                <div className="text-center p-3 bg-white/40 rounded-xl border border-indigo-100 backdrop-blur-sm">
+                  <div className="flex items-center justify-center space-x-1 mb-1">
+                    <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
                   </div>
-                  <div className="text-xl sm:text-4xl font-bold text-indigo-700">
+                  <div className="text-lg sm:text-xl font-bold text-indigo-700">
                     <div className="flex items-center justify-center space-x-1">
                       <span>{Math.floor(completedDuration / 60)}h</span>
                       <span>{completedDuration % 60}m</span>
                     </div>
                   </div>
-                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Studied</p>
+                  <p className="text-xs text-gray-600 font-medium">Studied</p>
                 </div>
               </div>
               
-              <div className="space-y-3 max-w-2xl mx-auto">
-                <Progress value={progressPercentage} className="h-3 sm:h-4 bg-white/50" />
+              <div className="space-y-2 max-w-lg mx-auto">
+                <Progress value={progressPercentage} className="h-3 bg-white/50" />
                 <div className="flex justify-between text-xs text-gray-600">
                   <span>0%</span>
                   <span className="font-bold text-indigo-700">{completedToday}/{totalToday} tasks</span>
@@ -184,35 +184,35 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
               </div>
             </div>
 
-            {/* Motivational Message - Better Desktop Styling */}
-            <div className="text-center p-4 sm:p-6 bg-gradient-to-r from-indigo-100/60 to-purple-100/60 rounded-xl border border-indigo-200/50 backdrop-blur-sm max-w-2xl mx-auto">
-              <p className="text-base sm:text-xl font-semibold text-indigo-800">{getMotivationalMessage()}</p>
+            {/* Motivational Message - Smaller Size */}
+            <div className="text-center p-3 sm:p-4 bg-gradient-to-r from-indigo-100/60 to-purple-100/60 rounded-xl border border-indigo-200/50 backdrop-blur-sm max-w-lg mx-auto">
+              <p className="text-sm sm:text-base font-semibold text-indigo-800">{getMotivationalMessage()}</p>
             </div>
 
-            {/* Today's Task Breakdown - Better Desktop Grid */}
+            {/* Today's Task Breakdown - Smaller Grid */}
             {totalToday > 0 && (
-              <div className="grid grid-cols-3 gap-3 sm:gap-6 max-w-2xl mx-auto">
-                <div className="text-center p-3 sm:p-4 bg-white/50 rounded-xl border border-indigo-100 backdrop-blur-sm">
-                  <div className="text-xl sm:text-2xl font-bold text-red-600 mb-1">{priorityBreakdown.high || 0}</div>
-                  <div className="text-xs sm:text-sm text-gray-600 font-medium">High Priority</div>
+              <div className="grid grid-cols-3 gap-3 max-w-lg mx-auto">
+                <div className="text-center p-2 sm:p-3 bg-white/50 rounded-xl border border-indigo-100 backdrop-blur-sm">
+                  <div className="text-lg sm:text-xl font-bold text-red-600 mb-1">{priorityBreakdown.high || 0}</div>
+                  <div className="text-xs text-gray-600 font-medium">High Priority</div>
                 </div>
-                <div className="text-center p-3 sm:p-4 bg-white/50 rounded-xl border border-indigo-100 backdrop-blur-sm">
-                  <div className="text-xl sm:text-2xl font-bold text-yellow-600 mb-1">{priorityBreakdown.medium || 0}</div>
-                  <div className="text-xs sm:text-sm text-gray-600 font-medium">Medium Priority</div>
+                <div className="text-center p-2 sm:p-3 bg-white/50 rounded-xl border border-indigo-100 backdrop-blur-sm">
+                  <div className="text-lg sm:text-xl font-bold text-yellow-600 mb-1">{priorityBreakdown.medium || 0}</div>
+                  <div className="text-xs text-gray-600 font-medium">Medium Priority</div>
                 </div>
-                <div className="text-center p-3 sm:p-4 bg-white/50 rounded-xl border border-indigo-100 backdrop-blur-sm">
-                  <div className="text-xl sm:text-2xl font-bold text-green-600 mb-1">{priorityBreakdown.low || 0}</div>
-                  <div className="text-xs sm:text-sm text-gray-600 font-medium">Low Priority</div>
+                <div className="text-center p-2 sm:p-3 bg-white/50 rounded-xl border border-indigo-100 backdrop-blur-sm">
+                  <div className="text-lg sm:text-xl font-bold text-green-600 mb-1">{priorityBreakdown.low || 0}</div>
+                  <div className="text-xs text-gray-600 font-medium">Low Priority</div>
                 </div>
               </div>
             )}
 
-            {/* No Tasks State - Better Desktop Layout */}
+            {/* No Tasks State - Smaller Size */}
             {totalToday === 0 && (
-              <div className="text-center p-6 sm:p-8 bg-white/30 rounded-xl border border-indigo-200/50 backdrop-blur-sm max-w-2xl mx-auto">
-                <Zap className="h-12 w-12 sm:h-16 sm:w-16 text-indigo-400 mx-auto mb-3" />
-                <p className="text-base sm:text-lg text-indigo-700 font-medium mb-2">No tasks scheduled for today</p>
-                <p className="text-sm sm:text-base text-indigo-600">Add some tasks to start your productive day!</p>
+              <div className="text-center p-4 sm:p-5 bg-white/30 rounded-xl border border-indigo-200/50 backdrop-blur-sm max-w-lg mx-auto">
+                <Zap className="h-10 w-10 sm:h-12 sm:w-12 text-indigo-400 mx-auto mb-2" />
+                <p className="text-sm sm:text-base text-indigo-700 font-medium mb-1">No tasks scheduled for today</p>
+                <p className="text-xs sm:text-sm text-indigo-600">Add some tasks to start your productive day!</p>
               </div>
             )}
           </div>
