@@ -119,35 +119,9 @@ export const TaskAnalytics = ({
   };
   const motivationalContent = getMotivationalContent();
   return <div className="space-y-4">
-      <Card className={`bg-gradient-to-br from-indigo-50 to-purple-50 ${themeColors.border} ${themeColors.glow} shadow-lg`}>
-        <CardHeader className="pb-3">
-          <CardTitle className={`flex items-center space-x-2 ${themeColors.text}`}>
-            <Target className="h-5 w-5" />
-            <span>Today's Progress</span>
-          </CardTitle>
-          <CardDescription>Keep building momentum!</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4 bg-transparent">
-            <div className="text-center">
-              <div className={`text-3xl font-bold ${themeColors.text}`}>
-                {completedToday}/{totalToday}
-              </div>
-              <p className="text-sm text-gray-600">Tasks Completed Today</p>
-            </div>
-            <Progress value={progressPercentage} className="h-3" />
-            <p className="text-center text-sm text-gray-600">
-              {Math.round(progressPercentage)}% of today's goals achieved
-            </p>
-            {totalToday === 0 && <p className="text-center text-sm text-gray-500 italic">No tasks scheduled for today</p>}
-          </div>
-        </CardContent>
-      </Card>
+      
 
-      <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg`}>
-        
-        
-      </Card>
+      
 
       <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg`}>
         <CardHeader className="pb-3">
@@ -174,30 +148,7 @@ export const TaskAnalytics = ({
         </CardContent>
       </Card>
 
-      <Card className={`bg-gradient-to-br from-green-50 to-emerald-50 border-green-200 ${themeColors.glow} shadow-lg`}>
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center space-x-2 text-green-800">
-            <Award className="h-5 w-5" />
-            <span>Achievement Stats</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4 text-center">
-            <div>
-              <div className="text-xl font-bold text-green-700">
-                {Math.round(averageCompletion)}%
-              </div>
-              <p className="text-xs text-gray-600">Weekly consistency</p>
-            </div>
-            <div>
-              <div className="text-xl font-bold text-green-700">
-                {totalHighPriority > 0 ? Math.round(highPriorityCompleted / totalHighPriority * 100) : 0}%
-              </div>
-              <p className="text-xs text-gray-600">Priority focus</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      
 
       
 
