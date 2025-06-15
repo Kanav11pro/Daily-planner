@@ -8,6 +8,7 @@ import { TaskModal } from "@/components/TaskModal";
 import { Celebration } from "@/components/Celebration";
 import { DateSelector } from "@/components/DateSelector";
 import { ProfileSection } from "@/components/ProfileSection";
+import { ProgressOverview } from "@/components/ProgressOverview";
 import { AuthForm } from "@/components/AuthForm";
 import { OnboardingQuiz, OnboardingAnswers } from "@/components/OnboardingQuiz";
 import { GuidedTour } from "@/components/GuidedTour";
@@ -163,7 +164,8 @@ const IndexContent = () => {
                     selectedDate={selectedDate}
                   />
                 </div>
-                <div>
+                <div className="space-y-6">
+                  <ProgressOverview tasks={tasks} />
                   <TaskAnalytics 
                     tasks={tasks} 
                     onOpenWeeklyAnalytics={() => setShowWeeklyAnalytics(true)}
@@ -213,7 +215,8 @@ const IndexContent = () => {
                 selectedDate={selectedDate}
               />
             </div>
-            <div>
+            <div className="space-y-6">
+              <ProgressOverview tasks={tasks} />
               <TaskAnalytics 
                 tasks={tasks} 
                 onOpenWeeklyAnalytics={() => setShowWeeklyAnalytics(true)}
