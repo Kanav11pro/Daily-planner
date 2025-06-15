@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { X, Search, BookOpen, FileText, GraduationCap, RotateCcw, Package, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -177,7 +178,7 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
     chapter: '',
     title: '',
     description: '',
-    priority: 'medium',
+    priority: '',
     duration: '',
     scheduled_date: selectedDate.toISOString().split('T')[0]
   });
@@ -208,7 +209,7 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title.trim() || !formData.subject || !formData.chapter) return;
+    if (!formData.title.trim() || !formData.subject || !formData.chapter || !formData.priority || !formData.duration) return;
     
     const taskData = {
       ...formData,
@@ -368,7 +369,7 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
             </div>
 
             <div>
-              <Label className="text-base font-medium mb-3 block">Priority</Label>
+              <Label className="text-base font-medium mb-3 block">Priority <span className="text-red-500">*</span></Label>
               <div className="grid grid-cols-3 gap-3">
                 {priorityOptions.map(option => (
                   <button
@@ -391,7 +392,7 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
             </div>
 
             <div>
-              <Label className="text-base font-medium mb-3 block">Duration</Label>
+              <Label className="text-base font-medium mb-3 block">Duration <span className="text-red-500">*</span></Label>
               <div className="grid grid-cols-2 gap-3">
                 {durationOptions.map(option => (
                   <button
@@ -429,9 +430,11 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
                 <p className="text-xs text-gray-600 mt-1">{formData.description}</p>
               )}
               <div className="flex items-center gap-2 mt-2">
-                <span className="text-xs px-2 py-1 rounded-full bg-indigo-100 text-indigo-700">
-                  {priorityOptions.find(p => p.value === formData.priority)?.label} Priority
-                </span>
+                {formData.priority && (
+                  <span className="text-xs px-2 py-1 rounded-full bg-indigo-100 text-indigo-700">
+                    {priorityOptions.find(p => p.value === formData.priority)?.label} Priority
+                  </span>
+                )}
                 {formData.duration && (
                   <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">
                     {formData.duration} mins
@@ -439,6 +442,11 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
                 )}
               </div>
             </div>
+            {(!formData.priority || !formData.duration) && (
+              <p className="text-center text-sm text-red-500">
+                Please select a priority and duration.
+              </p>
+            )}
           </div>
         );
 
@@ -512,6 +520,7 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
               <Button
                 onClick={handleSubmit}
                 className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 hover:scale-[1.02]"
+                disabled={!formData.priority || !formData.duration}
               >
                 Add Task
               </Button>
@@ -522,3 +531,4 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
     </div>
   );
 };
+
