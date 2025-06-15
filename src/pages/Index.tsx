@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Header } from "@/components/Header";
 import { QuoteSection } from "@/components/QuoteSection";
@@ -16,6 +15,7 @@ import { ThemeProvider, useTheme, getThemeColors } from "@/contexts/ThemeContext
 import { useAuth } from "@/hooks/useAuth";
 import { useTasks } from "@/hooks/useTasks";
 import { toast } from "sonner";
+import { formatInTimeZone } from "date-fns-tz";
 
 const IndexContent = () => {
   const [showTaskModal, setShowTaskModal] = useState(false);
@@ -30,15 +30,14 @@ const IndexContent = () => {
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
-  // Helper function to format date consistently for comparison
+  const IST_TIMEZONE = 'Asia/Kolkata';
+
+  // Helper function to format date consistently for comparison using IST
   const formatDateForComparison = (date: Date | string): string => {
     if (typeof date === 'string') {
       return date.split('T')[0];
     }
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return formatInTimeZone(date, IST_TIMEZONE, 'yyyy-MM-dd');
   };
 
   const handleAddTask = async (taskData: any) => {
@@ -74,7 +73,7 @@ const IndexContent = () => {
 
   const getTasksForDate = (date: Date) => {
     const dateString = formatDateForComparison(date);
-    console.log('Filtering tasks for date:', dateString);
+    console.log('Filtering tasks for date (IST):', dateString);
     console.log('Available tasks:', tasks.map(t => ({ id: t.id, title: t.title, scheduled_date: t.scheduled_date })));
     
     const filteredTasks = tasks.filter(task => {

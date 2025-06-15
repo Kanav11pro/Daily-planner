@@ -1,7 +1,9 @@
 
-import { TrendingUp, Target, Calendar, Trophy } from "lucide-react";
+import { TrendingUp, Target, Calendar, Trophy, Clock, CheckCircle2, Circle, Flame, Zap } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { format } from "date-fns";
+import { formatInTimeZone, toZonedTime } from "date-fns-tz";
 
 interface Task {
   id: string;
@@ -19,19 +21,24 @@ interface ProgressOverviewProps {
 }
 
 export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
+  const IST_TIMEZONE = 'Asia/Kolkata';
+  
+  // Helper function to get current IST date
+  const getCurrentISTDate = (): string => {
+    return formatInTimeZone(new Date(), IST_TIMEZONE, 'yyyy-MM-dd');
+  };
+
   // Helper function to format date consistently
   const formatDateForComparison = (date: Date | string): string => {
     if (typeof date === 'string') {
       return date.split('T')[0];
     }
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return formatInTimeZone(date, IST_TIMEZONE, 'yyyy-MM-dd');
   };
 
-  const today = formatDateForComparison(new Date());
-  console.log('Today\'s date for progress:', today);
+  const today = getCurrentISTDate();
+  const currentTime = formatInTimeZone(new Date(), IST_TIMEZONE, 'hh:mm a');
+  console.log('Today\'s IST date for progress:', today);
   
   const todayTasks = tasks.filter(task => {
     const taskDate = formatDateForComparison(task.scheduled_date);
@@ -44,6 +51,18 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
   const completedToday = todayTasks.filter(task => task.completed).length;
   const totalToday = todayTasks.length;
   const progressPercentage = totalToday > 0 ? (completedToday / totalToday) * 100 : 0;
+
+  // Calculate total duration and completed duration
+  const totalDuration = todayTasks.reduce((acc, task) => acc + (task.duration || 0), 0);
+  const completedDuration = todayTasks
+    .filter(task => task.completed)
+    .reduce((acc, task) => acc + (task.duration || 0), 0);
+
+  // Get priority breakdown
+  const priorityBreakdown = todayTasks.reduce((acc, task) => {
+    acc[task.priority] = (acc[task.priority] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
   const subjectProgress = tasks.reduce((acc, task) => {
     if (!acc[task.subject]) {
@@ -70,32 +89,128 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
 
   const weeklyStreak = daysWithCompletedTasks;
 
+  // Get motivational message based on progress
+  const getMotivationalMessage = () => {
+    if (progressPercentage === 100) return "🎉 Perfect day! You're on fire!";
+    if (progressPercentage >= 75) return "🔥 Almost there! Keep pushing!";
+    if (progressPercentage >= 50) return "💪 Great progress! You're doing amazing!";
+    if (progressPercentage >= 25) return "🚀 Good start! Let's keep the momentum!";
+    if (progressPercentage > 0) return "✨ Every step counts! You've got this!";
+    return "🎯 Ready to conquer today? Let's start!";
+  };
+
   return (
     <div className="space-y-6">
-      <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-indigo-200">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-indigo-800">
-            <Target className="h-5 w-5" />
-            <span>Today's Progress</span>
-          </CardTitle>
-          <CardDescription>Keep up the momentum!</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-indigo-700">
-                {completedToday}/{totalToday}
+      {/* Enhanced Today's Progress Card */}
+      <Card className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 border-indigo-200 shadow-lg relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0">
+          <div className="absolute -right-8 -top-8 w-32 h-32 bg-indigo-200/30 rounded-full blur-2xl"></div>
+          <div className="absolute -left-8 -bottom-8 w-28 h-28 bg-purple-200/30 rounded-full blur-xl"></div>
+          <div className="absolute right-1/3 top-1/4 w-20 h-20 bg-pink-200/20 rounded-full blur-lg"></div>
+        </div>
+        
+        <CardHeader className="relative z-10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <Target className="h-6 w-6 text-indigo-600" />
+                {progressPercentage > 0 && (
+                  <div className="absolute -top-1 -right-1">
+                    <Flame className="h-4 w-4 text-orange-500 animate-pulse" />
+                  </div>
+                )}
               </div>
-              <p className="text-sm text-gray-600">Tasks Completed</p>
+              <div>
+                <CardTitle className="text-indigo-800 text-xl">Today's Progress</CardTitle>
+                <CardDescription className="text-indigo-600 font-medium">
+                  {format(toZonedTime(new Date(), IST_TIMEZONE), 'EEEE, MMMM do, yyyy')} • {currentTime} IST
+                </CardDescription>
+              </div>
             </div>
-            <Progress value={progressPercentage} className="h-3" />
-            <p className="text-center text-sm text-gray-600">
-              {Math.round(progressPercentage)}% of today's goals achieved
-            </p>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-indigo-700">{Math.round(progressPercentage)}%</div>
+              <div className="text-sm text-indigo-600">Complete</div>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="relative z-10">
+          <div className="space-y-6">
+            {/* Main Progress Section */}
+            <div className="text-center space-y-4">
+              <div className="flex items-center justify-center space-x-8">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
+                    <CheckCircle2 className="h-6 w-6 text-green-600" />
+                    <span>{completedToday}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 font-medium">Completed</p>
+                </div>
+                <div className="w-px h-12 bg-indigo-200"></div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
+                    <Circle className="h-6 w-6 text-gray-400" />
+                    <span>{totalToday - completedToday}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 font-medium">Remaining</p>
+                </div>
+                <div className="w-px h-12 bg-indigo-200"></div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
+                    <Clock className="h-6 w-6 text-blue-600" />
+                    <span>{Math.floor(completedDuration / 60)}h {completedDuration % 60}m</span>
+                  </div>
+                  <p className="text-sm text-gray-600 font-medium">Studied</p>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Progress value={progressPercentage} className="h-4 bg-white/50" />
+                <div className="flex justify-between text-xs text-gray-600">
+                  <span>0%</span>
+                  <span className="font-bold text-indigo-700">{completedToday}/{totalToday} tasks</span>
+                  <span>100%</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Motivational Message */}
+            <div className="text-center p-4 bg-gradient-to-r from-indigo-100/50 to-purple-100/50 rounded-xl border border-indigo-200/50">
+              <p className="text-lg font-semibold text-indigo-800">{getMotivationalMessage()}</p>
+            </div>
+
+            {/* Today's Task Breakdown */}
+            {totalToday > 0 && (
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center p-3 bg-white/50 rounded-lg border border-indigo-100">
+                  <div className="text-lg font-bold text-red-600">{priorityBreakdown.high || 0}</div>
+                  <div className="text-xs text-gray-600">High Priority</div>
+                </div>
+                <div className="text-center p-3 bg-white/50 rounded-lg border border-indigo-100">
+                  <div className="text-lg font-bold text-yellow-600">{priorityBreakdown.medium || 0}</div>
+                  <div className="text-xs text-gray-600">Medium Priority</div>
+                </div>
+                <div className="text-center p-3 bg-white/50 rounded-lg border border-indigo-100">
+                  <div className="text-lg font-bold text-green-600">{priorityBreakdown.low || 0}</div>
+                  <div className="text-xs text-gray-600">Low Priority</div>
+                </div>
+              </div>
+            )}
+
+            {/* Quick Actions */}
+            {totalToday === 0 && (
+              <div className="text-center p-6 bg-white/30 rounded-xl border border-indigo-200/50">
+                <Zap className="h-12 w-12 text-indigo-400 mx-auto mb-2" />
+                <p className="text-indigo-700 font-medium">No tasks scheduled for today</p>
+                <p className="text-sm text-indigo-600 mt-1">Add some tasks to start your productive day!</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
 
+      {/* Subject Progress Card */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -123,6 +238,7 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
         </CardContent>
       </Card>
 
+      {/* Study Streak Card */}
       <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2 text-yellow-800">
@@ -138,6 +254,7 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
         </CardContent>
       </Card>
 
+      {/* Weekly Summary */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -150,8 +267,8 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
             {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, index) => {
               const date = new Date();
               date.setDate(date.getDate() - (6 - index));
-              const dateString = date.toISOString().split('T')[0];
-              const dayTasks = tasks.filter(task => task.scheduled_date === dateString);
+              const dateString = formatDateForComparison(date);
+              const dayTasks = tasks.filter(task => formatDateForComparison(task.scheduled_date) === dateString);
               const hasCompletedTasks = dayTasks.some(task => task.completed);
               
               return (

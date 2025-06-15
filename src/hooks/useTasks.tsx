@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
+import { formatInTimeZone } from 'date-fns-tz';
 
 export interface Task {
   id: string;
@@ -21,16 +21,16 @@ export interface Task {
   createdAt?: string;
 }
 
-// Helper function to format date consistently
+const IST_TIMEZONE = 'Asia/Kolkata';
+
+// Helper function to format date consistently in IST
 const formatDateForDB = (date: Date | string): string => {
   if (typeof date === 'string') {
     // If it's already a string, ensure it's in YYYY-MM-DD format
     return date.split('T')[0];
   }
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  // Convert to IST and format
+  return formatInTimeZone(date, IST_TIMEZONE, 'yyyy-MM-dd');
 };
 
 export const useTasks = () => {
@@ -75,7 +75,7 @@ export const useTasks = () => {
     if (!user) return;
 
     try {
-      // Ensure the scheduled_date is in the correct format
+      // Ensure the scheduled_date is in the correct format using IST
       const formattedTaskData = {
         ...taskData,
         scheduled_date: formatDateForDB(taskData.scheduled_date),
@@ -108,10 +108,10 @@ export const useTasks = () => {
 
   const updateTask = async (id: string, updates: Partial<Task>) => {
     try {
-      // Remove fields that don't exist in the database schema and format dates
+      // Remove fields that don't exist in the database schema and format dates using IST
       const { createdAt, ...cleanUpdates } = updates;
       
-      // If scheduled_date is being updated, format it properly
+      // If scheduled_date is being updated, format it properly using IST
       if (cleanUpdates.scheduled_date) {
         cleanUpdates.scheduled_date = formatDateForDB(cleanUpdates.scheduled_date);
       }
