@@ -1,3 +1,4 @@
+
 import { TrendingUp, Target, Calendar, Trophy, Clock, CheckCircle2, Circle, Flame, Zap } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -99,7 +100,7 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Enhanced Today's Progress Card - Mobile Optimized */}
+      {/* Enhanced Today's Progress Card - Improved Desktop Layout */}
       <Card className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 border-indigo-200 shadow-lg relative overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute inset-0">
@@ -109,10 +110,10 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
         </div>
         
         <CardHeader className="relative z-10 p-4 sm:p-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
             <div className="flex items-center space-x-2 sm:space-x-3">
               <div className="relative">
-                <Target className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-600" />
+                <Target className="h-5 w-5 sm:h-7 sm:w-7 text-indigo-600" />
                 {progressPercentage > 0 && (
                   <div className="absolute -top-1 -right-1">
                     <Flame className="h-3 w-3 sm:h-4 sm:w-4 text-orange-500 animate-pulse" />
@@ -120,7 +121,7 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
                 )}
               </div>
               <div>
-                <CardTitle className="text-indigo-800 text-lg sm:text-xl">Today's Progress</CardTitle>
+                <CardTitle className="text-indigo-800 text-lg sm:text-2xl font-bold">Today's Progress</CardTitle>
                 <CardDescription className="text-indigo-600 font-medium text-xs sm:text-sm">
                   <div className="hidden sm:block">
                     {format(toZonedTime(new Date(), IST_TIMEZONE), 'EEEE, MMMM do, yyyy')} • {currentTime} IST
@@ -131,47 +132,49 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
                 </CardDescription>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-xl sm:text-2xl font-bold text-indigo-700">{Math.round(progressPercentage)}%</div>
-              <div className="text-xs sm:text-sm text-indigo-600">Complete</div>
+            <div className="text-center sm:text-right">
+              <div className="text-3xl sm:text-4xl font-bold text-indigo-700">{Math.round(progressPercentage)}%</div>
+              <div className="text-sm sm:text-base text-indigo-600 font-medium">Complete</div>
             </div>
           </div>
         </CardHeader>
 
         <CardContent className="relative z-10 p-4 sm:p-6 pt-0">
           <div className="space-y-4 sm:space-y-6">
-            {/* Main Progress Section - Mobile Optimized */}
-            <div className="text-center space-y-3 sm:space-y-4">
-              <div className="flex items-center justify-center space-x-4 sm:space-x-8">
-                <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
-                    <CheckCircle2 className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
-                    <span>{completedToday}</span>
+            {/* Main Progress Section - Better Desktop Layout */}
+            <div className="text-center space-y-4 sm:space-y-6">
+              <div className="grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto">
+                <div className="text-center p-3 sm:p-4 bg-white/40 rounded-xl border border-indigo-100 backdrop-blur-sm">
+                  <div className="flex items-center justify-center space-x-1 mb-2">
+                    <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
                   </div>
+                  <div className="text-2xl sm:text-4xl font-bold text-indigo-700">{completedToday}</div>
                   <p className="text-xs sm:text-sm text-gray-600 font-medium">Completed</p>
                 </div>
-                <div className="w-px h-8 sm:h-12 bg-indigo-200"></div>
-                <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
-                    <Circle className="h-4 w-4 sm:h-6 sm:w-6 text-gray-400" />
-                    <span>{totalToday - completedToday}</span>
+                
+                <div className="text-center p-3 sm:p-4 bg-white/40 rounded-xl border border-indigo-100 backdrop-blur-sm">
+                  <div className="flex items-center justify-center space-x-1 mb-2">
+                    <Circle className="h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
                   </div>
+                  <div className="text-2xl sm:text-4xl font-bold text-indigo-700">{totalToday - completedToday}</div>
                   <p className="text-xs sm:text-sm text-gray-600 font-medium">Remaining</p>
                 </div>
-                <div className="w-px h-8 sm:h-12 bg-indigo-200"></div>
-                <div className="text-center">
-                  <div className="text-lg sm:text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
-                    <Clock className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
-                    <div className="flex flex-col sm:flex-row sm:space-x-1">
-                      <span className="text-base sm:text-3xl">{Math.floor(completedDuration / 60)}h</span>
-                      <span className="text-base sm:text-3xl">{completedDuration % 60}m</span>
+                
+                <div className="text-center p-3 sm:p-4 bg-white/40 rounded-xl border border-indigo-100 backdrop-blur-sm">
+                  <div className="flex items-center justify-center space-x-1 mb-2">
+                    <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                  </div>
+                  <div className="text-xl sm:text-4xl font-bold text-indigo-700">
+                    <div className="flex items-center justify-center space-x-1">
+                      <span>{Math.floor(completedDuration / 60)}h</span>
+                      <span>{completedDuration % 60}m</span>
                     </div>
                   </div>
                   <p className="text-xs sm:text-sm text-gray-600 font-medium">Studied</p>
                 </div>
               </div>
               
-              <div className="space-y-2">
+              <div className="space-y-3 max-w-2xl mx-auto">
                 <Progress value={progressPercentage} className="h-3 sm:h-4 bg-white/50" />
                 <div className="flex justify-between text-xs text-gray-600">
                   <span>0%</span>
@@ -181,35 +184,35 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
               </div>
             </div>
 
-            {/* Motivational Message - Mobile Optimized */}
-            <div className="text-center p-3 sm:p-4 bg-gradient-to-r from-indigo-100/50 to-purple-100/50 rounded-xl border border-indigo-200/50">
-              <p className="text-base sm:text-lg font-semibold text-indigo-800">{getMotivationalMessage()}</p>
+            {/* Motivational Message - Better Desktop Styling */}
+            <div className="text-center p-4 sm:p-6 bg-gradient-to-r from-indigo-100/60 to-purple-100/60 rounded-xl border border-indigo-200/50 backdrop-blur-sm max-w-2xl mx-auto">
+              <p className="text-base sm:text-xl font-semibold text-indigo-800">{getMotivationalMessage()}</p>
             </div>
 
-            {/* Today's Task Breakdown - Mobile Optimized */}
+            {/* Today's Task Breakdown - Better Desktop Grid */}
             {totalToday > 0 && (
-              <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                <div className="text-center p-2 sm:p-3 bg-white/50 rounded-lg border border-indigo-100">
-                  <div className="text-base sm:text-lg font-bold text-red-600">{priorityBreakdown.high || 0}</div>
-                  <div className="text-xs text-gray-600">High Priority</div>
+              <div className="grid grid-cols-3 gap-3 sm:gap-6 max-w-2xl mx-auto">
+                <div className="text-center p-3 sm:p-4 bg-white/50 rounded-xl border border-indigo-100 backdrop-blur-sm">
+                  <div className="text-xl sm:text-2xl font-bold text-red-600 mb-1">{priorityBreakdown.high || 0}</div>
+                  <div className="text-xs sm:text-sm text-gray-600 font-medium">High Priority</div>
                 </div>
-                <div className="text-center p-2 sm:p-3 bg-white/50 rounded-lg border border-indigo-100">
-                  <div className="text-base sm:text-lg font-bold text-yellow-600">{priorityBreakdown.medium || 0}</div>
-                  <div className="text-xs text-gray-600">Medium Priority</div>
+                <div className="text-center p-3 sm:p-4 bg-white/50 rounded-xl border border-indigo-100 backdrop-blur-sm">
+                  <div className="text-xl sm:text-2xl font-bold text-yellow-600 mb-1">{priorityBreakdown.medium || 0}</div>
+                  <div className="text-xs sm:text-sm text-gray-600 font-medium">Medium Priority</div>
                 </div>
-                <div className="text-center p-2 sm:p-3 bg-white/50 rounded-lg border border-indigo-100">
-                  <div className="text-base sm:text-lg font-bold text-green-600">{priorityBreakdown.low || 0}</div>
-                  <div className="text-xs text-gray-600">Low Priority</div>
+                <div className="text-center p-3 sm:p-4 bg-white/50 rounded-xl border border-indigo-100 backdrop-blur-sm">
+                  <div className="text-xl sm:text-2xl font-bold text-green-600 mb-1">{priorityBreakdown.low || 0}</div>
+                  <div className="text-xs sm:text-sm text-gray-600 font-medium">Low Priority</div>
                 </div>
               </div>
             )}
 
-            {/* Quick Actions - No Tasks State */}
+            {/* No Tasks State - Better Desktop Layout */}
             {totalToday === 0 && (
-              <div className="text-center p-4 sm:p-6 bg-white/30 rounded-xl border border-indigo-200/50">
-                <Zap className="h-8 w-8 sm:h-12 sm:w-12 text-indigo-400 mx-auto mb-2" />
-                <p className="text-sm sm:text-base text-indigo-700 font-medium">No tasks scheduled for today</p>
-                <p className="text-xs sm:text-sm text-indigo-600 mt-1">Add some tasks to start your productive day!</p>
+              <div className="text-center p-6 sm:p-8 bg-white/30 rounded-xl border border-indigo-200/50 backdrop-blur-sm max-w-2xl mx-auto">
+                <Zap className="h-12 w-12 sm:h-16 sm:w-16 text-indigo-400 mx-auto mb-3" />
+                <p className="text-base sm:text-lg text-indigo-700 font-medium mb-2">No tasks scheduled for today</p>
+                <p className="text-sm sm:text-base text-indigo-600">Add some tasks to start your productive day!</p>
               </div>
             )}
           </div>
