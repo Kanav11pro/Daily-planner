@@ -1,7 +1,10 @@
-
 import { useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { Calendar, TrendingUp, Clock, Target, Award, Book, Brain, Flame, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell 
+} from 'recharts';
+import { 
+  Calendar, TrendingUp, Clock, Target, Award, Book, Brain, Flame, X, ChevronLeft, ChevronRight 
+} from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
@@ -97,144 +100,156 @@ export const WeeklyAnalytics = ({ tasks, onClose }: WeeklyAnalyticsProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className={`${themeColors.card} rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-y-auto`}>
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-gradient-to-br from-white via-purple-50 to-violet-50 dark:from-neutral-900 dark:via-indigo-950 dark:to-neutral-900 rounded-3xl shadow-2xl w-full max-w-5xl max-h-[92vh] overflow-y-auto border-2 border-indigo-100 dark:border-neutral-800 animate-fade-in">
+        {/* Modal header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-indigo-100 dark:border-neutral-800 bg-white/70 dark:bg-indigo-950/70 rounded-t-3xl">
           <div className="flex items-center space-x-4">
-            <Brain className="h-8 w-8 text-purple-600" />
+            <Brain className="h-9 w-9 text-purple-600 dark:text-purple-300" />
             <div>
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent tracking-tight">
                 Study Analytics
               </h2>
-              <p className="text-gray-600">Deep insights into your learning journey</p>
+              <p className="text-gray-700 dark:text-gray-300 text-sm font-medium">Insights into your learning journey</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:scale-110"
+            className="text-gray-400 hover:text-purple-500 transition-colors p-2 hover:scale-110 focus:outline-none"
           >
             <X className="h-6 w-6" />
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-8">
+          {/* Week Picker */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={() => setSelectedWeek(selectedWeek + 1)}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 bg-white dark:bg-neutral-900 border border-indigo-100 dark:border-neutral-800 shadow hover:scale-105"
               >
                 <ChevronLeft className="h-4 w-4" />
-                <span>Previous</span>
+                <span className="font-semibold">Previous</span>
               </Button>
               <div className="text-center">
-                <h3 className="font-semibold text-lg">Week of {formatWeekRange()}</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-bold text-lg tracking-tight">{formatWeekRange()}</h3>
+                <p className="text-xs text-gray-500">
                   {selectedWeek === 0 ? 'Current Week' : `${selectedWeek} week${selectedWeek > 1 ? 's' : ''} ago`}
                 </p>
               </div>
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={() => setSelectedWeek(Math.max(0, selectedWeek - 1))}
                 disabled={selectedWeek === 0}
-                className="flex items-center space-x-2"
+                className="flex items-center space-x-2 bg-white dark:bg-neutral-900 border border-indigo-100 dark:border-neutral-800 shadow hover:scale-105"
               >
-                <span>Next</span>
+                <span className="font-semibold">Next</span>
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center space-x-2 text-blue-800">
+          {/* Statistic Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <Card className="bg-gradient-to-br from-blue-100/80 via-indigo-100/90 to-white border-blue-200 dark:from-indigo-900/70 dark:to-neutral-950 dark:border-neutral-800 shadow-lg">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center space-x-2 text-blue-800 dark:text-blue-300 text-base font-bold">
                   <Target className="h-5 w-5" />
-                  <span>Completion Rate</span>
+                  <span>Completion</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-blue-700">{weeklyCompletionRate}%</div>
-                <p className="text-sm text-gray-600">{totalCompleted}/{totalTasks} tasks</p>
+                <div className="text-3xl font-bolder text-blue-700 dark:text-blue-300">{weeklyCompletionRate}%</div>
+                <p className="text-xs text-gray-500 font-medium">{totalCompleted}/{totalTasks} tasks done</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center space-x-2 text-green-800">
+            <Card className="bg-gradient-to-br from-green-100/80 via-emerald-50/80 to-white border-green-200 dark:from-emerald-900/60 dark:to-neutral-950 dark:border-neutral-800 shadow-lg">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center space-x-2 text-green-800 dark:text-green-300 text-base font-bold">
                   <Clock className="h-5 w-5" />
                   <span>Study Time</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-green-700">{totalStudyTime}</div>
-                <p className="text-sm text-gray-600">minutes focused</p>
+                <div className="text-3xl font-bolder text-green-700 dark:text-green-300">{totalStudyTime}m</div>
+                <p className="text-xs text-gray-500 font-medium">minutes focused</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center space-x-2 text-purple-800">
+            <Card className="bg-gradient-to-br from-purple-100/80 via-violet-50/80 to-white border-purple-200 dark:from-violet-900/60 dark:to-neutral-950 dark:border-neutral-800 shadow-lg">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center space-x-2 text-purple-800 dark:text-purple-300 text-base font-bold">
                   <Book className="h-5 w-5" />
                   <span>Subjects</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-purple-700">{Object.keys(subjectDistribution).length}</div>
-                <p className="text-sm text-gray-600">subjects studied</p>
+                <div className="text-3xl font-bolder text-purple-700 dark:text-purple-300">{Object.keys(subjectDistribution).length}</div>
+                <p className="text-xs text-gray-500 font-medium">subjects studied</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-orange-50 to-red-50 border-orange-200">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center space-x-2 text-orange-800">
+            <Card className="bg-gradient-to-br from-orange-100/80 via-red-50/90 to-white border-orange-200 dark:from-orange-900/60 dark:to-neutral-950 dark:border-neutral-800 shadow-lg">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center space-x-2 text-orange-800 dark:text-orange-300 text-base font-bold">
                   <Flame className="h-5 w-5" />
                   <span>Peak Day</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-orange-700">
+                <div className="text-3xl font-bolder text-orange-700 dark:text-orange-300">
                   {dailyProgress.reduce((max, day) => day.percentage > max.percentage ? day : max, dailyProgress[0])?.day || 'N/A'}
                 </div>
-                <p className="text-sm text-gray-600">best performance</p>
+                <p className="text-xs text-gray-500 font-medium">best performance</p>
               </CardContent>
             </Card>
           </div>
 
+          {/* Analytics Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
+            {/* Daily Progress Chart */}
+            <Card className="bg-white/70 dark:bg-indigo-950/40 shadow rounded-2xl border border-indigo-100 dark:border-neutral-800">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <TrendingUp className="h-5 w-5 text-blue-600" />
+                <CardTitle className="flex items-center space-x-2 text-lg text-indigo-700 dark:text-indigo-200 font-bold">
+                  <TrendingUp className="h-5 w-5" />
                   <span>Daily Progress</span>
                 </CardTitle>
+                <CardDescription className="text-xs text-gray-500">
+                  Track the number of tasks completed and total assigned per day.
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={250}>
-                  <BarChart data={dailyProgress}>
-                    <CartesianGrid strokeDasharray="3 3" />
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={dailyProgress} barGap={3}>
+                    <CartesianGrid strokeDasharray="3 5" vertical={false} className="opacity-30"/>
                     <XAxis dataKey="day" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="completed" fill="#8884d8" name="Completed" />
-                    <Bar dataKey="total" fill="#82ca9d" name="Total Tasks" />
+                    <Bar dataKey="completed" fill="#6366f1" name="Completed" radius={[5, 5, 0, 0]} />
+                    <Bar dataKey="total" fill="#d1fae5" name="Total" radius={[5, 5, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
 
-            <Card>
+            {/* Subject Distribution Chart */}
+            <Card className="bg-white/70 dark:bg-indigo-950/40 shadow rounded-2xl border border-indigo-100 dark:border-neutral-800">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Award className="h-5 w-5 text-purple-600" />
+                <CardTitle className="flex items-center space-x-2 text-lg text-purple-700 dark:text-purple-200 font-bold">
+                  <Award className="h-5 w-5" />
                   <span>Subject Distribution</span>
                 </CardTitle>
+                <CardDescription className="text-xs text-gray-500">
+                  See which subjects you completed most in the week.
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={220}>
                   <PieChart>
                     <Pie
                       data={pieData}
@@ -242,7 +257,7 @@ export const WeeklyAnalytics = ({ tasks, onClose }: WeeklyAnalyticsProps) => {
                       cy="50%"
                       labelLine={false}
                       label={({ name, value }) => `${name}: ${value}`}
-                      outerRadius={80}
+                      outerRadius={75}
                       fill="#8884d8"
                       dataKey="value"
                     >
@@ -257,25 +272,31 @@ export const WeeklyAnalytics = ({ tasks, onClose }: WeeklyAnalyticsProps) => {
             </Card>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Calendar className="h-5 w-5 text-green-600" />
-                <span>Study Time Trend</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={dailyProgress}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="studyTime" stroke="#8884d8" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+          {/* Study Time Trend Chart */}
+          <div>
+            <Card className="bg-white/70 dark:bg-indigo-950/40 shadow rounded-2xl border border-indigo-100 dark:border-neutral-800">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2 text-lg text-green-700 dark:text-green-200 font-bold">
+                  <Calendar className="h-5 w-5" />
+                  <span>Study Time Trend</span>
+                </CardTitle>
+                <CardDescription className="text-xs text-gray-500">
+                  Your study time (minutes) for each day this week.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={180}>
+                  <LineChart data={dailyProgress}>
+                    <CartesianGrid strokeDasharray="3 5" vertical={false} className="opacity-25"/>
+                    <XAxis dataKey="day" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="studyTime" stroke="#34d399" strokeWidth={2.5} dot={{ r: 4 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
