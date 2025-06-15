@@ -225,13 +225,12 @@ const IndexContent = () => {
           </div>
         </main>
 
-        {showTaskModal && (
-          <TaskModal
-            onClose={() => setShowTaskModal(false)}
-            onAddTask={handleAddTask}
-            selectedDate={selectedDate}
-          />
-        )}
+        <TaskModal
+          isOpen={showTaskModal}
+          onClose={() => setShowTaskModal(false)}
+          onAddTask={handleAddTask}
+          selectedDate={selectedDate}
+        />
 
         {showWeeklyAnalytics && (
           <WeeklyAnalytics
