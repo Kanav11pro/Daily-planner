@@ -56,7 +56,6 @@ export const TaskModal = ({ isOpen, onClose, onAddTask, selectedDate }: TaskModa
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedSubject, setSelectedSubject] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [chapters, setChapters] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     subject: '',
     chapter: '',
@@ -80,7 +79,6 @@ export const TaskModal = ({ isOpen, onClose, onAddTask, selectedDate }: TaskModa
     setCurrentStep(1);
     setSelectedSubject('');
     setSearchQuery('');
-    setChapters([]);
     setFormData({
       subject: '',
       chapter: '',
