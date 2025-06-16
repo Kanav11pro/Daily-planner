@@ -176,7 +176,7 @@ export const TaskAnalytics = ({
       </Card>
 
       <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg hover:shadow-xl transition-all duration-300`}>
-        <CardContent className="p-6">
+        <CardContent className="p-6 bg-lime-400">
           <Button onClick={onOpenWeeklyAnalytics} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl transition-all duration-300 hover:scale-105 font-normal px-0 py-[22px]">
             <div className="flex items-center justify-center space-x-3">
               <BarChart3 className="h-6 w-6" />
