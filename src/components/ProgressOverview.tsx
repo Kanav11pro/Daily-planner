@@ -1,3 +1,4 @@
+
 import { TrendingUp, Target, Calendar, Trophy, Clock, CheckCircle2, Circle, Flame, Zap } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -112,15 +113,15 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 sm:space-x-3">
               <div className="relative">
-                <Target className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-600" />
+                <Target className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600" />
                 {progressPercentage > 0 && (
                   <div className="absolute -top-1 -right-1">
-                    <Flame className="h-3 w-3 sm:h-4 sm:w-4 text-orange-500 animate-pulse" />
+                    <Flame className="h-3 w-3 text-orange-500 animate-pulse" />
                   </div>
                 )}
               </div>
               <div>
-                <CardTitle className="text-indigo-800 text-lg sm:text-xl">Today's Progress</CardTitle>
+                <CardTitle className="text-indigo-800 text-base sm:text-lg lg:text-xl">Today's Progress</CardTitle>
                 <CardDescription className="text-indigo-600 font-medium text-xs sm:text-sm">
                   <div className="hidden sm:block">
                     {format(toZonedTime(new Date(), IST_TIMEZONE), 'EEEE, MMMM do, yyyy')} • {currentTime} IST
@@ -132,8 +133,8 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
               </div>
             </div>
             <div className="text-right">
-              <div className="text-xl sm:text-2xl font-bold text-indigo-700">{Math.round(progressPercentage)}%</div>
-              <div className="text-xs sm:text-sm text-indigo-600">Complete</div>
+              <div className="text-lg sm:text-xl lg:text-2xl font-bold text-indigo-700">{Math.round(progressPercentage)}%</div>
+              <div className="text-xs lg:text-sm text-indigo-600">Complete</div>
             </div>
           </div>
         </CardHeader>
@@ -142,32 +143,32 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
           <div className="space-y-4 sm:space-y-6">
             {/* Main Progress Section - Mobile Optimized */}
             <div className="text-center space-y-3 sm:space-y-4">
-              <div className="flex items-center justify-center space-x-4 sm:space-x-8">
+              <div className="flex items-center justify-center space-x-4 sm:space-x-6 lg:space-x-8">
                 <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
-                    <CheckCircle2 className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
+                  <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
+                    <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-green-600" />
                     <span>{completedToday}</span>
                   </div>
-                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Completed</p>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Completed</p>
                 </div>
-                <div className="w-px h-8 sm:h-12 bg-indigo-200"></div>
+                <div className="w-px h-8 sm:h-10 lg:h-12 bg-indigo-200"></div>
                 <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
-                    <Circle className="h-4 w-4 sm:h-6 sm:w-6 text-gray-400" />
+                  <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
+                    <Circle className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-gray-400" />
                     <span>{totalToday - completedToday}</span>
                   </div>
-                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Remaining</p>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Remaining</p>
                 </div>
-                <div className="w-px h-8 sm:h-12 bg-indigo-200"></div>
+                <div className="w-px h-8 sm:h-10 lg:h-12 bg-indigo-200"></div>
                 <div className="text-center">
-                  <div className="text-lg sm:text-3xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
-                    <Clock className="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
+                  <div className="text-lg sm:text-xl lg:text-2xl font-bold text-indigo-700 flex items-center justify-center space-x-1">
+                    <Clock className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-blue-600" />
                     <div className="flex flex-col sm:flex-row sm:space-x-1">
-                      <span className="text-base sm:text-3xl">{Math.floor(completedDuration / 60)}h</span>
-                      <span className="text-base sm:text-3xl">{completedDuration % 60}m</span>
+                      <span className="text-base sm:text-xl lg:text-2xl">{Math.floor(completedDuration / 60)}h</span>
+                      <span className="text-base sm:text-xl lg:text-2xl">{completedDuration % 60}m</span>
                     </div>
                   </div>
-                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Studied</p>
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Studied</p>
                 </div>
               </div>
               
@@ -183,22 +184,22 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
 
             {/* Motivational Message - Mobile Optimized */}
             <div className="text-center p-3 sm:p-4 bg-gradient-to-r from-indigo-100/50 to-purple-100/50 rounded-xl border border-indigo-200/50">
-              <p className="text-base sm:text-lg font-semibold text-indigo-800">{getMotivationalMessage()}</p>
+              <p className="text-sm sm:text-base lg:text-lg font-semibold text-indigo-800">{getMotivationalMessage()}</p>
             </div>
 
             {/* Today's Task Breakdown - Mobile Optimized */}
             {totalToday > 0 && (
-              <div className="grid grid-cols-3 gap-2 sm:gap-4">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
                 <div className="text-center p-2 sm:p-3 bg-white/50 rounded-lg border border-indigo-100">
-                  <div className="text-base sm:text-lg font-bold text-red-600">{priorityBreakdown.high || 0}</div>
+                  <div className="text-sm sm:text-base lg:text-lg font-bold text-red-600">{priorityBreakdown.high || 0}</div>
                   <div className="text-xs text-gray-600">High Priority</div>
                 </div>
                 <div className="text-center p-2 sm:p-3 bg-white/50 rounded-lg border border-indigo-100">
-                  <div className="text-base sm:text-lg font-bold text-yellow-600">{priorityBreakdown.medium || 0}</div>
+                  <div className="text-sm sm:text-base lg:text-lg font-bold text-yellow-600">{priorityBreakdown.medium || 0}</div>
                   <div className="text-xs text-gray-600">Medium Priority</div>
                 </div>
                 <div className="text-center p-2 sm:p-3 bg-white/50 rounded-lg border border-indigo-100">
-                  <div className="text-base sm:text-lg font-bold text-green-600">{priorityBreakdown.low || 0}</div>
+                  <div className="text-sm sm:text-base lg:text-lg font-bold text-green-600">{priorityBreakdown.low || 0}</div>
                   <div className="text-xs text-gray-600">Low Priority</div>
                 </div>
               </div>
@@ -207,8 +208,8 @@ export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
             {/* Quick Actions - No Tasks State */}
             {totalToday === 0 && (
               <div className="text-center p-4 sm:p-6 bg-white/30 rounded-xl border border-indigo-200/50">
-                <Zap className="h-8 w-8 sm:h-12 sm:w-12 text-indigo-400 mx-auto mb-2" />
-                <p className="text-sm sm:text-base text-indigo-700 font-medium">No tasks scheduled for today</p>
+                <Zap className="h-6 w-6 sm:h-8 sm:w-8 lg:h-10 lg:w-10 text-indigo-400 mx-auto mb-2" />
+                <p className="text-sm sm:text-base font-medium text-indigo-700">No tasks scheduled for today</p>
                 <p className="text-xs sm:text-sm text-indigo-600 mt-1">Add some tasks to start your productive day!</p>
               </div>
             )}
