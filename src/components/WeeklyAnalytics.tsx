@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell 
 } from 'recharts';
 import { 
-  Calendar, TrendingUp, Clock, Target, Award, Book, Brain, Flame, X, ChevronLeft, ChevronRight, BarChart3, Activity, Zap 
+  Calendar, TrendingUp, Clock, Target, Award, Book, Brain, Flame, X, ChevronLeft, ChevronRight 
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -85,7 +85,7 @@ export const WeeklyAnalytics = ({ tasks, onClose }: WeeklyAnalyticsProps) => {
     name: subject,
     value: data.completed,
     total: data.total,
-    color: ['#8b5cf6', '#06b6d4', '#f59e0b', '#ef4444', '#10b981'][index % 5]
+    color: ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff00'][index % 5]
   }));
 
   const totalCompleted = weeklyTasks.filter(task => task.completed).length;
@@ -100,61 +100,52 @@ export const WeeklyAnalytics = ({ tasks, onClose }: WeeklyAnalyticsProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-3xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-y-auto border border-slate-200 dark:border-slate-700 animate-fade-in">
-        
-        {/* Enhanced Modal Header */}
-        <div className="relative px-8 py-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-violet-500 via-purple-500 to-blue-500 rounded-t-3xl">
-          <div className="absolute inset-0 bg-black/10 rounded-t-3xl"></div>
-          <div className="relative flex items-center justify-between text-white">
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <div className="absolute inset-0 bg-white/20 rounded-2xl blur-lg"></div>
-                <div className="relative bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/20">
-                  <BarChart3 className="h-8 w-8" />
-                </div>
-              </div>
-              <div>
-                <h2 className="text-3xl font-bold tracking-tight">Weekly Analytics</h2>
-                <p className="text-blue-100 font-medium">Insights into your learning journey</p>
-              </div>
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <div className="bg-gradient-to-br from-white via-purple-50 to-violet-50 dark:from-neutral-900 dark:via-indigo-950 dark:to-neutral-900 rounded-3xl shadow-2xl w-full max-w-5xl max-h-[92vh] overflow-y-auto border-2 border-indigo-100 dark:border-neutral-800 animate-fade-in">
+        {/* Modal header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-indigo-100 dark:border-neutral-800 bg-white/70 dark:bg-indigo-950/70 rounded-t-3xl">
+          <div className="flex items-center space-x-4">
+            <Brain className="h-9 w-9 text-purple-600 dark:text-purple-300" />
+            <div>
+              <h2 className="text-2xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent tracking-tight">
+                Study Analytics
+              </h2>
+              <p className="text-gray-700 dark:text-gray-300 text-sm font-medium">Insights into your learning journey</p>
             </div>
-            <button
-              onClick={onClose}
-              className="text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200 p-2 rounded-xl backdrop-blur-sm border border-white/20 hover:scale-110"
-            >
-              <X className="h-6 w-6" />
-            </button>
           </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-purple-500 transition-colors p-2 hover:scale-110 focus:outline-none"
+          >
+            <X className="h-6 w-6" />
+          </button>
         </div>
 
-        <div className="p-8 space-y-8">
-          {/* Enhanced Week Picker */}
-          <div className="flex items-center justify-center">
-            <div className="flex items-center space-x-6 bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg border border-slate-200 dark:border-slate-700">
+        <div className="p-6 space-y-8">
+          {/* Week Picker */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSelectedWeek(selectedWeek + 1)}
-                className="flex items-center space-x-2 hover:bg-violet-50 dark:hover:bg-violet-950 hover:text-violet-600 dark:hover:text-violet-400 rounded-xl px-4 py-2 transition-all duration-200"
+                className="flex items-center space-x-2 bg-white dark:bg-neutral-900 border border-indigo-100 dark:border-neutral-800 shadow hover:scale-105"
               >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="font-semibold">Previous</span>
               </Button>
-              
-              <div className="text-center px-6">
-                <h3 className="font-bold text-xl text-slate-800 dark:text-slate-200">{formatWeekRange()}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+              <div className="text-center">
+                <h3 className="font-bold text-lg tracking-tight">{formatWeekRange()}</h3>
+                <p className="text-xs text-gray-500">
                   {selectedWeek === 0 ? 'Current Week' : `${selectedWeek} week${selectedWeek > 1 ? 's' : ''} ago`}
                 </p>
               </div>
-              
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSelectedWeek(Math.max(0, selectedWeek - 1))}
                 disabled={selectedWeek === 0}
-                className="flex items-center space-x-2 hover:bg-violet-50 dark:hover:bg-violet-950 hover:text-violet-600 dark:hover:text-violet-400 rounded-xl px-4 py-2 transition-all duration-200 disabled:opacity-50"
+                className="flex items-center space-x-2 bg-white dark:bg-neutral-900 border border-indigo-100 dark:border-neutral-800 shadow hover:scale-105"
               >
                 <span className="font-semibold">Next</span>
                 <ChevronRight className="h-4 w-4" />
@@ -162,126 +153,103 @@ export const WeeklyAnalytics = ({ tasks, onClose }: WeeklyAnalyticsProps) => {
             </div>
           </div>
 
-          {/* Enhanced Statistics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="group hover:scale-105 transition-all duration-300 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-950/50 dark:to-indigo-950/50 border-blue-200 dark:border-blue-800 shadow-lg hover:shadow-xl">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center justify-between text-blue-700 dark:text-blue-300">
-                  <div className="flex items-center space-x-2">
-                    <Target className="h-5 w-5" />
-                    <span className="font-bold">Completion</span>
-                  </div>
-                  <Activity className="h-4 w-4 opacity-60" />
+          {/* Statistic Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <Card className="bg-gradient-to-br from-blue-100/80 via-indigo-100/90 to-white border-blue-200 dark:from-indigo-900/70 dark:to-neutral-950 dark:border-neutral-800 shadow-lg">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center space-x-2 text-blue-800 dark:text-blue-300 text-base font-bold">
+                  <Target className="h-5 w-5" />
+                  <span>Completion</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-extrabold text-blue-800 dark:text-blue-200 mb-1">{weeklyCompletionRate}%</div>
-                <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">{totalCompleted}/{totalTasks} tasks completed</p>
+                <div className="text-3xl font-bolder text-blue-700 dark:text-blue-300">{weeklyCompletionRate}%</div>
+                <p className="text-xs text-gray-500 font-medium">{totalCompleted}/{totalTasks} tasks done</p>
               </CardContent>
             </Card>
 
-            <Card className="group hover:scale-105 transition-all duration-300 bg-gradient-to-br from-emerald-50 to-green-100 dark:from-emerald-950/50 dark:to-green-950/50 border-emerald-200 dark:border-emerald-800 shadow-lg hover:shadow-xl">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center justify-between text-emerald-700 dark:text-emerald-300">
-                  <div className="flex items-center space-x-2">
-                    <Clock className="h-5 w-5" />
-                    <span className="font-bold">Study Time</span>
-                  </div>
-                  <Zap className="h-4 w-4 opacity-60" />
+            <Card className="bg-gradient-to-br from-green-100/80 via-emerald-50/80 to-white border-green-200 dark:from-emerald-900/60 dark:to-neutral-950 dark:border-neutral-800 shadow-lg">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center space-x-2 text-green-800 dark:text-green-300 text-base font-bold">
+                  <Clock className="h-5 w-5" />
+                  <span>Study Time</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-extrabold text-emerald-800 dark:text-emerald-200 mb-1">{totalStudyTime}m</div>
-                <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">focused learning</p>
+                <div className="text-3xl font-bolder text-green-700 dark:text-green-300">{totalStudyTime}m</div>
+                <p className="text-xs text-gray-500 font-medium">minutes focused</p>
               </CardContent>
             </Card>
 
-            <Card className="group hover:scale-105 transition-all duration-300 bg-gradient-to-br from-purple-50 to-violet-100 dark:from-purple-950/50 dark:to-violet-950/50 border-purple-200 dark:border-purple-800 shadow-lg hover:shadow-xl">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center justify-between text-purple-700 dark:text-purple-300">
-                  <div className="flex items-center space-x-2">
-                    <Book className="h-5 w-5" />
-                    <span className="font-bold">Subjects</span>
-                  </div>
-                  <Brain className="h-4 w-4 opacity-60" />
+            <Card className="bg-gradient-to-br from-purple-100/80 via-violet-50/80 to-white border-purple-200 dark:from-violet-900/60 dark:to-neutral-950 dark:border-neutral-800 shadow-lg">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center space-x-2 text-purple-800 dark:text-purple-300 text-base font-bold">
+                  <Book className="h-5 w-5" />
+                  <span>Subjects</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-extrabold text-purple-800 dark:text-purple-200 mb-1">{Object.keys(subjectDistribution).length}</div>
-                <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">areas covered</p>
+                <div className="text-3xl font-bolder text-purple-700 dark:text-purple-300">{Object.keys(subjectDistribution).length}</div>
+                <p className="text-xs text-gray-500 font-medium">subjects studied</p>
               </CardContent>
             </Card>
 
-            <Card className="group hover:scale-105 transition-all duration-300 bg-gradient-to-br from-orange-50 to-red-100 dark:from-orange-950/50 dark:to-red-950/50 border-orange-200 dark:border-orange-800 shadow-lg hover:shadow-xl">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center justify-between text-orange-700 dark:text-orange-300">
-                  <div className="flex items-center space-x-2">
-                    <Flame className="h-5 w-5" />
-                    <span className="font-bold">Peak Day</span>
-                  </div>
-                  <Award className="h-4 w-4 opacity-60" />
+            <Card className="bg-gradient-to-br from-orange-100/80 via-red-50/90 to-white border-orange-200 dark:from-orange-900/60 dark:to-neutral-950 dark:border-neutral-800 shadow-lg">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center space-x-2 text-orange-800 dark:text-orange-300 text-base font-bold">
+                  <Flame className="h-5 w-5" />
+                  <span>Peak Day</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-extrabold text-orange-800 dark:text-orange-200 mb-1">
+                <div className="text-3xl font-bolder text-orange-700 dark:text-orange-300">
                   {dailyProgress.reduce((max, day) => day.percentage > max.percentage ? day : max, dailyProgress[0])?.day || 'N/A'}
                 </div>
-                <p className="text-sm text-orange-600 dark:text-orange-400 font-medium">best performance</p>
+                <p className="text-xs text-gray-500 font-medium">best performance</p>
               </CardContent>
             </Card>
           </div>
 
-          {/* Enhanced Analytics Charts */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Analytics Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Daily Progress Chart */}
-            <Card className="group hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 dark:from-indigo-500/20 dark:to-purple-500/20">
-                <CardTitle className="flex items-center space-x-3 text-indigo-700 dark:text-indigo-300">
-                  <div className="p-2 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg">
-                    <TrendingUp className="h-5 w-5" />
-                  </div>
-                  <span className="text-xl font-bold">Daily Progress</span>
+            <Card className="bg-white/70 dark:bg-indigo-950/40 shadow rounded-2xl border border-indigo-100 dark:border-neutral-800">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2 text-lg text-indigo-700 dark:text-indigo-200 font-bold">
+                  <TrendingUp className="h-5 w-5" />
+                  <span>Daily Progress</span>
                 </CardTitle>
-                <CardDescription className="text-slate-600 dark:text-slate-400 ml-11">
-                  Track your daily task completion and study consistency
+                <CardDescription className="text-xs text-gray-500">
+                  Track the number of tasks completed and total assigned per day.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-6">
-                <ResponsiveContainer width="100%" height={250}>
-                  <BarChart data={dailyProgress} barGap={8}>
-                    <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                    <XAxis dataKey="day" tick={{ fontSize: 12 }} />
-                    <YAxis tick={{ fontSize: 12 }} />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '12px',
-                        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
-                      }}
-                    />
-                    <Bar dataKey="completed" fill="#8b5cf6" name="Completed" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="total" fill="#e2e8f0" name="Total" radius={[4, 4, 0, 0]} />
+              <CardContent>
+                <ResponsiveContainer width="100%" height={220}>
+                  <BarChart data={dailyProgress} barGap={3}>
+                    <CartesianGrid strokeDasharray="3 5" vertical={false} className="opacity-30"/>
+                    <XAxis dataKey="day" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="completed" fill="#6366f1" name="Completed" radius={[5, 5, 0, 0]} />
+                    <Bar dataKey="total" fill="#d1fae5" name="Total" radius={[5, 5, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
 
             {/* Subject Distribution Chart */}
-            <Card className="group hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 dark:from-purple-500/20 dark:to-pink-500/20">
-                <CardTitle className="flex items-center space-x-3 text-purple-700 dark:text-purple-300">
-                  <div className="p-2 bg-purple-100 dark:bg-purple-900/50 rounded-lg">
-                    <Award className="h-5 w-5" />
-                  </div>
-                  <span className="text-xl font-bold">Subject Distribution</span>
+            <Card className="bg-white/70 dark:bg-indigo-950/40 shadow rounded-2xl border border-indigo-100 dark:border-neutral-800">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2 text-lg text-purple-700 dark:text-purple-200 font-bold">
+                  <Award className="h-5 w-5" />
+                  <span>Subject Distribution</span>
                 </CardTitle>
-                <CardDescription className="text-slate-600 dark:text-slate-400 ml-11">
-                  See your focus distribution across different subjects
+                <CardDescription className="text-xs text-gray-500">
+                  See which subjects you completed most in the week.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-6">
-                <ResponsiveContainer width="100%" height={250}>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={220}>
                   <PieChart>
                     <Pie
                       data={pieData}
@@ -289,7 +257,7 @@ export const WeeklyAnalytics = ({ tasks, onClose }: WeeklyAnalyticsProps) => {
                       cy="50%"
                       labelLine={false}
                       label={({ name, value }) => `${name}: ${value}`}
-                      outerRadius={85}
+                      outerRadius={75}
                       fill="#8884d8"
                       dataKey="value"
                     >
@@ -297,59 +265,38 @@ export const WeeklyAnalytics = ({ tasks, onClose }: WeeklyAnalyticsProps) => {
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '12px',
-                        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
-                      }}
-                    />
+                    <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
           </div>
 
-          {/* Enhanced Study Time Trend */}
-          <Card className="group hover:shadow-xl transition-all duration-300 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 dark:from-green-500/20 dark:to-emerald-500/20">
-              <CardTitle className="flex items-center space-x-3 text-green-700 dark:text-green-300">
-                <div className="p-2 bg-green-100 dark:bg-green-900/50 rounded-lg">
+          {/* Study Time Trend Chart */}
+          <div>
+            <Card className="bg-white/70 dark:bg-indigo-950/40 shadow rounded-2xl border border-indigo-100 dark:border-neutral-800">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2 text-lg text-green-700 dark:text-green-200 font-bold">
                   <Calendar className="h-5 w-5" />
-                </div>
-                <span className="text-xl font-bold">Study Time Trend</span>
-              </CardTitle>
-              <CardDescription className="text-slate-600 dark:text-slate-400 ml-11">
-                Monitor your daily study time patterns and consistency
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <ResponsiveContainer width="100%" height={220}>
-                <LineChart data={dailyProgress}>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                  <XAxis dataKey="day" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
-                    }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="studyTime" 
-                    stroke="#10b981" 
-                    strokeWidth={3} 
-                    dot={{ r: 5, fill: '#10b981' }}
-                    activeDot={{ r: 7, fill: '#059669' }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+                  <span>Study Time Trend</span>
+                </CardTitle>
+                <CardDescription className="text-xs text-gray-500">
+                  Your study time (minutes) for each day this week.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={180}>
+                  <LineChart data={dailyProgress}>
+                    <CartesianGrid strokeDasharray="3 5" vertical={false} className="opacity-25"/>
+                    <XAxis dataKey="day" />
+                    <YAxis />
+                    <Tooltip />
+                    <Line type="monotone" dataKey="studyTime" stroke="#34d399" strokeWidth={2.5} dot={{ r: 4 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
