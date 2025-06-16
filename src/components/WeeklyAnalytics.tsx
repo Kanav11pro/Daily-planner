@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell 
 } from 'recharts';
 import { 
-  Calendar, TrendingUp, Clock, Target, Award, Book, Brain, Flame, X, ChevronLeft, ChevronRight, BarChart3, Activity, Zap, Sparkles 
+  Calendar, TrendingUp, Clock, Target, Award, Book, Brain, Flame, X, ChevronLeft, ChevronRight, BarChart3, Activity, Zap 
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -104,124 +103,28 @@ export const WeeklyAnalytics = ({ tasks, onClose }: WeeklyAnalyticsProps) => {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-3xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-y-auto border border-slate-200 dark:border-slate-700 animate-fade-in">
         
-        {/* Enhanced Modal Header Card */}
-        <div className="relative p-8 border-b border-slate-200/50 dark:border-slate-700/50">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-t-3xl">
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=60 height=60 viewBox=0,0,60,60 xmlns=http://www.w3.org/2000/svg%3E%3Cg fill=none fill-rule=evenodd%3E%3Cg fill=%23ffffff fill-opacity=0.05%3E%3Cpath d=m36,34v-4h-2v4h2zm0-8v-2h-2v2h2zm-12,0v-2h-2v2h2zm0,8v-4h-2v4h2z/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
-          </div>
-          
-          {/* Content */}
-          <div className="relative">
-            {/* Close Button */}
+        {/* Enhanced Modal Header */}
+        <div className="relative px-8 py-6 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-violet-500 via-purple-500 to-blue-500 rounded-t-3xl">
+          <div className="absolute inset-0 bg-black/10 rounded-t-3xl"></div>
+          <div className="relative flex items-center justify-between text-white">
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="absolute inset-0 bg-white/20 rounded-2xl blur-lg"></div>
+                <div className="relative bg-white/10 backdrop-blur-sm p-3 rounded-2xl border border-white/20">
+                  <BarChart3 className="h-8 w-8" />
+                </div>
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight">Weekly Analytics</h2>
+                <p className="text-blue-100 font-medium">Insights into your learning journey</p>
+              </div>
+            </div>
             <button
               onClick={onClose}
-              className="absolute top-0 right-0 text-white/80 hover:text-white hover:bg-white/10 transition-all duration-300 p-3 rounded-2xl backdrop-blur-sm border border-white/20 hover:scale-110 hover:rotate-90 group"
+              className="text-white/80 hover:text-white hover:bg-white/10 transition-all duration-200 p-2 rounded-xl backdrop-blur-sm border border-white/20 hover:scale-110"
             >
-              <X className="h-6 w-6 transition-transform duration-300" />
+              <X className="h-6 w-6" />
             </button>
-            
-            {/* Main Header Content */}
-            <div className="flex items-start space-x-6 mb-8">
-              {/* Icon Container */}
-              <div className="relative group">
-                <div className="absolute -inset-2 bg-gradient-to-r from-violet-400 to-purple-400 rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
-                <div className="relative bg-white/15 backdrop-blur-md p-6 rounded-3xl border border-white/20 group-hover:bg-white/20 transition-all duration-300 hover:scale-105">
-                  <BarChart3 className="h-12 w-12 text-white drop-shadow-lg" />
-                  <div className="absolute -top-1 -right-1">
-                    <Sparkles className="h-5 w-5 text-yellow-300 animate-pulse" />
-                  </div>
-                </div>
-              </div>
-              
-              {/* Title and Description */}
-              <div className="flex-1 text-white">
-                <div className="flex items-center space-x-3 mb-3">
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent drop-shadow-sm">
-                    Weekly Analytics
-                  </h1>
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse"></div>
-                    <div className="w-2 h-2 bg-white/40 rounded-full animate-pulse delay-75"></div>
-                    <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse delay-150"></div>
-                  </div>
-                </div>
-                
-                <p className="text-xl text-blue-100/90 font-medium mb-4 leading-relaxed">
-                  View detailed insights & charts
-                </p>
-                
-                {/* Feature Tags */}
-                <div className="flex flex-wrap gap-2">
-                  <span className="inline-flex items-center px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium text-white/90 border border-white/20">
-                    <TrendingUp className="h-3 w-3 mr-1.5" />
-                    Progress Tracking
-                  </span>
-                  <span className="inline-flex items-center px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium text-white/90 border border-white/20">
-                    <Activity className="h-3 w-3 mr-1.5" />
-                    Performance Analytics
-                  </span>
-                  <span className="inline-flex items-center px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-sm font-medium text-white/90 border border-white/20">
-                    <Target className="h-3 w-3 mr-1.5" />
-                    Goal Insights
-                  </span>
-                </div>
-              </div>
-            </div>
-            
-            {/* Stats Preview Bar */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-emerald-400/20 rounded-lg">
-                    <Target className="h-5 w-5 text-emerald-300" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-white/70 font-medium">Completion</p>
-                    <p className="text-2xl font-bold text-white">{weeklyCompletionRate}%</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-blue-400/20 rounded-lg">
-                    <Clock className="h-5 w-5 text-blue-300" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-white/70 font-medium">Study Time</p>
-                    <p className="text-2xl font-bold text-white">{totalStudyTime}m</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-purple-400/20 rounded-lg">
-                    <Book className="h-5 w-5 text-purple-300" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-white/70 font-medium">Subjects</p>
-                    <p className="text-2xl font-bold text-white">{Object.keys(subjectDistribution).length}</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-orange-400/20 rounded-lg">
-                    <Flame className="h-5 w-5 text-orange-300" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-white/70 font-medium">Peak Day</p>
-                    <p className="text-2xl font-bold text-white">
-                      {dailyProgress.reduce((max, day) => day.percentage > max.percentage ? day : max, dailyProgress[0])?.day || 'N/A'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 

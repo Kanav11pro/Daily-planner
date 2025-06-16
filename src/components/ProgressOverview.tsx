@@ -1,8 +1,10 @@
+
 import { TrendingUp, Target, Calendar, Trophy, Clock, CheckCircle2, Circle, Flame, Zap } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { format } from "date-fns";
 import { formatInTimeZone, toZonedTime } from "date-fns-tz";
+
 interface Task {
   id: string;
   title: string;
@@ -13,12 +15,12 @@ interface Task {
   created_at: string;
   duration?: number;
 }
+
 interface ProgressOverviewProps {
   tasks: Task[];
 }
-export const ProgressOverview = ({
-  tasks
-}: ProgressOverviewProps) => {
+
+export const ProgressOverview = ({ tasks }: ProgressOverviewProps) => {
   const IST_TIMEZONE = 'Asia/Kolkata';
 
   // Helper function to get current IST date
@@ -33,18 +35,23 @@ export const ProgressOverview = ({
     }
     return formatInTimeZone(date, IST_TIMEZONE, 'yyyy-MM-dd');
   };
+
   const today = getCurrentISTDate();
   const currentTime = formatInTimeZone(new Date(), IST_TIMEZONE, 'hh:mm a');
+
   console.log('Today\'s IST date for progress:', today);
+
   const todayTasks = tasks.filter(task => {
     const taskDate = formatDateForComparison(task.scheduled_date);
     console.log('Comparing task date:', taskDate, 'with today:', today);
     return taskDate === today;
   });
+
   console.log('Today\'s tasks count:', todayTasks.length);
+
   const completedToday = todayTasks.filter(task => task.completed).length;
   const totalToday = todayTasks.length;
-  const progressPercentage = totalToday > 0 ? completedToday / totalToday * 100 : 0;
+  const progressPercentage = totalToday > 0 ? (completedToday / totalToday) * 100 : 0;
 
   // Calculate total duration and completed duration
   const totalDuration = todayTasks.reduce((acc, task) => acc + (task.duration || 0), 0);
@@ -55,35 +62,30 @@ export const ProgressOverview = ({
     acc[task.priority] = (acc[task.priority] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
+
   const subjectProgress = tasks.reduce((acc, task) => {
     if (!acc[task.subject]) {
-      acc[task.subject] = {
-        completed: 0,
-        total: 0
-      };
+      acc[task.subject] = { completed: 0, total: 0 };
     }
     acc[task.subject].total++;
     if (task.completed) {
       acc[task.subject].completed++;
     }
     return acc;
-  }, {} as Record<string, {
-    completed: number;
-    total: number;
-  }>);
+  }, {} as Record<string, { completed: number; total: number }>);
 
   // Calculate study streak (simplified - count days with completed tasks in last 7 days)
-  const last7Days = Array.from({
-    length: 7
-  }, (_, i) => {
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() - i);
     return formatDateForComparison(date);
   });
+
   const daysWithCompletedTasks = last7Days.filter(date => {
     const dayTasks = tasks.filter(task => formatDateForComparison(task.scheduled_date) === date);
     return dayTasks.some(task => task.completed);
   }).length;
+
   const weeklyStreak = daysWithCompletedTasks;
 
   // Get motivational message based on progress
@@ -95,7 +97,9 @@ export const ProgressOverview = ({
     if (progressPercentage > 0) return "✨ Every step counts! You've got this!";
     return "🎯 Ready to conquer today? Let's start!";
   };
-  return <div className="space-y-4 sm:space-y-6">
+
+  return (
+    <div className="space-y-4 sm:space-y-6">
       {/* Enhanced Today's Progress Card - Better Sizing for Desktop */}
       <Card className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 border-indigo-200 shadow-lg relative overflow-hidden">
         {/* Background decorative elements */}
@@ -110,9 +114,11 @@ export const ProgressOverview = ({
             <div className="flex items-center space-x-2 sm:space-x-3">
               <div className="relative">
                 <Target className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-600" />
-                {progressPercentage > 0 && <div className="absolute -top-1 -right-1">
+                {progressPercentage > 0 && (
+                  <div className="absolute -top-1 -right-1">
                     <Flame className="h-3 w-3 text-orange-500 animate-pulse" />
-                  </div>}
+                  </div>
+                )}
               </div>
               <div>
                 <CardTitle className="text-indigo-800 text-lg sm:text-xl font-bold">Today's Progress</CardTitle>
@@ -184,7 +190,8 @@ export const ProgressOverview = ({
             </div>
 
             {/* Today's Task Breakdown - Smaller Grid */}
-            {totalToday > 0 && <div className="grid grid-cols-3 gap-3 max-w-lg mx-auto">
+            {totalToday > 0 && (
+              <div className="grid grid-cols-3 gap-3 max-w-lg mx-auto">
                 <div className="text-center p-2 sm:p-3 bg-white/50 rounded-xl border border-indigo-100 backdrop-blur-sm">
                   <div className="text-lg sm:text-xl font-bold text-red-600 mb-1">{priorityBreakdown.high || 0}</div>
                   <div className="text-xs text-gray-600 font-medium">High Priority</div>
@@ -197,24 +204,52 @@ export const ProgressOverview = ({
                   <div className="text-lg sm:text-xl font-bold text-green-600 mb-1">{priorityBreakdown.low || 0}</div>
                   <div className="text-xs text-gray-600 font-medium">Low Priority</div>
                 </div>
-              </div>}
+              </div>
+            )}
 
             {/* No Tasks State - Smaller Size */}
-            {totalToday === 0 && <div className="text-center p-4 sm:p-5 bg-white/30 rounded-xl border border-indigo-200/50 backdrop-blur-sm max-w-lg mx-auto">
+            {totalToday === 0 && (
+              <div className="text-center p-4 sm:p-5 bg-white/30 rounded-xl border border-indigo-200/50 backdrop-blur-sm max-w-lg mx-auto">
                 <Zap className="h-10 w-10 sm:h-12 sm:w-12 text-indigo-400 mx-auto mb-2" />
                 <p className="text-sm sm:text-base text-indigo-700 font-medium mb-1">No tasks scheduled for today</p>
                 <p className="text-xs sm:text-sm text-indigo-600">Add some tasks to start your productive day!</p>
-              </div>}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
 
       {/* Subject Progress Card */}
-      
+      <Card>
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
+            <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+            <span>Subject Progress</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-4 sm:p-6 pt-0">
+          <div className="space-y-3">
+            {Object.entries(subjectProgress).map(([subject, progress]) => (
+              <div key={subject} className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="font-medium">{subject}</span>
+                  <span className="text-gray-600">
+                    {progress.completed}/{progress.total}
+                  </span>
+                </div>
+                <Progress 
+                  value={progress.total > 0 ? (progress.completed / progress.total) * 100 : 0} 
+                  className="h-2" 
+                />
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Study Streak Card */}
       <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200">
-        <CardHeader className="p-4 sm:p-6 py-[24px]">
+        <CardHeader className="p-4 sm:p-6">
           <CardTitle className="flex items-center space-x-2 text-yellow-800 text-base sm:text-lg">
             <Trophy className="h-4 w-4 sm:h-5 sm:w-5" />
             <span>Study Streak</span>
@@ -227,5 +262,6 @@ export const ProgressOverview = ({
           </div>
         </CardContent>
       </Card>
-    </div>;
+    </div>
+  );
 };
