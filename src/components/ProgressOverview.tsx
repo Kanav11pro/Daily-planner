@@ -208,25 +208,9 @@ export const ProgressOverview = ({
       </Card>
 
       {/* Subject Progress Card */}
-      <Card>
-        
-        
-      </Card>
+      
 
       {/* Study Streak Card */}
-      <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200">
-        <CardHeader className="p-4 sm:p-6 py-[10px]">
-          <CardTitle className="flex items-center space-x-2 text-yellow-800 text-base sm:text-lg">
-            <Trophy className="h-4 w-4 sm:h-5 sm:w-5" />
-            <span>Study Streak</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-4 sm:p-6 pt-0">
-          <div className="text-center">
-            <div className="text-xl sm:text-2xl font-bold text-yellow-700">{weeklyStreak} days</div>
-            <p className="text-sm text-gray-600">Keep it going! 🔥</p>
-          </div>
-        </CardContent>
-      </Card>
+      
     </div>;
 };
