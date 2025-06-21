@@ -63,21 +63,21 @@ const themes = {
     primary: 'from-blue-400 to-indigo-500',
     secondary: 'from-slate-600 via-blue-700 to-indigo-700',
     background: 'from-slate-900 via-blue-950 to-indigo-950',
-    accent: 'bg-slate-700 text-blue-100',
-    card: 'bg-slate-700/95 backdrop-blur-md border border-blue-500/50 text-white',
-    border: 'border-blue-500/50',
+    accent: 'bg-slate-600 text-blue-100',
+    card: 'bg-slate-800/95 backdrop-blur-md border border-blue-400/30 text-white shadow-xl',
+    border: 'border-blue-400/30',
     text: 'text-white',
-    glow: 'shadow-blue-400/50'
+    glow: 'shadow-blue-400/30 shadow-lg'
   },
   obsidian: {
     primary: 'from-purple-400 to-pink-500',
     secondary: 'from-gray-700 via-slate-700 to-zinc-800',
     background: 'from-black via-gray-950 to-slate-950',
     accent: 'bg-slate-600 text-purple-100',
-    card: 'bg-slate-600/95 backdrop-blur-md border border-purple-400/50 text-white',
-    border: 'border-purple-400/50',
+    card: 'bg-gray-800/95 backdrop-blur-md border border-purple-300/30 text-white shadow-xl',
+    border: 'border-purple-300/30',
     text: 'text-white',
-    glow: 'shadow-purple-400/50'
+    glow: 'shadow-purple-400/30 shadow-lg'
   }
 };
 
