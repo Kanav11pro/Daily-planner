@@ -91,6 +91,13 @@ export const EditTaskModal = ({ task, onClose, onSave }: EditTaskModalProps) => 
     }
   };
 
+  const handleDurationSelect = (value: string) => {
+    setFormData(prev => ({ ...prev, duration: value }));
+    if (errors.duration) {
+      setErrors(prev => ({ ...prev, duration: '' }));
+    }
+  };
+
   const currentPriority = priorityOptions.find(p => p.value === formData.priority);
 
   return (
@@ -184,7 +191,7 @@ export const EditTaskModal = ({ task, onClose, onSave }: EditTaskModalProps) => 
               <div className="space-y-3">
                 <Label className="text-sm font-medium text-gray-700">Estimated Duration</Label>
                 <div className="space-y-3">
-                  <Select value={formData.duration} onValueChange={(value) => handleInputChange('duration', value)}>
+                  <Select value={formData.duration} onValueChange={handleDurationSelect}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select duration" />
                     </SelectTrigger>
