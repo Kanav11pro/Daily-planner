@@ -98,6 +98,13 @@ export const EditTaskModal = ({ task, onClose, onSave }: EditTaskModalProps) => 
     }
   };
 
+  const clearDuration = () => {
+    setFormData(prev => ({ ...prev, duration: '' }));
+    if (errors.duration) {
+      setErrors(prev => ({ ...prev, duration: '' }));
+    }
+  };
+
   const currentPriority = priorityOptions.find(p => p.value === formData.priority);
 
   return (
@@ -191,28 +198,41 @@ export const EditTaskModal = ({ task, onClose, onSave }: EditTaskModalProps) => 
               <div className="space-y-3">
                 <Label className="text-sm font-medium text-gray-700">Estimated Duration</Label>
                 <div className="space-y-3">
-                  <Select value={formData.duration} onValueChange={handleDurationSelect}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select duration" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {durationOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          <div className="flex items-center space-x-2">
-                            <Clock className="h-4 w-4 text-gray-500" />
-                            <span>{option.label}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex space-x-2">
+                    <Select value={formData.duration} onValueChange={handleDurationSelect}>
+                      <SelectTrigger className="flex-1">
+                        <SelectValue placeholder="Quick select duration" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {durationOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            <div className="flex items-center space-x-2">
+                              <Clock className="h-4 w-4 text-gray-500" />
+                              <span>{option.label}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {formData.duration && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={clearDuration}
+                        className="px-3"
+                      >
+                        Clear
+                      </Button>
+                    )}
+                  </div>
                   
                   <div className="text-sm text-gray-500">Or enter custom duration:</div>
                   <Input
                     type="number"
                     value={formData.duration}
                     onChange={(e) => handleInputChange('duration', e.target.value)}
-                    placeholder="Minutes"
+                    placeholder="Enter minutes (5-480)"
                     min="5"
                     max="480"
                     className={`${errors.duration ? 'border-red-300 focus:border-red-500' : ''}`}
