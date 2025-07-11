@@ -18,22 +18,22 @@ interface TaskListProps {
 }
 
 const subjectColors = {
-  Maths: "bg-blue-50 text-blue-700 border-blue-200",
-  Physics: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  Chemistry: "bg-rose-50 text-rose-700 border-rose-200",
-  "Mock Test": "bg-purple-50 text-purple-700 border-purple-200"
+  Maths: "bg-blue-100 text-blue-800 border-blue-300",
+  Physics: "bg-green-100 text-green-800 border-green-300",
+  Chemistry: "bg-red-100 text-red-800 border-red-300",
+  "Mock Test": "bg-purple-100 text-purple-800 border-purple-300"
 };
 
 const priorityColors = {
-  high: "border-l-4 border-l-red-400",
-  medium: "border-l-4 border-l-amber-400",
-  low: "border-l-4 border-l-emerald-400"
+  high: "border-l-red-500 bg-gradient-to-r from-red-50 to-pink-50",
+  medium: "border-l-yellow-500 bg-gradient-to-r from-yellow-50 to-orange-50",
+  low: "border-l-green-500 bg-gradient-to-r from-green-50 to-emerald-50"
 };
 
-const priorityDots = {
-  high: "bg-red-400",
-  medium: "bg-amber-400", 
-  low: "bg-emerald-400"
+const priorityIcons = {
+  high: "🔴",
+  medium: "🟡", 
+  low: "🟢"
 };
 
 export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddTask, title }: TaskListProps) => {
@@ -120,102 +120,95 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
 
       <div className="space-y-6">
         {Object.entries(tasksBySubject).map(([subject, subjectTasks]: [string, any[]]) => (
-          <div key={subject} className="space-y-1">
-            {/* Subject Header */}
-            <div className="flex items-center gap-3 mb-4">
+          <div key={subject} className="space-y-3 animate-fade-in">
+            <div className="flex items-center space-x-2 flex-wrap">
               <BookOpen className={`h-5 w-5 ${themeColors.text}`} />
-              <h4 className={`text-lg font-semibold ${themeColors.text}`}>{subject}</h4>
-              <Badge className={`${subjectColors[subject] || "bg-gray-50 text-gray-700"} text-xs px-2 py-1 rounded-full font-medium`}>
+              <h4 className={`text-base sm:text-lg font-semibold ${themeColors.text}`}>{subject}</h4>
+              <Badge className={`${subjectColors[subject] || "bg-gray-100 text-gray-800"} text-xs`}>
                 {subjectTasks.length} task{subjectTasks.length !== 1 ? 's' : ''}
               </Badge>
             </div>
             
-            {/* Tasks */}
-            <div className="space-y-2">
+            <div className="space-y-3 ml-0 sm:ml-7">
               {subjectTasks.map((task) => {
                 const isCompleting = completingTasks.has(task.id);
                 return (
                   <div
                     key={task.id}
-                    className={`group ${priorityColors[task.priority]} bg-white rounded-lg hover:shadow-md transition-all duration-200 ${
-                      task.completed ? 'opacity-60' : ''
-                    } ${isCompleting ? 'animate-pulse' : ''} border border-gray-100`}
+                    className={`group border-l-4 ${priorityColors[task.priority]} rounded-r-lg shadow-sm hover:shadow-lg transition-all duration-300 p-3 sm:p-4 bg-white transform hover:scale-[1.01] ${
+                      task.completed ? 'opacity-75' : ''
+                    } ${isCompleting ? 'animate-pulse bg-gradient-to-r from-green-100 to-emerald-100' : ''} dark:bg-gray-800 dark:text-gray-100`}
                   >
-                    <div className="p-4">
-                      <div className="flex items-start gap-4">
-                        {/* Checkbox */}
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
                         <button
                           onClick={() => handleToggleTask(task.id, task.completed)}
-                          className={`mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 hover:scale-110 shrink-0 ${
+                          className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 hover:scale-110 ${
                             task.completed
-                              ? 'bg-emerald-500 border-emerald-500 text-white'
-                              : 'border-gray-300 hover:border-gray-400'
+                              ? 'bg-green-500 border-green-500 text-white animate-bounce'
+                              : 'border-gray-300 hover:border-indigo-500 hover:bg-indigo-50'
                           }`}
                         >
-                          {task.completed && <Check className="h-3 w-3" />}
-                          {isCompleting && !task.completed && <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />}
+                          {task.completed && <Check className="h-4 w-4" />}
+                          {isCompleting && !task.completed && <Sparkles className="h-4 w-4 text-indigo-500" />}
                         </button>
                         
-                        {/* Task Content */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between">
                             <div className="flex-1 min-w-0">
-                              <h5 className={`text-base font-medium leading-6 ${task.completed ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+                              <h5 className={`font-semibold break-words ${task.completed ? 'line-through' : ''} text-gray-800 dark:text-gray-100`}>
                                 {task.title}
                               </h5>
                               {task.chapter && (
-                                <p className={`text-sm mt-1 ${task.completed ? 'line-through text-gray-400' : 'text-gray-600'}`}>
+                                <p className={`text-sm break-words ${task.completed ? 'line-through' : ''} text-gray-600 dark:text-gray-300`}>
                                   Chapter: {task.chapter}
                                 </p>
                               )}
                               {task.description && (
-                                <p className={`text-sm mt-1 ${task.completed ? 'line-through text-gray-400' : 'text-gray-600'}`}>
+                                <p className={`mt-1 text-sm break-words ${task.completed ? 'line-through' : ''} text-gray-600 dark:text-gray-300`}>
                                   {task.description}
                                 </p>
                               )}
                             </div>
-                            
-                            {/* Action Buttons - Always visible on mobile, hover on desktop */}
-                            <div className="flex items-center gap-1 ml-4 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
-                              <button
-                                onClick={() => setMovingTask(task)}
-                                className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-                                title="Move to different date"
-                              >
-                                <Calendar className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => setEditingTask(task)}
-                                className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                title="Edit task"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </button>
-                              <button
-                                onClick={() => setDeletingTaskId(task.id)}
-                                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                title="Delete task"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
                           </div>
                           
-                          {/* Priority and Duration */}
-                          <div className="flex items-center gap-4 mt-3">
-                            <div className="flex items-center gap-2">
-                              <div className={`w-2 h-2 rounded-full ${priorityDots[task.priority]}`}></div>
-                              <span className="text-sm text-gray-600 capitalize">{task.priority} priority</span>
-                            </div>
+                          <div className="flex items-center space-x-2 sm:space-x-3 mt-3 flex-wrap gap-2">
+                            <Badge variant="outline" className="text-xs">
+                              {priorityIcons[task.priority]} {task.priority} priority
+                            </Badge>
                             
                             {task.duration && (
-                              <div className="flex items-center gap-1 text-sm text-gray-500">
-                                <Clock className="h-3.5 w-3.5" />
-                                <span>{task.duration} min</span>
+                              <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                <Clock className="h-4 w-4 mr-1" />
+                                {task.duration} min
                               </div>
                             )}
                           </div>
                         </div>
+                      </div>
+                      
+                      <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300 ml-2">
+                        <button
+                          onClick={() => setMovingTask(task)}
+                          className="text-purple-500 hover:text-purple-700 p-1 hover:scale-110 transition-all duration-300"
+                          title="Move to different date"
+                        >
+                          <Calendar className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => setEditingTask(task)}
+                          className="text-blue-500 hover:text-blue-700 p-1 hover:scale-110 transition-all duration-300"
+                          title="Edit task"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => setDeletingTaskId(task.id)}
+                          className="text-red-500 hover:text-red-700 p-1 hover:scale-110 transition-all duration-300"
+                          title="Delete task"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </div>
                     </div>
                   </div>
