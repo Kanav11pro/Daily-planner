@@ -60,24 +60,24 @@ const themes = {
     glow: 'shadow-indigo-300/60'
   },
   midnight: {
-    primary: 'from-blue-400 to-indigo-500',
-    secondary: 'from-slate-600 via-blue-700 to-indigo-700',
-    background: 'from-slate-900 via-blue-950 to-indigo-950',
-    accent: 'bg-slate-600 text-blue-100',
-    card: 'bg-slate-800/95 backdrop-blur-md border border-blue-400/30 text-white shadow-xl',
-    border: 'border-blue-400/30',
-    text: 'text-white',
-    glow: 'shadow-blue-400/30 shadow-lg'
+    primary: 'from-blue-400 to-cyan-300',
+    secondary: 'from-slate-800 via-slate-700 to-slate-600',
+    background: 'from-slate-900 via-slate-800 to-gray-900',
+    accent: 'bg-slate-700/80 text-blue-200 border border-slate-600',
+    card: 'bg-slate-800/90 backdrop-blur-md border border-slate-600/50 text-slate-100 shadow-xl',
+    border: 'border-slate-600',
+    text: 'text-slate-100',
+    glow: 'shadow-blue-400/20 shadow-lg'
   },
   obsidian: {
-    primary: 'from-purple-400 to-pink-500',
-    secondary: 'from-gray-700 via-slate-700 to-zinc-800',
-    background: 'from-black via-gray-950 to-slate-950',
-    accent: 'bg-slate-600 text-purple-100',
-    card: 'bg-gray-800/95 backdrop-blur-md border border-purple-300/30 text-white shadow-xl',
-    border: 'border-purple-300/30',
-    text: 'text-white',
-    glow: 'shadow-purple-400/30 shadow-lg'
+    primary: 'from-purple-400 to-pink-400',
+    secondary: 'from-gray-800 via-gray-700 to-zinc-700',
+    background: 'from-black via-gray-900 to-zinc-900',
+    accent: 'bg-gray-700/80 text-purple-200 border border-gray-600',
+    card: 'bg-gray-800/90 backdrop-blur-md border border-gray-600/50 text-gray-100 shadow-xl',
+    border: 'border-gray-600',
+    text: 'text-gray-100',
+    glow: 'shadow-purple-400/20 shadow-lg'
   }
 };
 
