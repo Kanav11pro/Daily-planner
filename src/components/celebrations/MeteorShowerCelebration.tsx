@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Comet, Star, Sparkles, Zap } from 'lucide-react';
+import { Star, Sparkles, Zap } from 'lucide-react';
 
 interface CelebrationMessage {
   title: string;
@@ -79,7 +79,7 @@ export const MeteorShowerCelebration = ({ message, onComplete }: MeteorShowerCel
         <div className="relative z-10">
           <div className="flex items-center justify-center mb-6">
             <div className="relative">
-              <Comet className="h-20 w-20 text-purple-400 animate-bounce" />
+              <Star className="h-20 w-20 text-purple-400 animate-bounce" />
               <div className="absolute -top-2 -right-2 text-2xl animate-spin">☄️</div>
             </div>
           </div>

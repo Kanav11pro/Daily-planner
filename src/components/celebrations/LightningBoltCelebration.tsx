@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Zap, Bolt, Flash, Star } from 'lucide-react';
+import { Zap, Bolt, Star } from 'lucide-react';
 
 interface CelebrationMessage {
   title: string;
@@ -97,9 +97,9 @@ export const LightningBoltCelebration = ({ message, onComplete }: LightningBoltC
           
           <div className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-full text-lg font-bold shadow-lg animate-pulse">
             <div className="flex items-center justify-center space-x-2">
-              <Flash className="h-5 w-5" />
+              <Zap className="h-5 w-5" />
               <span>Lightning Speed! ⚡</span>
-              <Flash className="h-5 w-5" />
+              <Zap className="h-5 w-5" />
             </div>
           </div>
         </div>

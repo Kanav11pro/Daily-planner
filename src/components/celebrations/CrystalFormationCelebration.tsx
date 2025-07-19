@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Crystal, Gem, Star, Sparkles } from 'lucide-react';
+import { Gem, Star, Sparkles } from 'lucide-react';
 
 interface CelebrationMessage {
   title: string;
@@ -70,7 +70,7 @@ export const CrystalFormationCelebration = ({ message, onComplete }: CrystalForm
         <div className="relative z-10">
           <div className="flex items-center justify-center mb-6">
             <div className="relative">
-              <Crystal className="h-20 w-20 text-cyan-400 animate-bounce" />
+              <Gem className="h-20 w-20 text-cyan-400 animate-bounce" />
               <div className="absolute -top-2 -right-2 text-2xl animate-spin">🔮</div>
             </div>
           </div>
