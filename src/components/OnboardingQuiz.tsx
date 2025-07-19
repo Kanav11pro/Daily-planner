@@ -78,10 +78,10 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
   });
 
   const steps = [
-    { icon: Target, title: "Which exam are you preparing for?", subtitle: "Select your target exam to get personalized content", color: "from-blue-500 to-cyan-500" },
-    { icon: Users, title: "Which institute are you studying from?", subtitle: "This helps us understand your learning approach", color: "from-purple-500 to-pink-500" },
-    { icon: Clock, title: "How many hours can you study daily?", subtitle: "We'll create a schedule that fits your availability", color: "from-green-500 to-emerald-500" },
-    { icon: Brain, title: "What are your biggest challenges?", subtitle: "Select all that apply - we'll help you overcome them", color: "from-orange-500 to-red-500" }
+    { icon: Target, title: "🎯 Which exam are you preparing for?", color: "from-blue-500 to-cyan-500" },
+    { icon: Users, title: "🏫 Which institute are you studying from?", color: "from-purple-500 to-pink-500" },
+    { icon: Clock, title: "⏰ How many hours can you study daily?", color: "from-green-500 to-emerald-500" },
+    { icon: Brain, title: "💪 What are your biggest challenges?", color: "from-orange-500 to-red-500" }
   ];
 
   const handleNext = () => {
@@ -136,15 +136,14 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
     <OnboardingStep
       icon={currentStepData.icon}
       title={currentStepData.title}
-      subtitle={currentStepData.subtitle}
       color={currentStepData.color}
       currentStep={currentStep}
       totalSteps={4}
     >
-      <div className="space-y-6 max-w-2xl mx-auto">
+      <div className="space-y-4 max-w-2xl mx-auto">
         {/* Step 1: Exam Selection */}
         {currentStep === 1 && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {examOptions.map((option) => (
               <OnboardingOption
                 key={option.value}
@@ -161,7 +160,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
                   placeholder="Please specify your exam"
                   value={answers.examOther || ""}
                   onChange={(e) => setAnswers({...answers, examOther: e.target.value})}
-                  className="border-2 border-white/30 bg-white/10 text-white placeholder:text-white/70 focus:border-blue-400 text-lg p-4 rounded-xl"
+                  className="border-2 border-white/30 bg-white/10 text-white placeholder:text-white/70 focus:border-blue-400 text-lg p-4"
                 />
               </div>
             )}
@@ -170,7 +169,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
 
         {/* Step 2: Institute Selection */}
         {currentStep === 2 && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {instituteOptions.map((option) => (
               <OnboardingOption
                 key={option.value}
@@ -187,7 +186,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
                   placeholder="Please specify your institute"
                   value={answers.instituteOther || ""}
                   onChange={(e) => setAnswers({...answers, instituteOther: e.target.value})}
-                  className="border-2 border-white/30 bg-white/10 text-white placeholder:text-white/70 focus:border-purple-400 text-lg p-4 rounded-xl"
+                  className="border-2 border-white/30 bg-white/10 text-white placeholder:text-white/70 focus:border-purple-400 text-lg p-4"
                 />
               </div>
             )}
@@ -196,7 +195,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
 
         {/* Step 3: Study Hours */}
         {currentStep === 3 && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {studyHoursOptions.map((option) => (
               <OnboardingOption
                 key={option.value}
@@ -216,7 +215,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
             <div className="text-center mb-6">
               <p className="text-white/80 text-lg">Select all that apply to you</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {challengeOptions.map((option) => (
                 <OnboardingOption
                   key={option.value}
@@ -238,7 +237,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
             onClick={handlePrevious}
             disabled={currentStep === 1}
             variant="outline"
-            className="flex items-center space-x-2 disabled:opacity-50 bg-white/10 border-white/30 text-white hover:bg-white/20 rounded-xl px-6 py-3"
+            className="flex items-center space-x-2 disabled:opacity-50 bg-white/10 border-white/30 text-white hover:bg-white/20"
           >
             <ChevronLeft className="h-4 w-4" />
             <span>Previous</span>
@@ -247,7 +246,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
           <Button
             onClick={handleNext}
             disabled={!isStepValid()}
-            className={`bg-gradient-to-r ${currentStepData.color} hover:opacity-90 transition-all duration-300 text-white font-semibold px-8 py-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed`}
+            className={`bg-gradient-to-r ${currentStepData.color} hover:opacity-90 transition-all duration-300 text-white font-semibold px-8 disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <span>{currentStep === 4 ? "Complete Setup" : "Next"}</span>
             {currentStep === 4 ? <Trophy className="h-4 w-4 ml-2" /> : <ChevronRight className="h-4 w-4 ml-2" />}
