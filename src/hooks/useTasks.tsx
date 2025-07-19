@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
@@ -17,19 +18,16 @@ export interface Task {
   created_at: string;
   updated_at: string;
   user_id: string;
-  // Add alias for compatibility with existing components
   createdAt?: string;
 }
 
 const IST_TIMEZONE = 'Asia/Kolkata';
 
-// Helper function to format date consistently in IST
+// Memoized helper function
 const formatDateForDB = (date: Date | string): string => {
   if (typeof date === 'string') {
-    // If it's already a string, ensure it's in YYYY-MM-DD format
     return date.split('T')[0];
   }
-  // Convert to IST and format
   return formatInTimeZone(date, IST_TIMEZONE, 'yyyy-MM-dd');
 };
 
@@ -38,7 +36,7 @@ export const useTasks = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     if (!user) return;
     
     setLoading(true);
@@ -50,32 +48,31 @@ export const useTasks = () => {
 
       if (error) throw error;
       
-      // Transform data to include createdAt alias for compatibility
+      // Transform data with memoization
       const transformedTasks = (data || []).map(task => ({
         ...task,
         createdAt: task.created_at,
         priority: task.priority as 'low' | 'medium' | 'high',
-        scheduled_date: formatDateForDB(task.scheduled_date) // Ensure consistent date format
+        scheduled_date: formatDateForDB(task.scheduled_date)
       }));
       
       setTasks(transformedTasks);
     } catch (error: any) {
-      toast.error('Failed to fetch tasks');
       console.error('Error fetching tasks:', error);
+      toast.error('Failed to fetch tasks');
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchTasks();
-  }, [user]);
+  }, [fetchTasks]);
 
-  const addTask = async (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at' | 'user_id' | 'createdAt'>) => {
+  const addTask = useCallback(async (taskData: Omit<Task, 'id' | 'created_at' | 'updated_at' | 'user_id' | 'createdAt'>) => {
     if (!user) return;
 
     try {
-      // Ensure the scheduled_date is in the correct format using IST
       const formattedTaskData = {
         ...taskData,
         scheduled_date: formatDateForDB(taskData.scheduled_date),
@@ -101,17 +98,15 @@ export const useTasks = () => {
       toast.success('Task added successfully!');
       return transformedTask;
     } catch (error: any) {
-      toast.error('Failed to add task');
       console.error('Error adding task:', error);
+      toast.error('Failed to add task');
     }
-  };
+  }, [user]);
 
-  const updateTask = async (id: string, updates: Partial<Task>) => {
+  const updateTask = useCallback(async (id: string, updates: Partial<Task>) => {
     try {
-      // Remove fields that don't exist in the database schema and format dates using IST
       const { createdAt, ...cleanUpdates } = updates;
       
-      // If scheduled_date is being updated, format it properly using IST
       if (cleanUpdates.scheduled_date) {
         cleanUpdates.scheduled_date = formatDateForDB(cleanUpdates.scheduled_date);
       }
@@ -136,12 +131,12 @@ export const useTasks = () => {
       toast.success('Task updated successfully!');
       return transformedTask;
     } catch (error: any) {
-      toast.error('Failed to update task');
       console.error('Error updating task:', error);
+      toast.error('Failed to update task');
     }
-  };
+  }, []);
 
-  const moveTask = async (id: string, newDate: string) => {
+  const moveTask = useCallback(async (id: string, newDate: string) => {
     try {
       const formattedDate = formatDateForDB(newDate);
       
@@ -165,12 +160,12 @@ export const useTasks = () => {
       toast.success('Task moved successfully!');
       return transformedTask;
     } catch (error: any) {
-      toast.error('Failed to move task');
       console.error('Error moving task:', error);
+      toast.error('Failed to move task');
     }
-  };
+  }, []);
 
-  const deleteTask = async (id: string) => {
+  const deleteTask = useCallback(async (id: string) => {
     try {
       const { error } = await supabase
         .from('tasks')
@@ -181,19 +176,20 @@ export const useTasks = () => {
       setTasks(prev => prev.filter(task => task.id !== id));
       toast.success('Task deleted successfully!');
     } catch (error: any) {
-      toast.error('Failed to delete task');
       console.error('Error deleting task:', error);
+      toast.error('Failed to delete task');
     }
-  };
+  }, []);
 
-  const toggleTask = async (id: string) => {
+  const toggleTask = useCallback(async (id: string) => {
     const task = tasks.find(t => t.id === id);
     if (!task) return;
 
     await updateTask(id, { completed: !task.completed });
-  };
+  }, [tasks, updateTask]);
 
-  return {
+  // Memoized return object
+  const returnValue = useMemo(() => ({
     tasks,
     loading,
     addTask,
@@ -202,5 +198,7 @@ export const useTasks = () => {
     toggleTask,
     moveTask,
     refetch: fetchTasks,
-  };
+  }), [tasks, loading, addTask, updateTask, deleteTask, toggleTask, moveTask, fetchTasks]);
+
+  return returnValue;
 };

@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { Header } from "@/components/Header";
 import { QuoteSection } from "@/components/QuoteSection";
 import { TaskDashboard } from "@/components/TaskDashboard";
@@ -19,6 +19,15 @@ import { useTasks } from "@/hooks/useTasks";
 import { toast } from "sonner";
 import { formatInTimeZone } from "date-fns-tz";
 
+// Memoized components for better performance
+const MemoizedHeader = React.memo(Header);
+const MemoizedQuoteSection = React.memo(QuoteSection);
+const MemoizedProfileSection = React.memo(ProfileSection);
+const MemoizedDateSelector = React.memo(DateSelector);
+const MemoizedTaskDashboard = React.memo(TaskDashboard);
+const MemoizedProgressOverview = React.memo(ProgressOverview);
+const MemoizedTaskAnalytics = React.memo(TaskAnalytics);
+
 const IndexContent = () => {
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
@@ -34,15 +43,16 @@ const IndexContent = () => {
 
   const IST_TIMEZONE = 'Asia/Kolkata';
 
-  // Helper function to format date consistently for comparison using IST
-  const formatDateForComparison = (date: Date | string): string => {
+  // Memoized helper function
+  const formatDateForComparison = useCallback((date: Date | string): string => {
     if (typeof date === 'string') {
       return date.split('T')[0];
     }
     return formatInTimeZone(date, IST_TIMEZONE, 'yyyy-MM-dd');
-  };
+  }, [IST_TIMEZONE]);
 
-  const handleAddTask = async (taskData: any) => {
+  // Memoized handlers
+  const handleAddTask = useCallback(async (taskData: any) => {
     const newTask = {
       ...taskData,
       scheduled_date: taskData.scheduledDate || formatDateForComparison(selectedDate),
@@ -50,42 +60,64 @@ const IndexContent = () => {
     };
     await addTask(newTask);
     setShowTaskModal(false);
-  };
+  }, [addTask, formatDateForComparison, selectedDate]);
 
-  const handleEditTask = async (taskId: string, updatedTask: any) => {
-    // Ensure the scheduled_date is properly formatted if it's being updated
+  const handleEditTask = useCallback(async (taskId: string, updatedTask: any) => {
     if (updatedTask.scheduled_date) {
       updatedTask.scheduled_date = formatDateForComparison(updatedTask.scheduled_date);
     }
     await updateTask(taskId, updatedTask);
-  };
+  }, [updateTask, formatDateForComparison]);
 
-  const handleToggleTask = async (taskId: string) => {
+  const handleToggleTask = useCallback(async (taskId: string) => {
     const task = tasks.find(t => t.id === taskId);
     if (task && !task.completed) {
       setShowCelebration(true);
-      setTimeout(() => setShowCelebration(false), 4000);
+      setTimeout(() => setShowCelebration(false), 5000);
     }
     await toggleTask(taskId);
-  };
+  }, [tasks, toggleTask]);
 
-  const handleDeleteTask = async (taskId: string) => {
+  const handleDeleteTask = useCallback(async (taskId: string) => {
     await deleteTask(taskId);
-  };
+  }, [deleteTask]);
 
-  const getTasksForDate = (date: Date) => {
-    const dateString = formatDateForComparison(date);
-    console.log('Filtering tasks for date (IST):', dateString);
-    console.log('Available tasks:', tasks.map(t => ({ id: t.id, title: t.title, scheduled_date: t.scheduled_date })));
-    
-    const filteredTasks = tasks.filter(task => {
+  const handleOpenTaskModal = useCallback(() => setShowTaskModal(true), []);
+  const handleCloseTaskModal = useCallback(() => setShowTaskModal(false), []);
+  const handleOpenWeeklyAnalytics = useCallback(() => setShowWeeklyAnalytics(true), []);
+  const handleCloseWeeklyAnalytics = useCallback(() => setShowWeeklyAnalytics(false), []);
+  const handleCloseCelebration = useCallback(() => setShowCelebration(false), []);
+
+  // Memoized tasks for selected date
+  const selectedDateTasks = useMemo(() => {
+    const dateString = formatDateForComparison(selectedDate);
+    return tasks.filter(task => {
       const taskDate = formatDateForComparison(task.scheduled_date);
       return taskDate === dateString;
     });
+  }, [tasks, selectedDate, formatDateForComparison]);
+
+  // Memoized onboarding completion handler
+  const handleOnboardingComplete = useCallback(async (answers: OnboardingAnswers) => {
+    await updateUserMetadata({
+      onboarding_completed: true,
+      exam: answers.exam,
+      exam_other: answers.examOther,
+      institute: answers.institute,
+      institute_other: answers.instituteOther,
+      study_hours: answers.studyHours,
+      challenge: answers.challenge
+    });
     
-    console.log('Filtered tasks:', filteredTasks.length);
-    return filteredTasks;
-  };
+    setShowOnboarding(false);
+    setShowGuidedTour(true);
+    toast.success("Welcome to Exam Ace! Let's take a quick tour 🚀");
+  }, [updateUserMetadata]);
+
+  const handleGuidedTourComplete = useCallback(() => {
+    setShowGuidedTour(false);
+    toast.success("You're all set! Start planning your study sessions 📚");
+  }, []);
 
   // Check if user needs onboarding
   React.useEffect(() => {
@@ -95,6 +127,11 @@ const IndexContent = () => {
       }
     }
   }, [user, authLoading, isOnboardingCompleted]);
+
+  // Memoized background style
+  const backgroundStyle = useMemo(() => ({
+    background: `linear-gradient(135deg, ${themeColors.background.replace('from-', '').replace('to-', ', ')})`,
+  }), [themeColors.background]);
 
   // Show loading spinner while checking auth
   if (authLoading) {
@@ -112,64 +149,44 @@ const IndexContent = () => {
 
   // Show onboarding quiz if user hasn't completed it
   if (showOnboarding) {
-    return (
-      <OnboardingQuiz
-        onComplete={async (answers: OnboardingAnswers) => {
-          // Save onboarding answers to user metadata
-          await updateUserMetadata({
-            onboarding_completed: true,
-            exam: answers.exam,
-            exam_other: answers.examOther,
-            institute: answers.institute,
-            institute_other: answers.instituteOther,
-            study_hours: answers.studyHours,
-            challenge: answers.challenge
-          });
-          
-          setShowOnboarding(false);
-          setShowGuidedTour(true);
-          toast.success("Welcome to Exam Ace! Let's take a quick tour 🚀");
-        }}
-      />
-    );
+    return <OnboardingQuiz onComplete={handleOnboardingComplete} />;
   }
 
   // Show guided tour if user just completed onboarding
   if (showGuidedTour) {
     return (
       <>
-        {/* Render the main app behind the tour */}
         <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} relative overflow-hidden`}>
           <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
           <div className="relative z-10">
-            <Header onAddTask={() => setShowTaskModal(true)} />
+            <MemoizedHeader onAddTask={handleOpenTaskModal} />
             
             <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
-              <ProfileSection />
-              <QuoteSection />
+              <MemoizedProfileSection />
+              <MemoizedQuoteSection />
               
-              <DateSelector 
+              <MemoizedDateSelector 
                 selectedDate={selectedDate}
                 onDateChange={setSelectedDate}
-                onAddTask={() => setShowTaskModal(true)}
+                onAddTask={handleOpenTaskModal}
               />
               
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
                 <div className="lg:col-span-2">
-                  <TaskDashboard 
-                    tasks={getTasksForDate(selectedDate)}
+                  <MemoizedTaskDashboard 
+                    tasks={selectedDateTasks}
                     onToggleTask={handleToggleTask}
                     onDeleteTask={handleDeleteTask}
                     onEditTask={handleEditTask}
-                    onAddTask={() => setShowTaskModal(true)}
+                    onAddTask={handleOpenTaskModal}
                     selectedDate={selectedDate}
                   />
                 </div>
                 <div className="space-y-6">
-                  <ProgressOverview tasks={tasks} />
-                  <TaskAnalytics 
+                  <MemoizedProgressOverview tasks={tasks} />
+                  <MemoizedTaskAnalytics 
                     tasks={tasks} 
-                    onOpenWeeklyAnalytics={() => setShowWeeklyAnalytics(true)}
+                    onOpenWeeklyAnalytics={handleOpenWeeklyAnalytics}
                   />
                 </div>
               </div>
@@ -177,50 +194,43 @@ const IndexContent = () => {
           </div>
         </div>
         
-        <GuidedTour
-          onComplete={() => {
-            setShowGuidedTour(false);
-            toast.success("You're all set! Start planning your study sessions 📚");
-          }}
-        />
+        <GuidedTour onComplete={handleGuidedTourComplete} />
       </>
     );
   }
-
-  const selectedDateTasks = getTasksForDate(selectedDate);
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} relative overflow-hidden`}>
       <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
       <div className="relative z-10">
-        <Header onAddTask={() => setShowTaskModal(true)} />
+        <MemoizedHeader onAddTask={handleOpenTaskModal} />
         
         <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
-          <ProfileSection />
-          <QuoteSection />
+          <MemoizedProfileSection />
+          <MemoizedQuoteSection />
           
-          <DateSelector 
+          <MemoizedDateSelector 
             selectedDate={selectedDate}
             onDateChange={setSelectedDate}
-            onAddTask={() => setShowTaskModal(true)}
+            onAddTask={handleOpenTaskModal}
           />
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
             <div className="lg:col-span-2">
-              <TaskDashboard 
+              <MemoizedTaskDashboard 
                 tasks={selectedDateTasks}
                 onToggleTask={handleToggleTask}
                 onDeleteTask={handleDeleteTask}
                 onEditTask={handleEditTask}
-                onAddTask={() => setShowTaskModal(true)}
+                onAddTask={handleOpenTaskModal}
                 selectedDate={selectedDate}
               />
             </div>
             <div className="space-y-6">
-              <ProgressOverview tasks={tasks} />
-              <TaskAnalytics 
+              <MemoizedProgressOverview tasks={tasks} />
+              <MemoizedTaskAnalytics 
                 tasks={tasks} 
-                onOpenWeeklyAnalytics={() => setShowWeeklyAnalytics(true)}
+                onOpenWeeklyAnalytics={handleOpenWeeklyAnalytics}
               />
             </div>
           </div>
@@ -228,7 +238,7 @@ const IndexContent = () => {
 
         {showTaskModal && (
           <TaskModal
-            onClose={() => setShowTaskModal(false)}
+            onClose={handleCloseTaskModal}
             onAddTask={handleAddTask}
             selectedDate={selectedDate}
           />
@@ -237,11 +247,13 @@ const IndexContent = () => {
         {showWeeklyAnalytics && (
           <WeeklyAnalytics
             tasks={tasks}
-            onClose={() => setShowWeeklyAnalytics(false)}
+            onClose={handleCloseWeeklyAnalytics}
           />
         )}
 
-        {showCelebration && <Celebration />}
+        {showCelebration && (
+          <Celebration onComplete={handleCloseCelebration} />
+        )}
       </div>
     </div>
   );
