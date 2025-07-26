@@ -36,56 +36,56 @@ const celebrationTypes = [
   { component: ConfettiCelebration, name: 'Confetti Rain', theme: 'classic' }
 ];
 
-const motivationalMessages = [
+const jeeMotivationalMessages = [
   {
-    title: "SYSTEM OVERRIDE: SUCCESS DETECTED! 🚀",
-    message: "Neural pathways optimized. Knowledge acquisition: COMPLETE.",
-    subtitle: "Your dedication is rewriting the code of success!"
+    title: "BREAKTHROUGH ACHIEVED! 🚀",
+    message: "Excellence unlocked. Your dedication is building tomorrow's success.",
+    subtitle: "Every completed task brings you closer to your JEE dreams!"
   },
   {
-    title: "QUANTUM ACHIEVEMENT UNLOCKED! ⚡",
-    message: "Processing excellence... Result: EXCEPTIONAL PERFORMANCE.",
-    subtitle: "Every task completed accelerates your ascension to greatness!"
+    title: "MASTERY LEVEL UNLOCKED! ⚡",
+    message: "Outstanding performance detected. Your potential is limitless.",
+    subtitle: "Keep pushing boundaries - JEE success awaits the persistent!"
   },
   {
-    title: "DIGITAL MASTERY ACHIEVED! 💎",
-    message: "Algorithm status: SUPERIOR. Performance metrics: OFF THE CHARTS.",
-    subtitle: "Your discipline is programming tomorrow's victories!"
+    title: "CHAMPION MINDSET ACTIVATED! 💎",
+    message: "Superior focus achieved. You're operating at peak performance.",
+    subtitle: "Your determination is forging the path to engineering excellence!"
   },
   {
-    title: "CYBERNETIC EXCELLENCE CONFIRMED! 🔥",
-    message: "Data analysis complete. Conclusion: UNSTOPPABLE FORCE DETECTED.",
-    subtitle: "You're not just studying - you're engineering your destiny!"
+    title: "VICTORY SEQUENCE INITIATED! 🔥",
+    message: "Exceptional progress confirmed. You're unstoppable.",
+    subtitle: "Each concept mastered is a step closer to your dream college!"
   },
   {
-    title: "NEURAL NETWORK OPTIMIZATION! 🧠",
-    message: "Synaptic connections enhanced. Learning capacity: MAXIMIZED.",
-    subtitle: "Each concept mastered upgrades your intellectual hardware!"
+    title: "GENIUS MODE ACTIVATED! 🧠",
+    message: "Mental agility maximized. Your learning capacity is extraordinary.",
+    subtitle: "Transform every challenge into an opportunity for growth!"
   },
   {
-    title: "MATRIX-LEVEL PERFORMANCE! 🎯",
-    message: "Reality.exe has stopped working. Reason: TOO MUCH EXCELLENCE.",
-    subtitle: "You're bending the rules of possibility with pure determination!"
+    title: "SUCCESS PROTOCOL ENGAGED! 🎯",
+    message: "Peak performance achieved. Your consistency is remarkable.",
+    subtitle: "You're not just preparing for JEE - you're becoming unstoppable!"
   },
   {
-    title: "HOLOGRAPHIC ACHIEVEMENT! ✨",
-    message: "Projecting success at quantum frequencies. Signal strength: MAXIMUM.",
-    subtitle: "Your potential is materializing into tangible results!"
+    title: "EXCELLENCE FREQUENCY REACHED! ✨",
+    message: "Your commitment is generating incredible momentum.",
+    subtitle: "Every moment of focus multiplies your chances of success!"
   },
   {
-    title: "ELECTROMAGNETIC VICTORY! ⚡",
-    message: "Energy levels: CRITICAL. Success probability: 99.9% GUARANTEED.",
-    subtitle: "You're generating the power to transform dreams into reality!"
+    title: "CHAMPION ENERGY DETECTED! ⚡",
+    message: "Your dedication is powering extraordinary results.",
+    subtitle: "You have the strength to turn your JEE dreams into reality!"
   },
   {
-    title: "PHOTONIC BREAKTHROUGH! 💫",
-    message: "Light-speed learning detected. Velocity: BEYOND MEASURABLE.",
-    subtitle: "At this rate, you'll reach your goals faster than light itself!"
+    title: "BREAKTHROUGH VELOCITY! 💫",
+    message: "Learning at incredible speed. Your progress is phenomenal.",
+    subtitle: "At this pace, nothing can stop you from reaching your goals!"
   },
   {
-    title: "COSMIC SYNCHRONIZATION! 🌟",
-    message: "Universal alignment confirmed. Destiny status: ON TRACK.",
-    subtitle: "The universe is conspiring to make your success inevitable!"
+    title: "DESTINY ALIGNMENT COMPLETE! 🌟",
+    message: "Perfect synchronization achieved. Success is inevitable.",
+    subtitle: "The universe is supporting your journey to engineering greatness!"
   }
 ];
 
@@ -108,14 +108,14 @@ export const CelebrationController = ({ onComplete }: CelebrationControllerProps
     
     const celebrationIndex = Math.floor(Math.random() * selectedThemes.length);
     const actualIndex = celebrationTypes.indexOf(selectedThemes[celebrationIndex]);
-    const messageIndex = Math.floor(Math.random() * motivationalMessages.length);
+    const messageIndex = Math.floor(Math.random() * jeeMotivationalMessages.length);
     
     setCurrentCelebration(actualIndex);
     setCurrentMessage(messageIndex);
   }, []);
 
   const CelebrationComponent = celebrationTypes[currentCelebration].component;
-  const message = motivationalMessages[currentMessage];
+  const message = jeeMotivationalMessages[currentMessage];
 
   return (
     <CelebrationComponent 
