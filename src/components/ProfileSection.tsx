@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme, getThemeColors } from '@/contexts/ThemeContext';
@@ -6,68 +5,51 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ProfilePictureModal } from './ProfilePictureModal';
-import { 
-  User, 
-  LogOut, 
-  GraduationCap, 
-  BookOpen, 
-  Clock,
-  TrendingUp,
-  Edit3,
-  Mail,
-  Calendar
-} from 'lucide-react';
-
+import { User, LogOut, GraduationCap, BookOpen, Clock, TrendingUp, Edit3, Mail, Calendar } from 'lucide-react';
 export const ProfileSection = React.memo(() => {
-  const { user, signOut, userMetadata } = useAuth();
-  const { theme } = useTheme();
+  const {
+    user,
+    signOut,
+    userMetadata
+  } = useAuth();
+  const {
+    theme
+  } = useTheme();
   const themeColors = getThemeColors(theme);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [avatarSeed, setAvatarSeed] = useState(() => user?.user_metadata?.avatar_seed || user?.email || 'default');
-
   if (!user) return null;
-
   const getInitials = (name: string) => {
     return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
   };
-
   const getUserName = () => {
     return user?.user_metadata?.full_name || 'Student';
   };
-
   const getExamInfo = () => {
     if (userMetadata?.exam === 'Other' && userMetadata?.exam_other) {
       return userMetadata.exam_other;
     }
     return userMetadata?.exam || 'Not specified';
   };
-
   const getInstituteInfo = () => {
     if (userMetadata?.institute === 'Others' && userMetadata?.institute_other) {
       return userMetadata.institute_other;
     }
     return userMetadata?.institute || 'Self-Study';
   };
-
   const generateAvatarUrl = (seed: string) => {
     return `https://api.dicebear.com/9.x/lorelei/svg?seed=${encodeURIComponent(seed)}`;
   };
-
   const handleSeedChange = (newSeed: string) => {
     setAvatarSeed(newSeed);
   };
-
-  return (
-    <>
-      <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl shadow-lg">
+  return <>
+      <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl shadow-lg py-[15px]">
         {/* Header with Profile and Sign Out */}
         <div className="flex justify-between items-start mb-6">
           <div className="flex items-center gap-4">
             <div className="relative group">
-              <Avatar 
-                className="h-16 w-16 ring-2 ring-blue-200 dark:ring-gray-600 shadow-md cursor-pointer transition-all duration-200 hover:ring-blue-300 hover:shadow-lg"
-                onClick={() => setShowProfileModal(true)}
-              >
+              <Avatar className="h-16 w-16 ring-2 ring-blue-200 dark:ring-gray-600 shadow-md cursor-pointer transition-all duration-200 hover:ring-blue-300 hover:shadow-lg" onClick={() => setShowProfileModal(true)}>
                 <AvatarImage src={generateAvatarUrl(avatarSeed)} />
                 <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-lg">
                   {getInitials(getUserName())}
@@ -91,67 +73,17 @@ export const ProfileSection = React.memo(() => {
             </div>
           </div>
 
-          <Button
-            onClick={signOut}
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors"
-          >
+          <Button onClick={signOut} variant="outline" size="sm" className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors">
             <LogOut className="h-4 w-4" />
             <span>Sign Out</span>
           </Button>
         </div>
 
         {/* Study Information */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4 backdrop-blur-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <GraduationCap className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                Target Exam
-              </span>
-            </div>
-            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-              {getExamInfo()}
-            </p>
-          </div>
-
-          <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4 backdrop-blur-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <BookOpen className="h-5 w-5 text-green-600 dark:text-green-400" />
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                Institute
-              </span>
-            </div>
-            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-              {getInstituteInfo()}
-            </p>
-          </div>
-
-          <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4 backdrop-blur-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <Clock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                Daily Hours
-              </span>
-            </div>
-            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
-              {userMetadata?.study_hours || 'Not set'}
-            </p>
-          </div>
-        </div>
+        
       </div>
 
       {/* Profile Picture Modal */}
-      {showProfileModal && (
-        <ProfilePictureModal
-          isOpen={showProfileModal}
-          onClose={() => setShowProfileModal(false)}
-          currentSeed={avatarSeed}
-          onSeedChange={handleSeedChange}
-          userName={getUserName()}
-        />
-      )}
-    </>
-  );
+      {showProfileModal && <ProfilePictureModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} currentSeed={avatarSeed} onSeedChange={handleSeedChange} userName={getUserName()} />}
+    </>;
 });
