@@ -6,7 +6,7 @@ import { ThemeProvider } from '@/contexts/ThemeContext';
 import { Toaster } from "@/components/ui/sonner";
 import Index from '@/pages/Index';
 import { AdminDashboard } from '@/pages/AdminDashboard';
-import { NotFound } from '@/pages/NotFound';
+import NotFound from '@/pages/NotFound';
 import './App.css';
 
 const queryClient = new QueryClient();
