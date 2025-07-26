@@ -7,6 +7,7 @@ export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userMetadata, setUserMetadata] = useState<any>(null);
 
   useEffect(() => {
     // Set up auth state listener
@@ -14,6 +15,7 @@ export const useAuth = () => {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        setUserMetadata(session?.user?.user_metadata ?? null);
         setLoading(false);
       }
     );
@@ -22,6 +24,7 @@ export const useAuth = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      setUserMetadata(session?.user?.user_metadata ?? null);
       setLoading(false);
     });
 
@@ -68,6 +71,9 @@ export const useAuth = () => {
         console.error('Auth metadata update error:', authError);
         return { data: authData, error: authError };
       }
+
+      // Update local state
+      setUserMetadata(metadata);
 
       // Update the profiles table with onboarding data
       if (user?.id) {
@@ -125,6 +131,7 @@ export const useAuth = () => {
     user,
     session,
     loading,
+    userMetadata,
     signUp,
     signIn,
     signOut,
