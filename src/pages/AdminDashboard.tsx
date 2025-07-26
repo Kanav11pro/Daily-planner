@@ -14,8 +14,16 @@ import { Navigate } from 'react-router-dom';
 type AdminSection = 'overview' | 'subjects' | 'chapters' | 'tags' | 'themes' | 'onboarding' | 'users';
 
 export const AdminDashboard = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [activeSection, setActiveSection] = useState<AdminSection>('overview');
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   // Simple admin check - in production, you'd want proper role-based access
   const isAdmin = user?.email === 'cbforin@gmail.com'; // Replace with your admin email
@@ -46,13 +54,13 @@ export const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950">
-      <div className="flex">
+    <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950">
+      <div className="flex w-full">
         <AdminSidebar 
           activeSection={activeSection} 
           onSectionChange={setActiveSection}
         />
-        <main className="flex-1 p-8 ml-64">
+        <main className="flex-1 p-8 ml-64 w-full">
           <div className="max-w-7xl mx-auto">
             <header className="mb-8">
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
