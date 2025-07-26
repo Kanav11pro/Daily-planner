@@ -5,17 +5,31 @@ import { FireworksCelebration } from './FireworksCelebration';
 import { RisingStarsCelebration } from './RisingStarsCelebration';
 import { ParticleBurstCelebration } from './ParticleBurstCelebration';
 import { GlowingRingCelebration } from './GlowingRingCelebration';
+import { BalloonRiseCelebration } from './BalloonRiseCelebration';
+import { TypewriterCelebration } from './TypewriterCelebration';
+import { NeonGlowCelebration } from './NeonGlowCelebration';
+import { PaperPlaneCelebration } from './PaperPlaneCelebration';
+import { RainbowWaveCelebration } from './RainbowWaveCelebration';
+import { CosmicExplosionCelebration } from './CosmicExplosionCelebration';
+import { BookFlipCelebration } from './BookFlipCelebration';
 
 interface CelebrationControllerProps {
   onComplete: () => void;
 }
 
 const celebrationTypes = [
-  { component: ConfettiCelebration, name: 'Confetti Rain' },
-  { component: FireworksCelebration, name: 'Fireworks' },
-  { component: RisingStarsCelebration, name: 'Rising Stars' },
-  { component: ParticleBurstCelebration, name: 'Particle Burst' },
-  { component: GlowingRingCelebration, name: 'Glowing Ring' }
+  { component: ConfettiCelebration, name: 'Confetti Rain', theme: 'classic' },
+  { component: FireworksCelebration, name: 'Fireworks', theme: 'explosive' },
+  { component: RisingStarsCelebration, name: 'Rising Stars', theme: 'celestial' },
+  { component: ParticleBurstCelebration, name: 'Particle Burst', theme: 'energy' },
+  { component: GlowingRingCelebration, name: 'Glowing Ring', theme: 'futuristic' },
+  { component: BalloonRiseCelebration, name: 'Balloon Rise', theme: 'playful' },
+  { component: TypewriterCelebration, name: 'Code Complete', theme: 'tech' },
+  { component: NeonGlowCelebration, name: 'Neon Glow', theme: 'cyberpunk' },
+  { component: PaperPlaneCelebration, name: 'Paper Plane', theme: 'journey' },
+  { component: RainbowWaveCelebration, name: 'Rainbow Wave', theme: 'colorful' },
+  { component: CosmicExplosionCelebration, name: 'Cosmic Explosion', theme: 'space' },
+  { component: BookFlipCelebration, name: 'Knowledge Flip', theme: 'academic' }
 ];
 
 const motivationalMessages = [
@@ -43,6 +57,31 @@ const motivationalMessages = [
     title: "Exceptional Dedication! 🏆",
     message: "You're proving that success is earned through persistence!",
     subtitle: "Every IIT/NEET topper started with discipline like yours!"
+  },
+  {
+    title: "Masterful Performance! 🌟",
+    message: "Your commitment to excellence is truly inspiring!",
+    subtitle: "This is how dreams transform into reality!"
+  },
+  {
+    title: "Academic Warrior! ⚡",
+    message: "You're conquering challenges with incredible determination!",
+    subtitle: "Success recognizes those who never give up!"
+  },
+  {
+    title: "Knowledge Champion! 📚",
+    message: "Every concept you master makes you stronger!",
+    subtitle: "Education is your superpower - keep wielding it!"
+  },
+  {
+    title: "Future Leader! 👑",
+    message: "Your discipline today shapes tomorrow's achievements!",
+    subtitle: "Great minds are built through consistent effort!"
+  },
+  {
+    title: "Excellence Personified! 🎖️",
+    message: "You're not just studying, you're crafting your destiny!",
+    subtitle: "Every step forward is a step towards greatness!"
   }
 ];
 
@@ -51,7 +90,7 @@ export const CelebrationController = ({ onComplete }: CelebrationControllerProps
   const [currentMessage, setCurrentMessage] = useState(0);
 
   useEffect(() => {
-    // Rotate celebration types and messages
+    // Rotate celebration types and messages randomly for variety
     const celebrationIndex = Math.floor(Math.random() * celebrationTypes.length);
     const messageIndex = Math.floor(Math.random() * motivationalMessages.length);
     

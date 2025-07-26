@@ -74,6 +74,11 @@ const challengeOptions = [
 export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [answers, setAnswers] = useState<Partial<OnboardingAnswers>>({
+    exam: '',
+    examOther: '',
+    institute: '',
+    instituteOther: '',
+    studyHours: '',
     challenge: []
   });
 
@@ -88,7 +93,16 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     } else {
-      onComplete(answers as OnboardingAnswers);
+      // Ensure all required fields are filled
+      const finalAnswers: OnboardingAnswers = {
+        exam: answers.exam || '',
+        examOther: answers.examOther || '',
+        institute: answers.institute || '',
+        instituteOther: answers.instituteOther || '',
+        studyHours: answers.studyHours || '',
+        challenge: answers.challenge || []
+      };
+      onComplete(finalAnswers);
     }
   };
 
@@ -98,29 +112,41 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
     }
   };
 
+  const handleExamSelect = (value: string) => {
+    setAnswers(prev => ({ ...prev, exam: value, examOther: '' }));
+  };
+
+  const handleInstituteSelect = (value: string) => {
+    setAnswers(prev => ({ ...prev, institute: value, instituteOther: '' }));
+  };
+
+  const handleStudyHoursSelect = (value: string) => {
+    setAnswers(prev => ({ ...prev, studyHours: value }));
+  };
+
   const handleChallengeChange = (challengeValue: string) => {
     const currentChallenges = answers.challenge || [];
     const isSelected = currentChallenges.includes(challengeValue);
     
     if (isSelected) {
-      setAnswers({
-        ...answers,
+      setAnswers(prev => ({
+        ...prev,
         challenge: currentChallenges.filter(c => c !== challengeValue)
-      });
+      }));
     } else {
-      setAnswers({
-        ...answers,
+      setAnswers(prev => ({
+        ...prev,
         challenge: [...currentChallenges, challengeValue]
-      });
+      }));
     }
   };
 
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        return answers.exam && (answers.exam !== "Other" || answers.examOther);
+        return answers.exam && (answers.exam !== "Other" || (answers.examOther && answers.examOther.trim()));
       case 2:
-        return answers.institute && (answers.institute !== "Others" || answers.instituteOther);
+        return answers.institute && (answers.institute !== "Others" || (answers.instituteOther && answers.instituteOther.trim()));
       case 3:
         return answers.studyHours;
       case 4:
@@ -148,7 +174,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
               <OnboardingOption
                 key={option.value}
                 selected={answers.exam === option.value}
-                onClick={() => setAnswers({...answers, exam: option.value})}
+                onClick={() => handleExamSelect(option.value)}
                 emoji={option.emoji}
               >
                 {option.label}
@@ -159,7 +185,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
                 <Input
                   placeholder="Please specify your exam"
                   value={answers.examOther || ""}
-                  onChange={(e) => setAnswers({...answers, examOther: e.target.value})}
+                  onChange={(e) => setAnswers(prev => ({...prev, examOther: e.target.value}))}
                   className="border-2 border-white/30 bg-white/10 text-white placeholder:text-white/70 focus:border-blue-400 text-lg p-4"
                 />
               </div>
@@ -174,7 +200,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
               <OnboardingOption
                 key={option.value}
                 selected={answers.institute === option.value}
-                onClick={() => setAnswers({...answers, institute: option.value})}
+                onClick={() => handleInstituteSelect(option.value)}
                 emoji={option.emoji}
               >
                 {option.label}
@@ -185,7 +211,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
                 <Input
                   placeholder="Please specify your institute"
                   value={answers.instituteOther || ""}
-                  onChange={(e) => setAnswers({...answers, instituteOther: e.target.value})}
+                  onChange={(e) => setAnswers(prev => ({...prev, instituteOther: e.target.value}))}
                   className="border-2 border-white/30 bg-white/10 text-white placeholder:text-white/70 focus:border-purple-400 text-lg p-4"
                 />
               </div>
@@ -200,7 +226,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
               <OnboardingOption
                 key={option.value}
                 selected={answers.studyHours === option.value}
-                onClick={() => setAnswers({...answers, studyHours: option.value})}
+                onClick={() => handleStudyHoursSelect(option.value)}
                 emoji={option.emoji}
               >
                 {option.label}
@@ -237,7 +263,7 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
             onClick={handlePrevious}
             disabled={currentStep === 1}
             variant="outline"
-            className="flex items-center space-x-2 disabled:opacity-50 bg-white/10 border-white/30 text-white hover:bg-white/20"
+            className="flex items-center space-x-2 disabled:opacity-50 bg-white/10 border-white/30 text-white hover:bg-white/20 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="h-4 w-4" />
             <span>Previous</span>
