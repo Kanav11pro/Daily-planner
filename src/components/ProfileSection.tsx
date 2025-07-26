@@ -1,149 +1,152 @@
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
 import { useTheme, getThemeColors } from '@/contexts/ThemeContext';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { ProfilePictureModal } from './ProfilePictureModal';
-import { LogOut, User, Camera, Settings } from 'lucide-react';
+import { 
+  User, 
+  Settings, 
+  LogOut, 
+  GraduationCap, 
+  BookOpen, 
+  Clock,
+  Target,
+  Award,
+  TrendingUp,
+  Edit3
+} from 'lucide-react';
 
-interface Profile {
-  id: string;
-  full_name: string;
-  avatar_url?: string;
-  avatar_seed?: string;
-}
-
-export const ProfileSection = () => {
-  const { user, signOut } = useAuth();
+export const ProfileSection = React.memo(() => {
+  const { user, signOut, userMetadata } = useAuth();
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
-  const [profile, setProfile] = useState<Profile | null>(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const [avatarSeed, setAvatarSeed] = useState('');
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (!user) return;
+  if (!user) return null;
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (data) {
-        setProfile(data);
-        // Use stored avatar_seed or fallback to user name/email
-        const seed = data.avatar_seed || data.full_name || user.email?.split('@')[0] || 'User';
-        setAvatarSeed(seed);
-      }
-    };
-
-    fetchProfile();
-  }, [user]);
-
-  const handleSignOut = async () => {
-    await signOut();
+  const getInitials = (name: string) => {
+    return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
   };
 
-  const handleAvatarSeedChange = async (newSeed: string) => {
-    if (!user) return;
+  const getUserName = () => {
+    return user?.user_metadata?.full_name || 'Student';
+  };
 
-    try {
-      // Update the avatar seed in the database
-      const { error } = await supabase
-        .from('profiles')
-        .update({ avatar_seed: newSeed })
-        .eq('id', user.id);
-
-      if (!error) {
-        setAvatarSeed(newSeed);
-        // Update local profile state
-        setProfile(prev => prev ? { ...prev, avatar_seed: newSeed } : null);
-      }
-    } catch (error) {
-      console.error('Error updating avatar seed:', error);
+  const getExamInfo = () => {
+    if (userMetadata?.exam === 'Other' && userMetadata?.exam_other) {
+      return userMetadata.exam_other;
     }
+    return userMetadata?.exam || 'Not specified';
   };
 
-  const handleProfilePictureClick = () => {
-    setShowProfileModal(true);
+  const getInstituteInfo = () => {
+    if (userMetadata?.institute === 'Others' && userMetadata?.institute_other) {
+      return userMetadata.institute_other;
+    }
+    return userMetadata?.institute || 'Self-Study';
   };
-
-  if (!user || !profile) return null;
-
-  // Generate profile picture URL using the stored seed or user's name/email
-  const userName = profile.full_name || user.email?.split('@')[0] || 'User';
-  const currentSeed = avatarSeed || userName;
-  const profilePicUrl = `https://api.dicebear.com/9.x/lorelei/svg?seed=${encodeURIComponent(currentSeed)}`;
 
   return (
-    <>
-      <div className={`${themeColors.card} rounded-xl p-4 ${themeColors.border} border`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="relative group">
-              <div 
-                className={`w-12 h-12 rounded-full overflow-hidden ${themeColors.accent} flex items-center justify-center cursor-pointer transform transition-all duration-200 hover:scale-105 hover:shadow-lg group-hover:ring-2 group-hover:ring-purple-400`}
-                onClick={handleProfilePictureClick}
-              >
-                <img 
-                  src={profilePicUrl} 
-                  alt={`${userName}'s profile`}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    // Fallback to icon if image fails to load
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                  }}
-                />
-                <User className={`h-6 w-6 ${themeColors.text} hidden`} />
-              </div>
-              
-              {/* Hover overlay */}
-              <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center cursor-pointer"
-                   onClick={handleProfilePictureClick}>
-                <Camera className="h-4 w-4 text-white" />
-              </div>
-              
-              {/* Customization hint */}
-              <div className="absolute -bottom-1 -right-1 bg-purple-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                <Settings className="h-3 w-3" />
-              </div>
-            </div>
-            
-            <div>
-              <p className={`font-semibold ${themeColors.text}`}>
-                {profile.full_name || 'User'}
-              </p>
-              <p className={`text-sm ${themeColors.text} opacity-70`}>
-                {user.email}
-              </p>
-              <p className={`text-xs ${themeColors.text} opacity-50`}>
-                Click avatar to customize
-              </p>
+    <div className={`${themeColors.card} backdrop-blur-sm ${themeColors.border} border rounded-2xl p-6 shadow-xl ${themeColors.glow} transition-all duration-300`}>
+      <div className="flex flex-col lg:flex-row lg:items-center gap-6">
+        {/* Profile Avatar and Basic Info */}
+        <div className="flex items-center gap-4">
+          <div className="relative group">
+            <Avatar 
+              className="h-16 w-16 lg:h-20 lg:w-20 ring-4 ring-white/20 shadow-lg cursor-pointer transition-all duration-300 group-hover:ring-white/40"
+              onClick={() => setShowProfileModal(true)}
+            >
+              <AvatarImage src={user?.user_metadata?.avatar_url} />
+              <AvatarFallback className={`bg-gradient-to-r ${themeColors.primary} text-white font-bold text-xl`}>
+                {getInitials(getUserName())}
+              </AvatarFallback>
+            </Avatar>
+            <div className="absolute inset-0 bg-black/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <Edit3 className="h-5 w-5 text-white" />
             </div>
           </div>
+
+          <div className="flex-1 min-w-0">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white truncate">
+              {getUserName()}
+            </h2>
+            <p className="text-base text-gray-600 dark:text-gray-300 truncate">
+              {user.email}
+            </p>
+            
+            {/* Status Badge */}
+            <div className="mt-2">
+              <Badge 
+                className={`bg-gradient-to-r ${themeColors.primary} text-white px-3 py-1 text-sm font-medium`}
+                variant="outline"
+              >
+                <TrendingUp className="h-3 w-3 mr-1" />
+                Active Learner
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        {/* Study Information Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1">
+          {/* Exam Card */}
+          <div className={`bg-gradient-to-r ${themeColors.primary}/10 rounded-xl p-4 border border-white/20`}>
+            <div className="flex items-center gap-2 mb-2">
+              <GraduationCap className={`h-5 w-5 bg-gradient-to-r ${themeColors.primary} bg-clip-text text-transparent`} />
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">TARGET EXAM</span>
+            </div>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+              {getExamInfo()}
+            </p>
+          </div>
+
+          {/* Institute Card */}
+          <div className={`bg-gradient-to-r ${themeColors.primary}/10 rounded-xl p-4 border border-white/20`}>
+            <div className="flex items-center gap-2 mb-2">
+              <BookOpen className={`h-5 w-5 bg-gradient-to-r ${themeColors.primary} bg-clip-text text-transparent`} />
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">INSTITUTE</span>
+            </div>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+              {getInstituteInfo()}
+            </p>
+          </div>
+
+          {/* Study Hours Card */}
+          <div className={`bg-gradient-to-r ${themeColors.primary}/10 rounded-xl p-4 border border-white/20`}>
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className={`h-5 w-5 bg-gradient-to-r ${themeColors.primary} bg-clip-text text-transparent`} />
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">DAILY HOURS</span>
+            </div>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+              {userMetadata?.study_hours || 'Not set'}
+            </p>
+          </div>
+        </div>
+
+        {/* Action Button */}
+        <div className="flex-shrink-0">
           <Button
-            onClick={handleSignOut}
+            onClick={signOut}
             variant="outline"
             size="sm"
-            className="flex items-center space-x-2"
+            className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors duration-300"
           >
             <LogOut className="h-4 w-4" />
-            <span>Sign Out</span>
+            <span className="hidden sm:inline">Sign Out</span>
           </Button>
         </div>
       </div>
 
-      <ProfilePictureModal
-        isOpen={showProfileModal}
-        onClose={() => setShowProfileModal(false)}
-        currentSeed={currentSeed}
-        onSeedChange={handleAvatarSeedChange}
-        userName={userName}
-      />
-    </>
+      {/* Profile Picture Modal */}
+      {showProfileModal && (
+        <ProfilePictureModal
+          isOpen={showProfileModal}
+          onClose={() => setShowProfileModal(false)}
+        />
+      )}
+    </div>
   );
-};
+});

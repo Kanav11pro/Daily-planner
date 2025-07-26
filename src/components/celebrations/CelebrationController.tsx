@@ -5,83 +5,87 @@ import { FireworksCelebration } from './FireworksCelebration';
 import { RisingStarsCelebration } from './RisingStarsCelebration';
 import { ParticleBurstCelebration } from './ParticleBurstCelebration';
 import { GlowingRingCelebration } from './GlowingRingCelebration';
-import { BalloonRiseCelebration } from './BalloonRiseCelebration';
 import { TypewriterCelebration } from './TypewriterCelebration';
 import { NeonGlowCelebration } from './NeonGlowCelebration';
-import { PaperPlaneCelebration } from './PaperPlaneCelebration';
-import { RainbowWaveCelebration } from './RainbowWaveCelebration';
 import { CosmicExplosionCelebration } from './CosmicExplosionCelebration';
 import { BookFlipCelebration } from './BookFlipCelebration';
+import { QuantumFieldCelebration } from './QuantumFieldCelebration';
+import { HologramCelebration } from './HologramCelebration';
+import { LaserGridCelebration } from './LaserGridCelebration';
+import { DigitalRainCelebration } from './DigitalRainCelebration';
+import { ElectronicPulseCelebration } from './ElectronicPulseCelebration';
 
 interface CelebrationControllerProps {
   onComplete: () => void;
 }
 
 const celebrationTypes = [
-  { component: ConfettiCelebration, name: 'Confetti Rain', theme: 'classic' },
+  { component: NeonGlowCelebration, name: 'Neon Glow', theme: 'cyberpunk' },
+  { component: TypewriterCelebration, name: 'Code Complete', theme: 'tech' },
+  { component: QuantumFieldCelebration, name: 'Quantum Field', theme: 'futuristic' },
+  { component: HologramCelebration, name: 'Hologram', theme: 'sci-fi' },
+  { component: LaserGridCelebration, name: 'Laser Grid', theme: 'cyberpunk' },
+  { component: DigitalRainCelebration, name: 'Digital Rain', theme: 'matrix' },
+  { component: ElectronicPulseCelebration, name: 'Electronic Pulse', theme: 'tech' },
+  { component: CosmicExplosionCelebration, name: 'Cosmic Explosion', theme: 'space' },
   { component: FireworksCelebration, name: 'Fireworks', theme: 'explosive' },
   { component: RisingStarsCelebration, name: 'Rising Stars', theme: 'celestial' },
   { component: ParticleBurstCelebration, name: 'Particle Burst', theme: 'energy' },
   { component: GlowingRingCelebration, name: 'Glowing Ring', theme: 'futuristic' },
-  { component: BalloonRiseCelebration, name: 'Balloon Rise', theme: 'playful' },
-  { component: TypewriterCelebration, name: 'Code Complete', theme: 'tech' },
-  { component: NeonGlowCelebration, name: 'Neon Glow', theme: 'cyberpunk' },
-  { component: PaperPlaneCelebration, name: 'Paper Plane', theme: 'journey' },
-  { component: RainbowWaveCelebration, name: 'Rainbow Wave', theme: 'colorful' },
-  { component: CosmicExplosionCelebration, name: 'Cosmic Explosion', theme: 'space' },
-  { component: BookFlipCelebration, name: 'Knowledge Flip', theme: 'academic' }
+  { component: BookFlipCelebration, name: 'Knowledge Flip', theme: 'academic' },
+  { component: ConfettiCelebration, name: 'Confetti Rain', theme: 'classic' }
 ];
 
 const motivationalMessages = [
   {
-    title: "Outstanding Achievement! 🎯",
-    message: "You're building the foundation for success, one task at a time!",
-    subtitle: "Every completed task brings you closer to your dream college!"
+    title: "SYSTEM OVERRIDE: SUCCESS DETECTED! 🚀",
+    message: "Neural pathways optimized. Knowledge acquisition: COMPLETE.",
+    subtitle: "Your dedication is rewriting the code of success!"
   },
   {
-    title: "Incredible Progress! 🚀",
-    message: "Your dedication is paying off! Keep this momentum going!",
-    subtitle: "Champions are made through consistent effort like this!"
+    title: "QUANTUM ACHIEVEMENT UNLOCKED! ⚡",
+    message: "Processing excellence... Result: EXCEPTIONAL PERFORMANCE.",
+    subtitle: "Every task completed accelerates your ascension to greatness!"
   },
   {
-    title: "Phenomenal Work! ⭐",
-    message: "You're not just completing tasks, you're building character!",
-    subtitle: "Future toppers have the same discipline you're showing!"
+    title: "DIGITAL MASTERY ACHIEVED! 💎",
+    message: "Algorithm status: SUPERIOR. Performance metrics: OFF THE CHARTS.",
+    subtitle: "Your discipline is programming tomorrow's victories!"
   },
   {
-    title: "Brilliant Execution! 💎",
-    message: "Excellence is a habit, and you're mastering it perfectly!",
-    subtitle: "Your future self will thank you for this dedication!"
+    title: "CYBERNETIC EXCELLENCE CONFIRMED! 🔥",
+    message: "Data analysis complete. Conclusion: UNSTOPPABLE FORCE DETECTED.",
+    subtitle: "You're not just studying - you're engineering your destiny!"
   },
   {
-    title: "Exceptional Dedication! 🏆",
-    message: "You're proving that success is earned through persistence!",
-    subtitle: "Every IIT/NEET topper started with discipline like yours!"
+    title: "NEURAL NETWORK OPTIMIZATION! 🧠",
+    message: "Synaptic connections enhanced. Learning capacity: MAXIMIZED.",
+    subtitle: "Each concept mastered upgrades your intellectual hardware!"
   },
   {
-    title: "Masterful Performance! 🌟",
-    message: "Your commitment to excellence is truly inspiring!",
-    subtitle: "This is how dreams transform into reality!"
+    title: "MATRIX-LEVEL PERFORMANCE! 🎯",
+    message: "Reality.exe has stopped working. Reason: TOO MUCH EXCELLENCE.",
+    subtitle: "You're bending the rules of possibility with pure determination!"
   },
   {
-    title: "Academic Warrior! ⚡",
-    message: "You're conquering challenges with incredible determination!",
-    subtitle: "Success recognizes those who never give up!"
+    title: "HOLOGRAPHIC ACHIEVEMENT! ✨",
+    message: "Projecting success at quantum frequencies. Signal strength: MAXIMUM.",
+    subtitle: "Your potential is materializing into tangible results!"
   },
   {
-    title: "Knowledge Champion! 📚",
-    message: "Every concept you master makes you stronger!",
-    subtitle: "Education is your superpower - keep wielding it!"
+    title: "ELECTROMAGNETIC VICTORY! ⚡",
+    message: "Energy levels: CRITICAL. Success probability: 99.9% GUARANTEED.",
+    subtitle: "You're generating the power to transform dreams into reality!"
   },
   {
-    title: "Future Leader! 👑",
-    message: "Your discipline today shapes tomorrow's achievements!",
-    subtitle: "Great minds are built through consistent effort!"
+    title: "PHOTONIC BREAKTHROUGH! 💫",
+    message: "Light-speed learning detected. Velocity: BEYOND MEASURABLE.",
+    subtitle: "At this rate, you'll reach your goals faster than light itself!"
   },
   {
-    title: "Excellence Personified! 🎖️",
-    message: "You're not just studying, you're crafting your destiny!",
-    subtitle: "Every step forward is a step towards greatness!"
+    title: "COSMIC SYNCHRONIZATION! 🌟",
+    message: "Universal alignment confirmed. Destiny status: ON TRACK.",
+    subtitle: "The universe is conspiring to make your success inevitable!"
   }
 ];
 
@@ -90,11 +94,23 @@ export const CelebrationController = ({ onComplete }: CelebrationControllerProps
   const [currentMessage, setCurrentMessage] = useState(0);
 
   useEffect(() => {
-    // Rotate celebration types and messages randomly for variety
-    const celebrationIndex = Math.floor(Math.random() * celebrationTypes.length);
+    // Prioritize cyberpunk and tech themes
+    const cyberpunkThemes = celebrationTypes.filter(c => 
+      c.theme === 'cyberpunk' || c.theme === 'tech' || c.theme === 'futuristic' || c.theme === 'matrix' || c.theme === 'sci-fi'
+    );
+    const otherThemes = celebrationTypes.filter(c => 
+      c.theme !== 'cyberpunk' && c.theme !== 'tech' && c.theme !== 'futuristic' && c.theme !== 'matrix' && c.theme !== 'sci-fi'
+    );
+    
+    // 70% chance for cyberpunk/tech themes, 30% for others
+    const useAdvancedTheme = Math.random() < 0.7;
+    const selectedThemes = useAdvancedTheme ? cyberpunkThemes : otherThemes;
+    
+    const celebrationIndex = Math.floor(Math.random() * selectedThemes.length);
+    const actualIndex = celebrationTypes.indexOf(selectedThemes[celebrationIndex]);
     const messageIndex = Math.floor(Math.random() * motivationalMessages.length);
     
-    setCurrentCelebration(celebrationIndex);
+    setCurrentCelebration(actualIndex);
     setCurrentMessage(messageIndex);
   }, []);
 

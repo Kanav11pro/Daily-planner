@@ -58,22 +58,22 @@ const challengeOptions = [
   { value: "Time management", label: "Time management", emoji: "⏰" },
   { value: "Memorizing formulas", label: "Memorizing formulas", emoji: "🧠" },
   { value: "Problem-solving speed", label: "Problem-solving speed", emoji: "⚡" },
-  { value: "Staying motivated", label: "Staying motivated", emoji: "❤️" },
+  { value: "Staying motivated", label: "Staying motivated", emoji: "💪" },
   { value: "Too much syllabus to cover", label: "Too much syllabus to cover", emoji: "📚" },
   { value: "Time management - school + coaching", label: "Balancing school + coaching", emoji: "🕒" },
-  { value: "Procrastination", label: "Procrastination", emoji: "❌" },
+  { value: "Procrastination", label: "Procrastination", emoji: "🚫" },
   { value: "Revision and retention", label: "Revision and retention", emoji: "📝" },
   { value: "Low mock test scores", label: "Low mock test scores", emoji: "📉" },
-  { value: "Understanding tough concepts", label: "Understanding tough concepts", emoji: "🧠" },
+  { value: "Understanding tough concepts", label: "Understanding tough concepts", emoji: "🔬" },
   { value: "Backlogs", label: "Backlogs", emoji: "🔁" },
-  { value: "Stress and burnout", label: "Stress and burnout", emoji: "🤯" },
+  { value: "Stress and burnout", label: "Stress and burnout", emoji: "😰" },
   { value: "Distractions", label: "Distractions", emoji: "🛑" },
   { value: "No proper routine", label: "No proper routine", emoji: "📆" }
 ];
 
 export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [answers, setAnswers] = useState<Partial<OnboardingAnswers>>({
+  const [answers, setAnswers] = useState<OnboardingAnswers>({
     exam: '',
     examOther: '',
     institute: '',
@@ -93,16 +93,8 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Ensure all required fields are filled
-      const finalAnswers: OnboardingAnswers = {
-        exam: answers.exam || '',
-        examOther: answers.examOther || '',
-        institute: answers.institute || '',
-        instituteOther: answers.instituteOther || '',
-        studyHours: answers.studyHours || '',
-        challenge: answers.challenge || []
-      };
-      onComplete(finalAnswers);
+      console.log('Completing onboarding with answers:', answers);
+      onComplete(answers);
     }
   };
 
@@ -113,44 +105,53 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
   };
 
   const handleExamSelect = (value: string) => {
-    setAnswers(prev => ({ ...prev, exam: value, examOther: '' }));
+    setAnswers(prev => ({ ...prev, exam: value, examOther: value === 'Other' ? prev.examOther : '' }));
+    console.log('Selected exam:', value);
   };
 
   const handleInstituteSelect = (value: string) => {
-    setAnswers(prev => ({ ...prev, institute: value, instituteOther: '' }));
+    setAnswers(prev => ({ ...prev, institute: value, instituteOther: value === 'Others' ? prev.instituteOther : '' }));
+    console.log('Selected institute:', value);
   };
 
   const handleStudyHoursSelect = (value: string) => {
     setAnswers(prev => ({ ...prev, studyHours: value }));
+    console.log('Selected study hours:', value);
   };
 
   const handleChallengeChange = (challengeValue: string) => {
     const currentChallenges = answers.challenge || [];
     const isSelected = currentChallenges.includes(challengeValue);
     
+    let newChallenges;
     if (isSelected) {
-      setAnswers(prev => ({
-        ...prev,
-        challenge: currentChallenges.filter(c => c !== challengeValue)
-      }));
+      newChallenges = currentChallenges.filter(c => c !== challengeValue);
     } else {
-      setAnswers(prev => ({
-        ...prev,
-        challenge: [...currentChallenges, challengeValue]
-      }));
+      newChallenges = [...currentChallenges, challengeValue];
     }
+    
+    setAnswers(prev => ({ ...prev, challenge: newChallenges }));
+    console.log('Updated challenges:', newChallenges);
   };
 
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        return answers.exam && (answers.exam !== "Other" || (answers.examOther && answers.examOther.trim()));
+        const examValid = answers.exam && (answers.exam !== "Other" || (answers.examOther && answers.examOther.trim().length > 0));
+        console.log('Step 1 validation - exam:', answers.exam, 'examOther:', answers.examOther, 'valid:', examValid);
+        return examValid;
       case 2:
-        return answers.institute && (answers.institute !== "Others" || (answers.instituteOther && answers.instituteOther.trim()));
+        const instituteValid = answers.institute && (answers.institute !== "Others" || (answers.instituteOther && answers.instituteOther.trim().length > 0));
+        console.log('Step 2 validation - institute:', answers.institute, 'instituteOther:', answers.instituteOther, 'valid:', instituteValid);
+        return instituteValid;
       case 3:
-        return answers.studyHours;
+        const hoursValid = !!answers.studyHours;
+        console.log('Step 3 validation - studyHours:', answers.studyHours, 'valid:', hoursValid);
+        return hoursValid;
       case 4:
-        return answers.challenge && answers.challenge.length > 0;
+        const challengeValid = answers.challenge && answers.challenge.length > 0;
+        console.log('Step 4 validation - challenges:', answers.challenge, 'valid:', challengeValid);
+        return challengeValid;
       default:
         return false;
     }
