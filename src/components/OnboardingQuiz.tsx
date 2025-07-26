@@ -93,7 +93,6 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
     if (currentStep < 4) {
       setCurrentStep(currentStep + 1);
     } else {
-      console.log('Completing onboarding with answers:', answers);
       onComplete(answers);
     }
   };
@@ -105,53 +104,60 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
   };
 
   const handleExamSelect = (value: string) => {
-    setAnswers(prev => ({ ...prev, exam: value, examOther: value === 'Other' ? prev.examOther : '' }));
-    console.log('Selected exam:', value);
+    setAnswers(prev => ({ 
+      ...prev, 
+      exam: value, 
+      examOther: value === 'Other' ? prev.examOther : '' 
+    }));
   };
 
   const handleInstituteSelect = (value: string) => {
-    setAnswers(prev => ({ ...prev, institute: value, instituteOther: value === 'Others' ? prev.instituteOther : '' }));
-    console.log('Selected institute:', value);
+    setAnswers(prev => ({ 
+      ...prev, 
+      institute: value, 
+      instituteOther: value === 'Others' ? prev.instituteOther : '' 
+    }));
   };
 
   const handleStudyHoursSelect = (value: string) => {
     setAnswers(prev => ({ ...prev, studyHours: value }));
-    console.log('Selected study hours:', value);
   };
 
   const handleChallengeChange = (challengeValue: string) => {
-    const currentChallenges = answers.challenge || [];
-    const isSelected = currentChallenges.includes(challengeValue);
-    
-    let newChallenges;
-    if (isSelected) {
-      newChallenges = currentChallenges.filter(c => c !== challengeValue);
-    } else {
-      newChallenges = [...currentChallenges, challengeValue];
-    }
-    
-    setAnswers(prev => ({ ...prev, challenge: newChallenges }));
-    console.log('Updated challenges:', newChallenges);
+    setAnswers(prev => {
+      const currentChallenges = prev.challenge || [];
+      const isSelected = currentChallenges.includes(challengeValue);
+      
+      if (isSelected) {
+        return {
+          ...prev,
+          challenge: currentChallenges.filter(c => c !== challengeValue)
+        };
+      } else {
+        return {
+          ...prev,
+          challenge: [...currentChallenges, challengeValue]
+        };
+      }
+    });
   };
 
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        const examValid = answers.exam && (answers.exam !== "Other" || (answers.examOther && answers.examOther.trim().length > 0));
-        console.log('Step 1 validation - exam:', answers.exam, 'examOther:', answers.examOther, 'valid:', examValid);
-        return examValid;
+        if (answers.exam === 'Other') {
+          return answers.examOther && answers.examOther.trim().length > 0;
+        }
+        return answers.exam && answers.exam.length > 0;
       case 2:
-        const instituteValid = answers.institute && (answers.institute !== "Others" || (answers.instituteOther && answers.instituteOther.trim().length > 0));
-        console.log('Step 2 validation - institute:', answers.institute, 'instituteOther:', answers.instituteOther, 'valid:', instituteValid);
-        return instituteValid;
+        if (answers.institute === 'Others') {
+          return answers.instituteOther && answers.instituteOther.trim().length > 0;
+        }
+        return answers.institute && answers.institute.length > 0;
       case 3:
-        const hoursValid = !!answers.studyHours;
-        console.log('Step 3 validation - studyHours:', answers.studyHours, 'valid:', hoursValid);
-        return hoursValid;
+        return answers.studyHours && answers.studyHours.length > 0;
       case 4:
-        const challengeValid = answers.challenge && answers.challenge.length > 0;
-        console.log('Step 4 validation - challenges:', answers.challenge, 'valid:', challengeValid);
-        return challengeValid;
+        return answers.challenge && answers.challenge.length > 0;
       default:
         return false;
     }

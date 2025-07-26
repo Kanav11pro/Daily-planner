@@ -55,117 +55,89 @@ export const ProfileSection = React.memo(() => {
 
   const handleSeedChange = (newSeed: string) => {
     setAvatarSeed(newSeed);
-    // Optionally save to user metadata
   };
 
   return (
     <>
-      <div className={`${themeColors.card} backdrop-blur-sm ${themeColors.border} border rounded-3xl p-8 shadow-2xl transition-all duration-300`}>
-        {/* Header Section */}
-        <div className="flex flex-col lg:flex-row lg:items-center gap-8 mb-6">
-          {/* Profile Avatar and Basic Info */}
-          <div className="flex items-center gap-6">
+      <div className="w-full bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl shadow-lg">
+        {/* Header with Profile and Sign Out */}
+        <div className="flex justify-between items-start mb-6">
+          <div className="flex items-center gap-4">
             <div className="relative group">
               <Avatar 
-                className="h-24 w-24 lg:h-28 lg:w-28 ring-4 ring-white/20 shadow-2xl cursor-pointer transition-all duration-300 group-hover:ring-white/40 group-hover:scale-105"
+                className="h-16 w-16 ring-2 ring-blue-200 dark:ring-gray-600 shadow-md cursor-pointer transition-all duration-200 hover:ring-blue-300 hover:shadow-lg"
                 onClick={() => setShowProfileModal(true)}
               >
                 <AvatarImage src={generateAvatarUrl(avatarSeed)} />
-                <AvatarFallback className={`bg-gradient-to-br ${themeColors.primary} text-white font-bold text-2xl`}>
+                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-semibold text-lg">
                   {getInitials(getUserName())}
                 </AvatarFallback>
               </Avatar>
-              <div className="absolute inset-0 bg-black/30 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center backdrop-blur-sm">
-                <Edit3 className="h-6 w-6 text-white" />
+              <div className="absolute inset-0 bg-black/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                <Edit3 className="h-4 w-4 text-white" />
               </div>
             </div>
 
-            <div className="flex-1 min-w-0 space-y-3">
-              <div>
-                <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white truncate mb-1">
-                  {getUserName()}
-                </h2>
-                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
-                  <Mail className="h-4 w-4" />
-                  <p className="text-sm truncate">{user.email}</p>
-                </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white truncate">
+                {getUserName()} : The Great
+              </h2>
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300 text-sm">
+                <span>{user.email}</span>
               </div>
-              
-              {/* Status Badge */}
-              <div className="flex items-center gap-3">
-                <Badge 
-                  className={`bg-gradient-to-r ${themeColors.primary} text-white px-4 py-2 text-sm font-medium shadow-lg`}
-                >
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  Active Learner
-                </Badge>
-                <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                  <Calendar className="h-3 w-3" />
-                  <span>Joined {new Date(user.created_at).toLocaleDateString()}</span>
-                </div>
-              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Click avatar to customize
+              </p>
             </div>
           </div>
 
-          {/* Action Button */}
-          <div className="flex-shrink-0">
-            <Button
-              onClick={signOut}
-              variant="outline"
-              size="lg"
-              className="flex items-center gap-3 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all duration-300 px-6 py-3"
-            >
-              <LogOut className="h-5 w-5" />
-              <span>Sign Out</span>
-            </Button>
-          </div>
+          <Button
+            onClick={signOut}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Sign Out</span>
+          </Button>
         </div>
 
-        {/* Study Information Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Exam Card */}
-          <div className={`bg-gradient-to-br ${themeColors.primary}/10 ${themeColors.border} border rounded-2xl p-6 backdrop-blur-sm transition-all duration-300 hover:shadow-lg`}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className={`p-3 rounded-xl bg-gradient-to-br ${themeColors.primary}/20`}>
-                <GraduationCap className={`h-6 w-6 text-transparent bg-gradient-to-r ${themeColors.primary} bg-clip-text`} />
-              </div>
-              <div>
-                <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Target Exam</span>
-                <p className="text-lg font-bold text-gray-900 dark:text-white truncate">
-                  {getExamInfo()}
-                </p>
-              </div>
+        {/* Study Information */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4 backdrop-blur-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <GraduationCap className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                Target Exam
+              </span>
             </div>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+              {getExamInfo()}
+            </p>
           </div>
 
-          {/* Institute Card */}
-          <div className={`bg-gradient-to-br ${themeColors.primary}/10 ${themeColors.border} border rounded-2xl p-6 backdrop-blur-sm transition-all duration-300 hover:shadow-lg`}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className={`p-3 rounded-xl bg-gradient-to-br ${themeColors.primary}/20`}>
-                <BookOpen className={`h-6 w-6 text-transparent bg-gradient-to-r ${themeColors.primary} bg-clip-text`} />
-              </div>
-              <div>
-                <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Institute</span>
-                <p className="text-lg font-bold text-gray-900 dark:text-white truncate">
-                  {getInstituteInfo()}
-                </p>
-              </div>
+          <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4 backdrop-blur-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <BookOpen className="h-5 w-5 text-green-600 dark:text-green-400" />
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                Institute
+              </span>
             </div>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+              {getInstituteInfo()}
+            </p>
           </div>
 
-          {/* Study Hours Card */}
-          <div className={`bg-gradient-to-br ${themeColors.primary}/10 ${themeColors.border} border rounded-2xl p-6 backdrop-blur-sm transition-all duration-300 hover:shadow-lg`}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className={`p-3 rounded-xl bg-gradient-to-br ${themeColors.primary}/20`}>
-                <Clock className={`h-6 w-6 text-transparent bg-gradient-to-r ${themeColors.primary} bg-clip-text`} />
-              </div>
-              <div>
-                <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Daily Hours</span>
-                <p className="text-lg font-bold text-gray-900 dark:text-white truncate">
-                  {userMetadata?.study_hours || 'Not set'}
-                </p>
-              </div>
+          <div className="bg-white/50 dark:bg-gray-800/50 rounded-lg p-4 backdrop-blur-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                Daily Hours
+              </span>
             </div>
+            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+              {userMetadata?.study_hours || 'Not set'}
+            </p>
           </div>
         </div>
       </div>
