@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useMemo } from "react";
 import { Header } from "@/components/Header";
 import { QuoteSection } from "@/components/QuoteSection";
@@ -42,7 +43,7 @@ const IndexContent = () => {
 
   const IST_TIMEZONE = 'Asia/Kolkata';
 
-  // Simple admin check - in production, you'd want proper role-based access
+  // Memoized helper function
   const formatDateForComparison = useCallback((date: Date | string): string => {
     if (typeof date === 'string') {
       return date.split('T')[0];
@@ -50,6 +51,7 @@ const IndexContent = () => {
     return formatInTimeZone(date, IST_TIMEZONE, 'yyyy-MM-dd');
   }, [IST_TIMEZONE]);
 
+  // Memoized handlers
   const handleAddTask = useCallback(async (taskData: any) => {
     const newTask = {
       ...taskData,
@@ -86,6 +88,7 @@ const IndexContent = () => {
   const handleCloseWeeklyAnalytics = useCallback(() => setShowWeeklyAnalytics(false), []);
   const handleCloseCelebration = useCallback(() => setShowCelebration(false), []);
 
+  // Memoized tasks for selected date
   const selectedDateTasks = useMemo(() => {
     const dateString = formatDateForComparison(selectedDate);
     return tasks.filter(task => {
@@ -94,6 +97,7 @@ const IndexContent = () => {
     });
   }, [tasks, selectedDate, formatDateForComparison]);
 
+  // Memoized onboarding completion handler
   const handleOnboardingComplete = useCallback(async (answers: OnboardingAnswers) => {
     await updateUserMetadata({
       onboarding_completed: true,
@@ -115,6 +119,7 @@ const IndexContent = () => {
     toast.success("You're all set! Start planning your study sessions 📚");
   }, []);
 
+  // Check if user needs onboarding
   React.useEffect(() => {
     if (user && !authLoading) {
       if (!isOnboardingCompleted()) {
@@ -123,44 +128,50 @@ const IndexContent = () => {
     }
   }, [user, authLoading, isOnboardingCompleted]);
 
+  // Memoized background style
+  const backgroundStyle = useMemo(() => ({
+    background: `linear-gradient(135deg, ${themeColors.background.replace('from-', '').replace('to-', ', ')})`,
+  }), [themeColors.background]);
+
+  // Show loading spinner while checking auth
   if (authLoading) {
     return (
-      <div className={`min-h-screen w-full bg-gradient-to-br ${themeColors.background} flex items-center justify-center`}>
+      <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} flex items-center justify-center`}>
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
 
+  // Show auth form if not authenticated
   if (!user) {
     return <AuthForm />;
   }
 
+  // Show onboarding quiz if user hasn't completed it
   if (showOnboarding) {
     return <OnboardingQuiz onComplete={handleOnboardingComplete} />;
   }
 
+  // Show guided tour if user just completed onboarding
   if (showGuidedTour) {
     return (
       <>
-        <div className={`min-h-screen w-full bg-gradient-to-br ${themeColors.background}`}>
-          <MemoizedHeader onAddTask={handleOpenTaskModal} />
-          
-          <main className="w-full px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
-            <div className="max-w-7xl mx-auto">
+        <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} relative overflow-hidden`}>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
+          <div className="relative z-10">
+            <MemoizedHeader onAddTask={handleOpenTaskModal} />
+            
+            <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
               <MemoizedProfileSection />
-              <div className="mt-6">
-                <MemoizedQuoteSection />
-              </div>
+              <MemoizedQuoteSection />
               
-              <div className="mt-8">
-                <MemoizedDateSelector 
-                  selectedDate={selectedDate}
-                  onDateChange={setSelectedDate}
-                  onAddTask={handleOpenTaskModal}
-                />
-              </div>
+              <MemoizedDateSelector 
+                selectedDate={selectedDate}
+                onDateChange={setSelectedDate}
+                onAddTask={handleOpenTaskModal}
+              />
               
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mt-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
                 <div className="lg:col-span-2">
                   <MemoizedTaskDashboard 
                     tasks={selectedDateTasks}
@@ -179,8 +190,8 @@ const IndexContent = () => {
                   />
                 </div>
               </div>
-            </div>
-          </main>
+            </main>
+          </div>
         </div>
         
         <GuidedTour onComplete={handleGuidedTourComplete} />
@@ -189,25 +200,22 @@ const IndexContent = () => {
   }
 
   return (
-    <div className={`min-h-screen w-full bg-gradient-to-br ${themeColors.background}`}>
-      <MemoizedHeader onAddTask={handleOpenTaskModal} />
-      
-      <main className="w-full px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
-        <div className="max-w-7xl mx-auto">
+    <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} relative overflow-hidden`}>
+      <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
+      <div className="relative z-10">
+        <MemoizedHeader onAddTask={handleOpenTaskModal} />
+        
+        <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
           <MemoizedProfileSection />
-          <div className="mt-6">
-            <MemoizedQuoteSection />
-          </div>
+          <MemoizedQuoteSection />
           
-          <div className="mt-8">
-            <MemoizedDateSelector 
-              selectedDate={selectedDate}
-              onDateChange={setSelectedDate}
-              onAddTask={handleOpenTaskModal}
-            />
-          </div>
+          <MemoizedDateSelector 
+            selectedDate={selectedDate}
+            onDateChange={setSelectedDate}
+            onAddTask={handleOpenTaskModal}
+          />
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mt-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
             <div className="lg:col-span-2">
               <MemoizedTaskDashboard 
                 tasks={selectedDateTasks}
@@ -226,7 +234,7 @@ const IndexContent = () => {
               />
             </div>
           </div>
-        </div>
+        </main>
 
         {showTaskModal && (
           <TaskModal
@@ -246,7 +254,7 @@ const IndexContent = () => {
         {showCelebration && (
           <Celebration onComplete={handleCloseCelebration} />
         )}
-      </main>
+      </div>
     </div>
   );
 };
