@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { OnboardingStep } from './onboarding/OnboardingStep';
@@ -81,33 +81,6 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
     studyHours: '',
     challenge: []
   });
-  const [isValid, setIsValid] = useState(false);
-
-  // Validate current step whenever answers change
-  useEffect(() => {
-    const validateStep = () => {
-      switch (currentStep) {
-        case 1:
-          if (answers.exam === 'Other') {
-            return answers.examOther && answers.examOther.trim().length > 0;
-          }
-          return answers.exam && answers.exam.length > 0;
-        case 2:
-          if (answers.institute === 'Others') {
-            return answers.instituteOther && answers.instituteOther.trim().length > 0;
-          }
-          return answers.institute && answers.institute.length > 0;
-        case 3:
-          return answers.studyHours && answers.studyHours.length > 0;
-        case 4:
-          return answers.challenge && answers.challenge.length > 0;
-        default:
-          return false;
-      }
-    };
-
-    setIsValid(validateStep());
-  }, [answers, currentStep]);
 
   const steps = [
     { icon: Target, title: "🎯 Which exam are you preparing for?", color: "from-blue-500 to-cyan-500" },
@@ -167,6 +140,27 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
         };
       }
     });
+  };
+
+  const isStepValid = () => {
+    switch (currentStep) {
+      case 1:
+        if (answers.exam === 'Other') {
+          return answers.examOther && answers.examOther.trim().length > 0;
+        }
+        return answers.exam && answers.exam.length > 0;
+      case 2:
+        if (answers.institute === 'Others') {
+          return answers.instituteOther && answers.instituteOther.trim().length > 0;
+        }
+        return answers.institute && answers.institute.length > 0;
+      case 3:
+        return answers.studyHours && answers.studyHours.length > 0;
+      case 4:
+        return answers.challenge && answers.challenge.length > 0;
+      default:
+        return false;
+    }
   };
 
   const currentStepData = steps[currentStep - 1];
@@ -284,11 +278,11 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
 
           <Button
             onClick={handleNext}
-            disabled={!isValid}
-            className={`bg-gradient-to-r ${currentStepData.color} hover:opacity-90 transition-all duration-300 text-white font-semibold px-8 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2`}
+            disabled={!isStepValid()}
+            className={`bg-gradient-to-r ${currentStepData.color} hover:opacity-90 transition-all duration-300 text-white font-semibold px-8 disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             <span>{currentStep === 4 ? "Complete Setup" : "Next"}</span>
-            {currentStep === 4 ? <Trophy className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+            {currentStep === 4 ? <Trophy className="h-4 w-4 ml-2" /> : <ChevronRight className="h-4 w-4 ml-2" />}
           </Button>
         </div>
       </div>

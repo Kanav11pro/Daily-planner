@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-export type Theme = 'ocean' | 'forest' | 'aurora' | 'cosmic' | 'neon' | 'matrix' | 'cyberpunk';
+export type Theme = 'ocean' | 'forest' | 'aurora' | 'cosmic' | 'midnight' | 'obsidian';
 
 interface ThemeContextType {
   theme: Theme;
@@ -40,14 +40,14 @@ const themes = {
     glow: 'shadow-green-300/60'
   },
   aurora: {
-    primary: 'from-purple-400 via-pink-400 to-indigo-400',
-    secondary: 'from-purple-950 via-indigo-950 to-pink-950',
-    background: 'from-purple-950 via-indigo-950 to-pink-950',
-    accent: 'bg-purple-800/50 text-purple-100 backdrop-blur-sm',
-    card: 'bg-gradient-to-br from-purple-900/90 via-indigo-900/90 to-pink-900/90 backdrop-blur-xl border border-purple-400/30 text-purple-100 shadow-2xl shadow-purple-500/20',
-    border: 'border-purple-400/30',
-    text: 'text-purple-100',
-    glow: 'shadow-purple-400/30 shadow-lg'
+    primary: 'from-pink-500 to-violet-600',
+    secondary: 'from-pink-50 via-purple-50 to-violet-50',
+    background: 'from-pink-200 via-purple-300 to-violet-400',
+    accent: 'bg-pink-100 text-pink-900',
+    card: 'bg-white/95 backdrop-blur-md border border-pink-200 text-gray-900',
+    border: 'border-pink-300',
+    text: 'text-pink-900',
+    glow: 'shadow-pink-300/60'
   },
   cosmic: {
     primary: 'from-indigo-600 to-blue-700',
@@ -59,44 +59,29 @@ const themes = {
     text: 'text-indigo-900',
     glow: 'shadow-indigo-300/60'
   },
-  neon: {
-    primary: 'from-cyan-400 via-blue-500 to-purple-600',
-    secondary: 'from-slate-900 via-gray-900 to-black',
+  midnight: {
+    primary: 'from-blue-400 to-indigo-500',
+    secondary: 'from-slate-600 via-blue-700 to-indigo-700',
+    background: 'from-slate-900 via-blue-950 to-indigo-950',
+    accent: 'bg-slate-600 text-blue-100',
+    card: 'bg-slate-800/95 backdrop-blur-md border border-blue-400/30 text-white shadow-xl',
+    border: 'border-blue-400/30',
+    text: 'text-white',
+    glow: 'shadow-blue-400/30 shadow-lg'
+  },
+  obsidian: {
+    primary: 'from-purple-400 to-pink-500',
+    secondary: 'from-gray-700 via-slate-700 to-zinc-800',
     background: 'from-black via-gray-950 to-slate-950',
-    accent: 'bg-cyan-600/50 text-cyan-100 backdrop-blur-sm',
-    card: 'bg-gradient-to-br from-slate-900/95 via-gray-900/95 to-black/95 backdrop-blur-xl border border-cyan-400/30 text-cyan-100 shadow-2xl shadow-cyan-500/20',
-    border: 'border-cyan-400/30',
-    text: 'text-cyan-100',
-    glow: 'shadow-cyan-400/30 shadow-lg'
-  },
-  matrix: {
-    primary: 'from-green-400 via-lime-500 to-emerald-600',
-    secondary: 'from-black via-gray-950 to-green-950',
-    background: 'from-black via-gray-950 to-green-950',
-    accent: 'bg-green-700/50 text-green-100 backdrop-blur-sm',
-    card: 'bg-gradient-to-br from-black/95 via-gray-950/95 to-green-950/95 backdrop-blur-xl border border-green-400/30 text-green-100 shadow-2xl shadow-green-500/20',
-    border: 'border-green-400/30',
-    text: 'text-green-100',
-    glow: 'shadow-green-400/30 shadow-lg'
-  },
-  cyberpunk: {
-    primary: 'from-pink-400 via-purple-500 to-indigo-600',
-    secondary: 'from-slate-900 via-purple-950 to-pink-950',
-    background: 'from-black via-purple-950 to-pink-950',
-    accent: 'bg-pink-700/50 text-pink-100 backdrop-blur-sm',
-    card: 'bg-gradient-to-br from-slate-900/95 via-purple-950/95 to-pink-950/95 backdrop-blur-xl border border-pink-400/30 text-pink-100 shadow-2xl shadow-pink-500/20',
-    border: 'border-pink-400/30',
-    text: 'text-pink-100',
-    glow: 'shadow-pink-400/30 shadow-lg'
+    accent: 'bg-slate-600 text-purple-100',
+    card: 'bg-gray-800/95 backdrop-blur-md border border-purple-300/30 text-white shadow-xl',
+    border: 'border-purple-300/30',
+    text: 'text-white',
+    glow: 'shadow-purple-400/30 shadow-lg'
   }
 };
 
-const validThemes: Theme[] = ['ocean', 'forest', 'aurora', 'cosmic', 'neon', 'matrix', 'cyberpunk'];
-
-// Helper function to determine if a theme is dark
-export const isDarkTheme = (theme: Theme): boolean => {
-  return ['aurora', 'neon', 'matrix', 'cyberpunk'].includes(theme);
-};
+const validThemes: Theme[] = ['ocean', 'forest', 'aurora', 'cosmic', 'midnight', 'obsidian'];
 
 export const getThemeColors = (theme: Theme) => {
   const themeColors = themes[theme];
