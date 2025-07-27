@@ -40,11 +40,11 @@ const themes = {
     glow: 'shadow-green-300/60'
   },
   aurora: {
-    primary: 'from-purple-400 to-pink-400',
-    secondary: 'from-purple-900 via-indigo-900 to-pink-900',
+    primary: 'from-purple-400 via-pink-400 to-indigo-400',
+    secondary: 'from-purple-950 via-indigo-950 to-pink-950',
     background: 'from-purple-950 via-indigo-950 to-pink-950',
-    accent: 'bg-purple-800 text-purple-100',
-    card: 'bg-purple-900/95 backdrop-blur-md border border-purple-400/30 text-purple-100 shadow-xl shadow-purple-500/20',
+    accent: 'bg-purple-800/50 text-purple-100 backdrop-blur-sm',
+    card: 'bg-gradient-to-br from-purple-900/90 via-indigo-900/90 to-pink-900/90 backdrop-blur-xl border border-purple-400/30 text-purple-100 shadow-2xl shadow-purple-500/20',
     border: 'border-purple-400/30',
     text: 'text-purple-100',
     glow: 'shadow-purple-400/30 shadow-lg'
@@ -60,31 +60,31 @@ const themes = {
     glow: 'shadow-indigo-300/60'
   },
   neon: {
-    primary: 'from-cyan-400 to-blue-500',
-    secondary: 'from-slate-800 via-gray-900 to-black',
+    primary: 'from-cyan-400 via-blue-500 to-purple-600',
+    secondary: 'from-slate-900 via-gray-900 to-black',
     background: 'from-black via-gray-950 to-slate-950',
-    accent: 'bg-cyan-600 text-cyan-100',
-    card: 'bg-slate-900/95 backdrop-blur-md border border-cyan-400/30 text-cyan-100 shadow-xl shadow-cyan-500/20',
+    accent: 'bg-cyan-600/50 text-cyan-100 backdrop-blur-sm',
+    card: 'bg-gradient-to-br from-slate-900/95 via-gray-900/95 to-black/95 backdrop-blur-xl border border-cyan-400/30 text-cyan-100 shadow-2xl shadow-cyan-500/20',
     border: 'border-cyan-400/30',
     text: 'text-cyan-100',
     glow: 'shadow-cyan-400/30 shadow-lg'
   },
   matrix: {
-    primary: 'from-green-400 to-lime-500',
+    primary: 'from-green-400 via-lime-500 to-emerald-600',
     secondary: 'from-black via-gray-950 to-green-950',
     background: 'from-black via-gray-950 to-green-950',
-    accent: 'bg-green-700 text-green-100',
-    card: 'bg-black/95 backdrop-blur-md border border-green-400/30 text-green-100 shadow-xl shadow-green-500/20',
+    accent: 'bg-green-700/50 text-green-100 backdrop-blur-sm',
+    card: 'bg-gradient-to-br from-black/95 via-gray-950/95 to-green-950/95 backdrop-blur-xl border border-green-400/30 text-green-100 shadow-2xl shadow-green-500/20',
     border: 'border-green-400/30',
     text: 'text-green-100',
     glow: 'shadow-green-400/30 shadow-lg'
   },
   cyberpunk: {
-    primary: 'from-pink-400 to-purple-500',
+    primary: 'from-pink-400 via-purple-500 to-indigo-600',
     secondary: 'from-slate-900 via-purple-950 to-pink-950',
     background: 'from-black via-purple-950 to-pink-950',
-    accent: 'bg-pink-700 text-pink-100',
-    card: 'bg-slate-900/95 backdrop-blur-md border border-pink-400/30 text-pink-100 shadow-xl shadow-pink-500/20',
+    accent: 'bg-pink-700/50 text-pink-100 backdrop-blur-sm',
+    card: 'bg-gradient-to-br from-slate-900/95 via-purple-950/95 to-pink-950/95 backdrop-blur-xl border border-pink-400/30 text-pink-100 shadow-2xl shadow-pink-500/20',
     border: 'border-pink-400/30',
     text: 'text-pink-100',
     glow: 'shadow-pink-400/30 shadow-lg'
@@ -92,6 +92,11 @@ const themes = {
 };
 
 const validThemes: Theme[] = ['ocean', 'forest', 'aurora', 'cosmic', 'neon', 'matrix', 'cyberpunk'];
+
+// Helper function to determine if a theme is dark
+export const isDarkTheme = (theme: Theme): boolean => {
+  return ['aurora', 'neon', 'matrix', 'cyberpunk'].includes(theme);
+};
 
 export const getThemeColors = (theme: Theme) => {
   const themeColors = themes[theme];

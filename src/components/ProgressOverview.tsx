@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { format } from "date-fns";
 import { formatInTimeZone, toZonedTime } from "date-fns-tz";
-import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
+import { useTheme, getThemeColors, isDarkTheme } from "@/contexts/ThemeContext";
 
 interface Task {
   id: string;
@@ -76,6 +76,8 @@ export const ProgressOverview = ({
     return "🎯 Ready to conquer today? Let's start!";
   };
 
+  const isThemeDark = isDarkTheme(theme);
+
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Enhanced Today's Progress Card - Mobile Optimized */}
@@ -102,7 +104,7 @@ export const ProgressOverview = ({
                 <CardTitle className={`${themeColors.text} text-sm sm:text-base lg:text-lg font-semibold truncate`}>
                   Today's Progress
                 </CardTitle>
-                <CardDescription className={`${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-300' : 'text-indigo-600'} font-medium text-xs sm:text-sm truncate`}>
+                <CardDescription className={`${isThemeDark ? 'text-gray-300' : 'text-indigo-600'} font-medium text-xs sm:text-sm truncate`}>
                   <div className="hidden sm:block">
                     {format(toZonedTime(new Date(), IST_TIMEZONE), 'EEEE, MMMM do, yyyy')} • {currentTime} IST
                   </div>
@@ -116,7 +118,7 @@ export const ProgressOverview = ({
               <div className={`text-lg sm:text-xl lg:text-xl font-bold ${themeColors.text}`}>
                 {Math.round(progressPercentage)}%
               </div>
-              <div className={`text-xs text-gray-500 ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-400' : ''}`}>
+              <div className={`text-xs text-gray-500 ${isThemeDark ? 'text-gray-400' : ''}`}>
                 Complete
               </div>
             </div>
@@ -133,21 +135,21 @@ export const ProgressOverview = ({
                     <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4 lg:h-4 lg:w-4 text-green-600 flex-shrink-0" />
                     <span className="truncate">{completedToday}</span>
                   </div>
-                  <p className={`text-xs font-medium ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-300' : 'text-gray-600'}`}>
+                  <p className={`text-xs font-medium ${isThemeDark ? 'text-gray-300' : 'text-gray-600'}`}>
                     Completed
                   </p>
                 </div>
-                <div className={`w-px h-6 sm:h-8 lg:h-6 ${theme === 'midnight' || theme === 'obsidian' ? 'bg-gray-600' : 'bg-indigo-200'}`}></div>
+                <div className={`w-px h-6 sm:h-8 lg:h-6 ${isThemeDark ? 'bg-gray-600' : 'bg-indigo-200'}`}></div>
                 <div className="text-center min-w-0">
                   <div className={`text-lg sm:text-xl lg:text-lg font-bold ${themeColors.text} flex items-center justify-center space-x-1`}>
                     <Circle className="h-3 w-3 sm:h-4 sm:w-4 lg:h-4 lg:w-4 text-gray-400 flex-shrink-0" />
                     <span className="truncate">{totalToday - completedToday}</span>
                   </div>
-                  <p className={`text-xs font-medium ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-300' : 'text-gray-600'}`}>
+                  <p className={`text-xs font-medium ${isThemeDark ? 'text-gray-300' : 'text-gray-600'}`}>
                     Remaining
                   </p>
                 </div>
-                <div className={`w-px h-6 sm:h-8 lg:h-6 ${theme === 'midnight' || theme === 'obsidian' ? 'bg-gray-600' : 'bg-indigo-200'}`}></div>
+                <div className={`w-px h-6 sm:h-8 lg:h-6 ${isThemeDark ? 'bg-gray-600' : 'bg-indigo-200'}`}></div>
                 <div className="text-center min-w-0">
                   <div className={`text-sm sm:text-lg lg:text-base font-bold ${themeColors.text} flex items-center justify-center space-x-1`}>
                     <Clock className="h-3 w-3 sm:h-4 sm:w-4 lg:h-4 lg:w-4 text-blue-600 flex-shrink-0" />
@@ -156,7 +158,7 @@ export const ProgressOverview = ({
                       <span className="text-xs sm:text-lg lg:text-base truncate">{completedDuration % 60}m</span>
                     </div>
                   </div>
-                  <p className={`text-xs font-medium ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-300' : 'text-gray-600'}`}>
+                  <p className={`text-xs font-medium ${isThemeDark ? 'text-gray-300' : 'text-gray-600'}`}>
                     Studied
                   </p>
                 </div>
@@ -164,7 +166,7 @@ export const ProgressOverview = ({
               
               <div className="space-y-2">
                 <Progress value={progressPercentage} className="h-2 sm:h-3 bg-white/50" />
-                <div className={`flex justify-between text-xs ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-400' : 'text-gray-600'}`}>
+                <div className={`flex justify-between text-xs ${isThemeDark ? 'text-gray-400' : 'text-gray-600'}`}>
                   <span>0%</span>
                   <span className={`font-bold ${themeColors.text}`}>{completedToday}/{totalToday} tasks</span>
                   <span>100%</span>
@@ -173,7 +175,7 @@ export const ProgressOverview = ({
             </div>
 
             {/* Motivational Message - Mobile Optimized */}
-            <div className={`text-center p-3 rounded-xl border ${theme === 'midnight' || theme === 'obsidian' ? 'bg-slate-700/50 border-gray-600' : 'bg-gradient-to-r from-indigo-100/50 to-purple-100/50 border-indigo-200/50'}`}>
+            <div className={`text-center p-3 rounded-xl border ${isThemeDark ? 'bg-slate-700/50 border-gray-600' : 'bg-gradient-to-r from-indigo-100/50 to-purple-100/50 border-indigo-200/50'}`}>
               <p className={`text-sm sm:text-base font-semibold ${themeColors.text}`}>
                 {getMotivationalMessage()}
               </p>
@@ -182,27 +184,27 @@ export const ProgressOverview = ({
             {/* Today's Task Breakdown - Mobile Optimized */}
             {totalToday > 0 && (
               <div className="grid grid-cols-3 gap-2">
-                <div className={`text-center p-2 rounded-lg border ${theme === 'midnight' || theme === 'obsidian' ? 'bg-slate-700/50 border-gray-600' : 'bg-white/50 border-indigo-100'}`}>
+                <div className={`text-center p-2 rounded-lg border ${isThemeDark ? 'bg-slate-700/50 border-gray-600' : 'bg-white/50 border-indigo-100'}`}>
                   <div className="text-sm sm:text-base font-bold text-red-600">{priorityBreakdown.high || 0}</div>
-                  <div className={`text-xs ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-300' : 'text-gray-600'}`}>High Priority</div>
+                  <div className={`text-xs ${isThemeDark ? 'text-gray-300' : 'text-gray-600'}`}>High Priority</div>
                 </div>
-                <div className={`text-center p-2 rounded-lg border ${theme === 'midnight' || theme === 'obsidian' ? 'bg-slate-700/50 border-gray-600' : 'bg-white/50 border-indigo-100'}`}>
+                <div className={`text-center p-2 rounded-lg border ${isThemeDark ? 'bg-slate-700/50 border-gray-600' : 'bg-white/50 border-indigo-100'}`}>
                   <div className="text-sm sm:text-base font-bold text-yellow-600">{priorityBreakdown.medium || 0}</div>
-                  <div className={`text-xs ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-300' : 'text-gray-600'}`}>Medium Priority</div>
+                  <div className={`text-xs ${isThemeDark ? 'text-gray-300' : 'text-gray-600'}`}>Medium Priority</div>
                 </div>
-                <div className={`text-center p-2 rounded-lg border ${theme === 'midnight' || theme === 'obsidian' ? 'bg-slate-700/50 border-gray-600' : 'bg-white/50 border-indigo-100'}`}>
+                <div className={`text-center p-2 rounded-lg border ${isThemeDark ? 'bg-slate-700/50 border-gray-600' : 'bg-white/50 border-indigo-100'}`}>
                   <div className="text-sm sm:text-base font-bold text-green-600">{priorityBreakdown.low || 0}</div>
-                  <div className={`text-xs ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-300' : 'text-gray-600'}`}>Low Priority</div>
+                  <div className={`text-xs ${isThemeDark ? 'text-gray-300' : 'text-gray-600'}`}>Low Priority</div>
                 </div>
               </div>
             )}
 
             {/* Quick Actions - No Tasks State */}
             {totalToday === 0 && (
-              <div className={`text-center p-4 rounded-xl border ${theme === 'midnight' || theme === 'obsidian' ? 'bg-slate-700/30 border-gray-600' : 'bg-white/30 border-indigo-200/50'}`}>
+              <div className={`text-center p-4 rounded-xl border ${isThemeDark ? 'bg-slate-700/30 border-gray-600' : 'bg-white/30 border-indigo-200/50'}`}>
                 <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-indigo-400 mx-auto mb-2" />
                 <p className={`text-sm font-medium ${themeColors.text}`}>No tasks scheduled for today</p>
-                <p className={`text-xs mt-1 ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-400' : 'text-indigo-600'}`}>
+                <p className={`text-xs mt-1 ${isThemeDark ? 'text-gray-400' : 'text-indigo-600'}`}>
                   Add some tasks to start your productive day!
                 </p>
               </div>

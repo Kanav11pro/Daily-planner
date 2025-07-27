@@ -3,7 +3,7 @@ import { TrendingUp, Target, Calendar, Clock, Award, BookOpen, Zap, Sparkles, Br
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
+import { useTheme, getThemeColors, isDarkTheme } from "@/contexts/ThemeContext";
 
 interface Task {
   id: string;
@@ -98,6 +98,8 @@ export const TaskAnalytics = ({
     }
   };
 
+  const isThemeDark = isDarkTheme(theme);
+
   return (
     <div className="space-y-4">
       {/* Enhanced Subject Mastery Card */}
@@ -112,7 +114,7 @@ export const TaskAnalytics = ({
               <Trophy className="h-4 w-4 text-yellow-500" />
             </div>
           </CardTitle>
-          <CardDescription className={`${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-300' : 'text-gray-600'}`}>
+          <CardDescription className={`${isThemeDark ? 'text-gray-300' : 'text-gray-600'}`}>
             Track your progress across all subjects
           </CardDescription>
         </CardHeader>
@@ -121,7 +123,7 @@ export const TaskAnalytics = ({
             {Object.entries(subjectStats).length > 0 ? (
               Object.entries(subjectStats).map(([subject, stats]) => (
                 <div key={subject} className={`p-3 rounded-xl border transition-all duration-200 hover:shadow-md ${
-                  theme === 'midnight' || theme === 'obsidian' 
+                  isThemeDark
                     ? 'bg-slate-700/30 border-gray-600 hover:bg-slate-700/50' 
                     : 'bg-gradient-to-r from-gray-50 to-white border-gray-200 hover:from-gray-100 hover:to-gray-50'
                 }`}>
@@ -134,7 +136,7 @@ export const TaskAnalytics = ({
                       <div className={`text-sm font-bold ${themeColors.text}`}>
                         {stats.completed}/{stats.total}
                       </div>
-                      <div className={`text-xs ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <div className={`text-xs ${isThemeDark ? 'text-gray-400' : 'text-gray-500'}`}>
                         {Math.floor(stats.timeSpent / 60)}h {stats.timeSpent % 60}m
                       </div>
                     </div>
@@ -145,7 +147,7 @@ export const TaskAnalytics = ({
                       className="h-2"
                     />
                     <div className="flex justify-between text-xs">
-                      <span className={`${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-400' : 'text-gray-500'}`}>
+                      <span className={`${isThemeDark ? 'text-gray-400' : 'text-gray-500'}`}>
                         {stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0}% Complete
                       </span>
                       {stats.completed === stats.total && stats.total > 0 && (
@@ -157,15 +159,15 @@ export const TaskAnalytics = ({
               ))
             ) : (
               <div className={`text-center p-6 rounded-lg ${
-                theme === 'midnight' || theme === 'obsidian' 
+                isThemeDark
                   ? 'bg-slate-700/30' 
                   : 'bg-gray-50'
               }`}>
                 <BookOpen className={`h-8 w-8 mx-auto mb-2 ${
-                  theme === 'midnight' || theme === 'obsidian' ? 'text-gray-400' : 'text-gray-400'
+                  isThemeDark ? 'text-gray-400' : 'text-gray-400'
                 }`} />
                 <p className={`text-sm ${themeColors.text}`}>No subjects yet</p>
-                <p className={`text-xs ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-400' : 'text-gray-500'}`}>
+                <p className={`text-xs ${isThemeDark ? 'text-gray-400' : 'text-gray-500'}`}>
                   Add some tasks to see your progress!
                 </p>
               </div>
@@ -186,7 +188,7 @@ export const TaskAnalytics = ({
               <Sparkles className="h-4 w-4 text-purple-500" />
             </div>
           </CardTitle>
-          <CardDescription className={`${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-300' : 'text-gray-600'}`}>
+          <CardDescription className={`${isThemeDark ? 'text-gray-300' : 'text-gray-600'}`}>
             Your consistency over the last 7 days
           </CardDescription>
         </CardHeader>
@@ -195,7 +197,7 @@ export const TaskAnalytics = ({
             <div className="grid grid-cols-7 gap-2">
               {weeklyCompletion.map((day, index) => (
                 <div key={index} className="text-center space-y-2">
-                  <div className={`text-xs font-medium ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-300' : 'text-gray-500'}`}>
+                  <div className={`text-xs font-medium ${isThemeDark ? 'text-gray-300' : 'text-gray-500'}`}>
                     {new Date(day.date).toLocaleDateString('en-US', { weekday: 'narrow' })}
                   </div>
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold mx-auto transition-all duration-300 ${
@@ -205,13 +207,13 @@ export const TaskAnalytics = ({
                         ? 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-md' 
                         : day.percentage > 0 
                           ? 'bg-gradient-to-r from-orange-400 to-red-400 text-white shadow-sm' 
-                          : theme === 'midnight' || theme === 'obsidian'
+                          : isThemeDark
                             ? 'bg-gray-700 text-gray-400 border border-gray-600'
                             : 'bg-gray-100 text-gray-400 border border-gray-200'
                   }`}>
                     {day.total > 0 ? `${Math.round(day.percentage)}%` : '-'}
                   </div>
-                  <div className={`text-xs mt-1 ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <div className={`text-xs mt-1 ${isThemeDark ? 'text-gray-400' : 'text-gray-500'}`}>
                     {day.total > 0 && (
                       <span>{day.completed}/{day.total}</span>
                     )}
@@ -221,14 +223,14 @@ export const TaskAnalytics = ({
             </div>
             
             <div className={`mt-6 p-4 rounded-lg ${
-              theme === 'midnight' || theme === 'obsidian' 
+              isThemeDark
                 ? 'bg-slate-700/30 border border-gray-600' 
                 : 'bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200'
             }`}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className={`text-sm font-medium ${themeColors.text}`}>Weekly Average</p>
-                  <p className={`text-xs ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <p className={`text-xs ${isThemeDark ? 'text-gray-400' : 'text-gray-600'}`}>
                     Your consistency score
                   </p>
                 </div>

@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useTheme, getThemeColors } from '@/contexts/ThemeContext';
+import { useTheme, getThemeColors, isDarkTheme } from '@/contexts/ThemeContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Shuffle, Palette, User, Sparkles, RefreshCw } from 'lucide-react';
@@ -63,6 +63,8 @@ export const ProfilePictureModal = ({
     return `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(seed)}`;
   };
 
+  const isThemeDark = isDarkTheme(theme);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={`${themeColors.card} max-w-2xl max-h-[80vh] overflow-y-auto`}>
@@ -71,7 +73,7 @@ export const ProfilePictureModal = ({
             <Palette className="h-6 w-6 mr-2 text-purple-500" />
             Customize Your Avatar
           </DialogTitle>
-          <DialogDescription className={`${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-300' : 'text-gray-600'}`}>
+          <DialogDescription className={`${isThemeDark ? 'text-gray-300' : 'text-gray-600'}`}>
             Choose a style and customize your profile picture to make it uniquely yours!
           </DialogDescription>
         </DialogHeader>
@@ -95,7 +97,7 @@ export const ProfilePictureModal = ({
             </div>
             <div>
               <p className={`font-semibold ${themeColors.text}`}>Preview</p>
-              <p className={`text-sm ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-400' : 'text-gray-500'}`}>
+              <p className={`text-sm ${isThemeDark ? 'text-gray-400' : 'text-gray-500'}`}>
                 This is how your avatar will look
               </p>
             </div>
@@ -124,7 +126,7 @@ export const ProfilePictureModal = ({
                 <div
                   key={style}
                   className={`relative cursor-pointer rounded-xl p-3 border-2 transition-all duration-200 hover:scale-105 ${
-                    theme === 'midnight' || theme === 'obsidian'
+                    isThemeDark
                       ? 'bg-slate-700/30 border-gray-600 hover:border-purple-400'
                       : 'bg-gray-50 border-gray-200 hover:border-purple-400'
                   }`}
@@ -151,7 +153,7 @@ export const ProfilePictureModal = ({
           {/* Custom Seed Input */}
           <div>
             <h3 className={`font-semibold ${themeColors.text} mb-2`}>Custom Seed</h3>
-            <p className={`text-sm ${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-400' : 'text-gray-600'} mb-3`}>
+            <p className={`text-sm ${isThemeDark ? 'text-gray-400' : 'text-gray-600'} mb-3`}>
               Enter any text to generate a unique avatar based on that text
             </p>
             <div className="flex space-x-2">
@@ -161,7 +163,7 @@ export const ProfilePictureModal = ({
                 onChange={(e) => setSelectedSeed(e.target.value)}
                 placeholder="Enter custom text..."
                 className={`flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 ${
-                  theme === 'midnight' || theme === 'obsidian'
+                  isThemeDark
                     ? 'bg-slate-700 border-gray-600 text-white'
                     : 'bg-white border-gray-300'
                 }`}
