@@ -20,72 +20,82 @@ interface CelebrationControllerProps {
 }
 
 const celebrationTypes = [
-  { component: NeonGlowCelebration, name: 'Victory Glow', theme: 'cyberpunk' },
-  { component: TypewriterCelebration, name: 'Success Formula', theme: 'tech' },
-  { component: QuantumFieldCelebration, name: 'Excellence Field', theme: 'futuristic' },
-  { component: HologramCelebration, name: 'Achievement Vision', theme: 'sci-fi' },
-  { component: LaserGridCelebration, name: 'Focus Grid', theme: 'cyberpunk' },
-  { component: DigitalRainCelebration, name: 'Knowledge Rain', theme: 'matrix' },
-  { component: ElectronicPulseCelebration, name: 'Success Pulse', theme: 'tech' },
-  { component: CosmicExplosionCelebration, name: 'Victory Explosion', theme: 'space' },
-  { component: FireworksCelebration, name: 'Achievement Burst', theme: 'explosive' },
-  { component: RisingStarsCelebration, name: 'Rising Champion', theme: 'celestial' },
-  { component: ParticleBurstCelebration, name: 'Energy Burst', theme: 'energy' },
-  { component: GlowingRingCelebration, name: 'Champion Ring', theme: 'futuristic' },
-  { component: BookFlipCelebration, name: 'Knowledge Master', theme: 'academic' },
-  { component: ConfettiCelebration, name: 'Victory Rain', theme: 'classic' }
+  { component: NeonGlowCelebration, name: 'JEE Victory Glow', theme: 'cyberpunk' },
+  { component: TypewriterCelebration, name: 'Formula Master', theme: 'tech' },
+  { component: QuantumFieldCelebration, name: 'Physics Champion', theme: 'futuristic' },
+  { component: HologramCelebration, name: 'IIT Dream Vision', theme: 'sci-fi' },
+  { component: LaserGridCelebration, name: 'Study Focus Grid', theme: 'cyberpunk' },
+  { component: DigitalRainCelebration, name: 'Knowledge Matrix', theme: 'matrix' },
+  { component: ElectronicPulseCelebration, name: 'Revision Pulse', theme: 'tech' },
+  { component: CosmicExplosionCelebration, name: 'Breakthrough Blast', theme: 'space' },
+  { component: FireworksCelebration, name: 'Problem Solved', theme: 'explosive' },
+  { component: RisingStarsCelebration, name: 'JEE Star Rising', theme: 'celestial' },
+  { component: ParticleBurstCelebration, name: 'Concept Clarity', theme: 'energy' },
+  { component: GlowingRingCelebration, name: 'Topper Circle', theme: 'futuristic' },
+  { component: BookFlipCelebration, name: 'Chapter Complete', theme: 'academic' },
+  { component: ConfettiCelebration, name: 'Study Victory', theme: 'classic' }
 ];
 
 const motivationalMessages = [
   {
-    title: "MISSION ACCOMPLISHED! 🚀",
-    message: "Your dedication is paying off. Every task completed brings you closer to JEE success!",
-    subtitle: "Keep this momentum going - you're building the habits of a topper!"
+    title: "CHAPTER MASTERED! 🎯",
+    message: "Outstanding! You've conquered another challenging topic. This is how JEE toppers build their success!",
+    subtitle: "Your consistent effort is turning you into a JEE champion. Keep this momentum going!"
   },
   {
-    title: "EXCELLENCE UNLOCKED! ⚡",
-    message: "Outstanding work! Your consistent effort is the key to cracking JEE.",
-    subtitle: "Each step forward is a step closer to your dream college!"
+    title: "PROBLEM CRUSHER! ⚡",
+    message: "Incredible problem-solving skills! You're developing the analytical mind of a future engineer.",
+    subtitle: "Each solved problem brings you closer to your IIT dream. You're unstoppable!"
   },
   {
-    title: "CHAMPION MINDSET ACTIVATED! 💎",
-    message: "Your focus and determination are remarkable. This is how JEE toppers think!",
-    subtitle: "You're not just studying - you're mastering the art of success!"
+    title: "FORMULA WARRIOR! 🧠",
+    message: "Your mastery of concepts is remarkable! This is exactly how JEE toppers think and solve.",
+    subtitle: "You're not just learning - you're becoming a physics, chemistry, and math genius!"
   },
   {
-    title: "VICTORY STREAK CONTINUES! 🔥",
-    message: "Incredible progress! Your discipline is setting you apart from the competition.",
-    subtitle: "Every completed task is proof of your JEE preparation strength!"
+    title: "STUDY STREAK CHAMPION! 🔥",
+    message: "Your dedication is unmatched! This consistent effort is what separates toppers from the rest.",
+    subtitle: "Every completed task is a step closer to your dream college. You're building success habits!"
   },
   {
-    title: "TOPPER LEVEL ACHIEVED! 🧠",
-    message: "Your brain is getting stronger with every challenge you complete!",
-    subtitle: "This is exactly how JEE champions build their success foundation!"
+    title: "CONCEPT CONQUEROR! 🏆",
+    message: "Amazing work! You're mastering concepts that will be crucial for JEE success.",
+    subtitle: "Your understanding is deepening with every topic. This is how champions are made!"
   },
   {
-    title: "UNSTOPPABLE FORCE! 🎯",
-    message: "Your consistency is your superpower. JEE success demands exactly this mindset!",
-    subtitle: "You're proving that dedication always defeats talent without hard work!"
+    title: "REVISION MASTER! 📚",
+    message: "Perfect! Your revision strategy is paying off. This is how you'll ace the JEE exam.",
+    subtitle: "Strong foundations lead to strong results. You're preparing like a true topper!"
   },
   {
-    title: "DREAM BUILDER! ✨",
-    message: "Every task you complete is a brick in your dream college foundation.",
-    subtitle: "Your future self will thank you for this dedication!"
+    title: "SPEED SOLVER! ⚡",
+    message: "Impressive speed and accuracy! You're developing the timing skills crucial for JEE.",
+    subtitle: "Your problem-solving velocity is increasing. This is competitive exam excellence!"
   },
   {
-    title: "SUCCESS MAGNET! ⚡",
-    message: "You're attracting success with your incredible work ethic!",
-    subtitle: "This is the energy that transforms JEE dreams into reality!"
+    title: "MOCK TEST HERO! 🎯",
+    message: "Outstanding performance! You're showing the consistency that leads to JEE success.",
+    subtitle: "Your scores are improving because of this dedicated practice. Keep pushing forward!"
   },
   {
-    title: "BREAKTHROUGH MOMENT! 💫",
-    message: "Your speed of learning is accelerating. This is peak performance mode!",
-    subtitle: "At this pace, your JEE goals are not just possible - they're inevitable!"
+    title: "PHYSICS PHENOMENON! 🚀",
+    message: "Your grasp of physics concepts is phenomenal! Future engineers think like this.",
+    subtitle: "You're building the analytical skills that will make you stand out in JEE!"
   },
   {
-    title: "CHAMPION IN ACTION! 🌟",
-    message: "The universe rewards those who never give up. You're living proof!",
-    subtitle: "Your persistence is writing the success story of your JEE journey!"
+    title: "MATH MAGICIAN! ✨",
+    message: "Brilliant mathematical thinking! Your problem-solving approach is getting sharper.",
+    subtitle: "This mathematical fluency is your ticket to JEE success. You're becoming unstoppable!"
+  },
+  {
+    title: "CHEMISTRY CHAMPION! 🧪",
+    message: "Excellent understanding of chemical concepts! Your knowledge is expanding rapidly.",
+    subtitle: "You're mastering the reactions and equations that will help you crack JEE!"
+  },
+  {
+    title: "TIME MANAGEMENT MASTER! ⏰",
+    message: "Perfect time utilization! This efficiency will be your superpower in the actual exam.",
+    subtitle: "You're learning to work smart, not just hard. This is how toppers optimize their study!"
   }
 ];
 
