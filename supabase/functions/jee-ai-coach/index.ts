@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-// Confirm the key is loaded
+// 1️⃣ At startup, log the key so we know it’s loaded
 console.log("🔑 GEMINI_API_KEY is:", Deno.env.get("GEMINI_API_KEY"));
 
 const corsHeaders = {
@@ -12,13 +12,16 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // 2️⃣ Preflight CORS handshake
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
 
   try {
+    // 3️⃣ Parse incoming JSON
     const { tasks, analysisType, timeframe } = await req.json();
 
+    // 4️⃣ Build prompts
     const systemPrompt = `
 You are a specialized JEE 2027 AI coach with deep expertise in Physics, Chemistry, and Mathematics.
 Analyze the student's study data and provide personalized insights, recommendations, and motivation.
@@ -50,18 +53,21 @@ Please provide:
 Format as structured JSON with sections: performance, recommendations, motivation, actionItems
 `.trim();
 
-    // Build Gemini request URL
+    // 5️⃣ Build the correct Gemini request
     const endpoint = new URL(
       "https://generativelanguage.googleapis.com/v1beta2/models/chat-bison-001:generateMessage"
     );
     endpoint.searchParams.set("key", Deno.env.get("GEMINI_API_KEY") ?? "");
 
-    // **Updated** body: messages at top level
     const geminiBody = {
-      messages: [
-        { author: "system", content: systemPrompt },
-        { author: "user",   content: userPrompt   },
-      ],
+      prompt: {
+        chat: {
+          messages: [
+            { author: "system", content: systemPrompt },
+            { author: "user",   content: userPrompt   },
+          ],
+        },
+      },
       temperature:     0.7,
       candidateCount:  1,
       maxOutputTokens: 2000,
@@ -84,6 +90,7 @@ Format as structured JSON with sections: performance, recommendations, motivatio
     const { candidates } = JSON.parse(raw);
     const analysis = candidates?.[0]?.content ?? "";
 
+    // 6️⃣ Return the structured AI analysis
     return new Response(JSON.stringify({ analysis }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
