@@ -4,7 +4,6 @@ import { Calendar, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
 interface DateSelectorProps {
@@ -140,48 +139,8 @@ export const DateSelector = ({ selectedDate, onDateChange, onAddTask }: DateSele
         </div>
       </div>
 
-      {/* Mobile Scrollable Week View */}
-      <div className="block sm:hidden mb-6">
-        <ScrollArea className="w-full whitespace-nowrap">
-          <div className="flex space-x-3 p-1">
-            {weekDates.map((date, index) => {
-              const isSelected = isSameDate(date, selectedDate);
-              const isTodayDate = isToday(date);
-              
-              return (
-                <div
-                  key={index}
-                  onClick={() => onDateChange(date)}
-                  className={`
-                    flex-shrink-0 flex flex-col items-center justify-center p-3 rounded-2xl cursor-pointer
-                    transition-all duration-300 hover:scale-105 min-w-[60px]
-                    ${isSelected 
-                      ? `bg-gradient-to-br ${themeColors.primary} text-white shadow-lg transform scale-105` 
-                      : isTodayDate
-                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
-                    }
-                  `}
-                >
-                  <span className={`text-xs font-medium mb-1 ${isSelected ? 'text-white/90' : 'text-gray-500 dark:text-gray-400'}`}>
-                    {formatDayName(date)}
-                  </span>
-                  <span className={`text-lg font-bold ${isSelected ? 'text-white' : isTodayDate ? 'text-blue-600 dark:text-blue-400' : 'text-gray-800 dark:text-gray-200'}`}>
-                    {formatDayNumber(date)}
-                  </span>
-                  {isTodayDate && !isSelected && (
-                    <div className="absolute -bottom-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-      </div>
-
-      {/* Desktop Week View */}
-      <div className="hidden sm:grid grid-cols-7 gap-2 sm:gap-4 mb-6">
+      {/* Week View */}
+      <div className="grid grid-cols-7 gap-2 sm:gap-4 mb-6">
         {weekDates.map((date, index) => {
           const isSelected = isSameDate(date, selectedDate);
           const isTodayDate = isToday(date);
