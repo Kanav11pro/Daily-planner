@@ -139,65 +139,63 @@ export const DateSelector = ({ selectedDate, onDateChange, onAddTask }: DateSele
         </div>
       </div>
 
-      {/* Week View - Horizontally scrollable on mobile */}
-      <div className="mb-6 overflow-hidden">
-        <div className="flex space-x-2 sm:grid sm:grid-cols-7 sm:gap-4 overflow-x-auto sm:overflow-x-visible pb-2 sm:pb-0 scrollbar-hide">
-          {weekDates.map((date, index) => {
-            const isSelected = isSameDate(date, selectedDate);
-            const isTodayDate = isToday(date);
-            
-            return (
-              <div
-                key={index}
-                onClick={() => onDateChange(date)}
-                className={`
-                  relative flex flex-col items-center justify-center p-3 rounded-2xl cursor-pointer
-                  transition-all duration-300 hover:scale-105 group min-w-[70px] sm:min-w-0
-                  ${isSelected 
-                    ? `bg-gradient-to-br ${themeColors.primary} text-white shadow-lg transform scale-105` 
-                    : isTodayDate
-                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
-                  }
-                `}
-              >
-                {/* Day name */}
-                <span className={`
-                  text-xs font-medium mb-1 transition-colors duration-200
-                  ${isSelected 
-                    ? 'text-white/90' 
-                    : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
-                  }
-                `}>
-                  {formatDayName(date)}
-                </span>
-                
-                {/* Day number */}
-                <span className={`
-                  text-lg sm:text-xl font-bold transition-colors duration-200
-                  ${isSelected 
-                    ? 'text-white' 
-                    : isTodayDate
-                    ? 'text-blue-600 dark:text-blue-400'
-                    : 'text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white'
-                  }
-                `}>
-                  {formatDayNumber(date)}
-                </span>
-                
-                {/* Today indicator */}
-                {isTodayDate && !isSelected && (
-                  <div className="absolute -bottom-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                )}
-                
-                {/* Selection indicator */}
-                {isSelected && (
-                  <div className="absolute inset-0 rounded-2xl ring-2 ring-white/30 ring-offset-2 ring-offset-transparent" />
-                )}
-              </div>
-            );
-          })}
-        </div>
+      {/* Week View */}
+      <div className="grid grid-cols-7 gap-2 sm:gap-4 mb-6">
+        {weekDates.map((date, index) => {
+          const isSelected = isSameDate(date, selectedDate);
+          const isTodayDate = isToday(date);
+          
+          return (
+            <div
+              key={index}
+              onClick={() => onDateChange(date)}
+              className={`
+                relative flex flex-col items-center justify-center p-2 sm:p-3 rounded-2xl cursor-pointer
+                transition-all duration-300 hover:scale-105 group
+                ${isSelected 
+                  ? `bg-gradient-to-br ${themeColors.primary} text-white shadow-lg transform scale-105` 
+                  : isTodayDate
+                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
+                }
+              `}
+            >
+              {/* Day name */}
+              <span className={`
+                text-xs font-medium mb-1 transition-colors duration-200
+                ${isSelected 
+                  ? 'text-white/90' 
+                  : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
+                }
+              `}>
+                {formatDayName(date)}
+              </span>
+              
+              {/* Day number */}
+              <span className={`
+                text-lg sm:text-xl font-bold transition-colors duration-200
+                ${isSelected 
+                  ? 'text-white' 
+                  : isTodayDate
+                  ? 'text-blue-600 dark:text-blue-400'
+                  : 'text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white'
+                }
+              `}>
+                {formatDayNumber(date)}
+              </span>
+              
+              {/* Today indicator */}
+              {isTodayDate && !isSelected && (
+                <div className="absolute -bottom-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+              )}
+              
+              {/* Selection indicator */}
+              {isSelected && (
+                <div className="absolute inset-0 rounded-2xl ring-2 ring-white/30 ring-offset-2 ring-offset-transparent" />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Bottom section with date info and add task button */}
