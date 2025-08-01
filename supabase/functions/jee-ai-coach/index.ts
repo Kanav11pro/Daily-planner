@@ -1,13 +1,6 @@
+// … keep your imports and corsHeaders as before …
 
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -17,57 +10,45 @@ serve(async (req) => {
   try {
     const { tasks, analysisType, timeframe } = await req.json();
 
-    const systemPrompt = `You are a specialized JEE 2027 AI coach with deep expertise in Physics, Chemistry, and Mathematics. 
-    Analyze the student's study data and provide personalized insights, recommendations, and motivation.
-    
-    Focus on:
-    - JEE Main & Advanced exam patterns
-    - Chapter-wise importance and difficulty
-    - Strategic study planning for JEE 2027
-    - Subject-wise weaknesses and strengths
-    - Time management for competitive exams
-    - Motivation and mental preparation
-    
-    Provide actionable, specific advice tailored to JEE preparation.`;
+    const systemPrompt = `You are a specialized JEE 2027 AI coach…`;  // your same prompt
+    const userPrompt   = `Analyze this JEE student's ${timeframe} performance data…`;  // your same userPrompt
 
-    const userPrompt = `Analyze this JEE student's ${timeframe} performance data:
-    
-    Tasks Data: ${JSON.stringify(tasks)}
-    Analysis Type: ${analysisType}
-    
-    Please provide:
-    1. Performance analysis for Physics, Chemistry, and Mathematics
-    2. Chapter-wise recommendations
-    3. Strategic improvements for JEE 2027
-    4. Motivational insights
-    5. Specific action items for next week/month
-    
-    Format as structured JSON with sections: performance, recommendations, motivation, actionItems`;
+    // 1. Build the Gemini URL with your API key
+    const endpoint = new URL(
+      'https://generativelanguage.googleapis.com/v1beta2/models/chat-bison-001:generateMessage'
+    );
+    endpoint.searchParams.set('key', geminiApiKey!);
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
+    // 2. Gemin i payload is slightly different from OpenAI’s
+    const geminiBody = {
+      prompt: {
         messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
+          { author: 'system', content: systemPrompt },
+          { author: 'user',   content: userPrompt },
         ],
-        temperature: 0.7,
-        max_tokens: 2000,
-      }),
+      },
+      temperature: 0.7,
+      candidateCount: 1,
+      // you can tune maxOutputTokens if you want
+    };
+
+    const response = await fetch(endpoint.toString(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(geminiBody),
     });
 
-    const data = await response.json();
-    
-    if (!data.choices || data.choices.length === 0) {
-      throw new Error('No response from OpenAI API');
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Gemini API error: ${errText}`);
     }
-    
-    const analysis = data.choices[0].message.content;
+
+    const { candidates } = await response.json();
+    if (!candidates || candidates.length === 0) {
+      throw new Error('No response from Gemini API');
+    }
+
+    const analysis = candidates[0].content;
 
     return new Response(JSON.stringify({ analysis }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
