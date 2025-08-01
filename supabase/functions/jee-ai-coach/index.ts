@@ -1,7 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-// 1️⃣ Confirm the key is loaded
+// Confirm the key is loaded
 console.log("🔑 GEMINI_API_KEY is:", Deno.env.get("GEMINI_API_KEY"));
 
 const corsHeaders = {
@@ -12,16 +12,13 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // 2️⃣ Handle preflight CORS
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
 
   try {
-    // 3️⃣ Parse the incoming JSON
     const { tasks, analysisType, timeframe } = await req.json();
 
-    // 4️⃣ Build your prompts
     const systemPrompt = `
 You are a specialized JEE 2027 AI coach with deep expertise in Physics, Chemistry, and Mathematics.
 Analyze the student's study data and provide personalized insights, recommendations, and motivation.
@@ -53,25 +50,23 @@ Please provide:
 Format as structured JSON with sections: performance, recommendations, motivation, actionItems
 `.trim();
 
-    // 5️⃣ Prepare the Gemini request
+    // Build Gemini request URL
     const endpoint = new URL(
       "https://generativelanguage.googleapis.com/v1beta2/models/chat-bison-001:generateMessage"
     );
     endpoint.searchParams.set("key", Deno.env.get("GEMINI_API_KEY") ?? "");
 
+    // **Updated** body: messages at top level
     const geminiBody = {
-      prompt: {
-        messages: [
-          { author: "system", content: systemPrompt },
-          { author: "user",   content: userPrompt   },
-        ],
-      },
+      messages: [
+        { author: "system", content: systemPrompt },
+        { author: "user",   content: userPrompt   },
+      ],
       temperature:     0.7,
       candidateCount:  1,
       maxOutputTokens: 2000,
     };
 
-    // 6️⃣ Call Gemini
     console.log("▶️ Sending to Gemini:", JSON.stringify(geminiBody).slice(0, 200));
     const response = await fetch(endpoint.toString(), {
       method:  "POST",
@@ -89,7 +84,6 @@ Format as structured JSON with sections: performance, recommendations, motivatio
     const { candidates } = JSON.parse(raw);
     const analysis = candidates?.[0]?.content ?? "";
 
-    // 7️⃣ Return the AI analysis
     return new Response(JSON.stringify({ analysis }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
