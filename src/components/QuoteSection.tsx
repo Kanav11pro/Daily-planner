@@ -142,15 +142,7 @@ export const QuoteSection = () => {
         </div>
 
         {/* Action Call-to-Action */}
-        <div className="mt-8 p-4 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-2xl border border-yellow-300/30 backdrop-blur-sm">
-          <div className="flex items-center justify-center space-x-2">
-            <Flame className="h-5 w-5 text-orange-300 animate-bounce" />
-            <span className="text-lg font-bold text-center bg-gradient-to-r from-yellow-200 to-orange-200 bg-clip-text text-transparent">
-              Every second counts. Your future self is watching. MAKE IT COUNT! 
-            </span>
-            <Flame className="h-5 w-5 text-orange-300 animate-bounce delay-100" />
-          </div>
-        </div>
+        
       </div>
 
       {/* Progress Indicator */}
