@@ -1,96 +1,125 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-// 1️⃣ Log the Gemini key at startup
-console.log("🔑 GEMINI_API_KEY is:", Deno.env.get("GEMINI_API_KEY"));
+const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin":  "*",
+  "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Access-Control-Max-Age":       "86400",
 };
 
 serve(async (req) => {
-  // 2️⃣ Preflight CORS
+  // Handle preflight CORS requests
   if (req.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: corsHeaders });
+    return new Response(null, { headers: corsHeaders });
   }
 
+  // Validate API key
+  if (!openAIApiKey) {
+    return new Response(
+      JSON.stringify({ error: "Missing OpenAI API key on server." }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  // Parse JSON body
+  let reqData;
   try {
-    // 3️⃣ Parse frontend data
-    const { tasks, analysisType, timeframe } = await req.json();
+    reqData = await req.json();
+  } catch (e) {
+    return new Response(
+      JSON.stringify({ error: "Invalid JSON body." }),
+      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
 
-    // 4️⃣ Build prompts
-    const systemPrompt = `
-You are a specialized JEE 2027 AI coach with deep expertise in Physics, Chemistry, and Mathematics.
+  const { tasks, analysisType, timeframe } = reqData;
+
+  // Defensive: check for required fields
+  if (!tasks || !analysisType || !timeframe) {
+    return new Response(
+      JSON.stringify({ error: "Missing required fields: tasks, analysisType, timeframe" }),
+      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  // Construct prompts
+  const systemPrompt = `You are a specialized JEE 2027 AI coach with expertise in Physics, Chemistry, and Mathematics.
 Analyze the student's study data and provide personalized insights, recommendations, and motivation.
-Focus on exam patterns, chapter-wise difficulty, strategic planning, strengths & weaknesses,
-time management, and mental preparation. Give actionable advice tailored to JEE prep.
-`.trim();
+Focus on:
+- JEE Main & Advanced exam patterns
+- Chapter-wise importance and difficulty
+- Strategic study planning for JEE 2027
+- Subject-wise weaknesses and strengths
+- Time management for competitive exams
+- Motivation and mental preparation
+Provide actionable, specific advice tailored to JEE preparation.`;
 
-    const userPrompt = `
-Analyze this JEE student's ${timeframe} performance data:
+  const userPrompt = `Analyze this JEE student's ${timeframe} performance data:
 Tasks Data: ${JSON.stringify(tasks)}
 Analysis Type: ${analysisType}
-
 Please provide:
 1. Performance analysis for Physics, Chemistry, and Mathematics
 2. Chapter-wise recommendations
 3. Strategic improvements for JEE 2027
 4. Motivational insights
 5. Specific action items for next week/month
+Format as structured JSON with sections: performance, recommendations, motivation, actionItems`;
 
-Format as structured JSON with sections: performance, recommendations, motivation, actionItems
-`.trim();
-
-    // 5️⃣ Prepare Gemini request
-    const endpoint = new URL(
-      "https://generativelanguage.googleapis.com/v1beta2/models/chat-bison-001:generateMessage"
-    );
-    endpoint.searchParams.set("key", Deno.env.get("GEMINI_API_KEY") ?? "");
-
-    const geminiBody = {
-      model:             "models/chat-bison-001",
-      prompt: {
-        messages: [
-          { author: "system", content: systemPrompt },
-          { author: "user",   content: userPrompt   },
-        ],
+  // OpenAI API Call
+  let openAiRes;
+  try {
+    openAiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${openAIApiKey}`,
+        "Content-Type": "application/json",
       },
-      temperature:     0.7,
-      candidateCount:  1,
-      maxOutputTokens: 2000,
-    };
-
-    console.log("▶️ Sending to Gemini:", JSON.stringify(geminiBody).slice(0, 200));
-
-    // 6️⃣ Call Gemini
-    const response = await fetch(endpoint.toString(), {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify(geminiBody),
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 2000,
+      }),
     });
-
-    const raw = await response.text();
-    console.log("🔁 Gemini status:", response.status, "body:", raw);
-
-    if (!response.ok) throw new Error(raw);
-
-    const { candidates } = JSON.parse(raw);
-    const analysis = candidates?.[0]?.content ?? "";
-
-    // 7️⃣ Return to frontend
-    return new Response(JSON.stringify({ analysis }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-
-  } catch (err) {
-    console.error("❌ Function error:", err.message);
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: "Failed to contact OpenAI API." }),
+      { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
+
+  let data;
+  try {
+    data = await openAiRes.json();
+  } catch (e) {
+    return new Response(
+      JSON.stringify({ error: "Failed to parse OpenAI response." }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  if (!data.choices || !data.choices[0]?.message?.content) {
+    return new Response(
+      JSON.stringify({ error: "No AI analysis received." }),
+      { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
+  // Parse AI's analysis content as JSON if possible, else just return plain text
+  let analysis;
+  try {
+    analysis = JSON.parse(data.choices[0].message.content);
+  } catch {
+    // Possibly the AI returned a string or code block
+    analysis = data.choices[0].message.content;
+  }
+
+  return new Response(JSON.stringify({ analysis }), {
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
 });
