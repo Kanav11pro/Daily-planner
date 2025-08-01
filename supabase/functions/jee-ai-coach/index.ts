@@ -62,6 +62,11 @@ serve(async (req) => {
     });
 
     const data = await response.json();
+    
+    if (!data.choices || data.choices.length === 0) {
+      throw new Error('No response from OpenAI API');
+    }
+    
     const analysis = data.choices[0].message.content;
 
     return new Response(JSON.stringify({ analysis }), {

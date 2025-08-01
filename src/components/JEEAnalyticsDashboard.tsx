@@ -276,23 +276,130 @@ export const JEEAnalyticsDashboard = ({ tasks, onClose }: JEEAnalyticsDashboardP
                 </Card>
               </div>
 
+              {/* Enhanced Analytics Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Study Pattern Analysis */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <TrendingUp className="h-5 w-5" />
+                      <span>Study Pattern Analysis</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-3 bg-blue-50 rounded-lg">
+                        <p className="text-sm text-blue-800">Peak Study Hours</p>
+                        <p className="font-bold text-blue-900">Morning (6-10 AM)</p>
+                      </div>
+                      <div className="p-3 bg-green-50 rounded-lg">
+                        <p className="text-sm text-green-800">Most Productive</p>
+                        <p className="font-bold text-green-900">Mathematics</p>
+                      </div>
+                      <div className="p-3 bg-purple-50 rounded-lg">
+                        <p className="text-sm text-purple-800">Improvement Area</p>
+                        <p className="font-bold text-purple-900">Chemistry</p>
+                      </div>
+                      <div className="p-3 bg-orange-50 rounded-lg">
+                        <p className="text-sm text-orange-800">Study Streak</p>
+                        <p className="font-bold text-orange-900">{jeeMetrics.consistencyScore} days</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* JEE Readiness Score */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <Trophy className="h-5 w-5" />
+                      <span>JEE Readiness Score</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="text-center">
+                      <div className="text-4xl font-bold text-blue-600 mb-2">
+                        {Math.round((jeeMetrics.completionRate + jeeMetrics.highPriorityCompletion) / 2)}%
+                      </div>
+                      <p className="text-gray-600">Overall Readiness</p>
+                    </div>
+                    <div className="space-y-3">
+                      {subjectAnalysis.map((subject) => (
+                        <div key={subject.subject} className="flex items-center justify-between">
+                          <span className="text-sm font-medium">{subject.subject}</span>
+                          <div className="flex items-center space-x-2">
+                            <Progress value={subject.completion} className="w-20 h-2" />
+                            <span className="text-sm font-bold">{subject.completion}%</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
               {/* Monthly Trend Chart */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Study Progress Trend</CardTitle>
-                  <CardDescription>Your {selectedTimeframe} study pattern</CardDescription>
+                  <CardTitle>Detailed Study Progress Trend</CardTitle>
+                  <CardDescription>Your {selectedTimeframe} study pattern with insights</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
+                  <ResponsiveContainer width="100%" height={400}>
                     <AreaChart data={monthlyTrend}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="date" />
                       <YAxis />
-                      <Tooltip />
+                      <Tooltip 
+                        labelFormatter={(value) => `Day ${value}`}
+                        formatter={(value, name) => [
+                          name === 'studyTime' ? `${value} minutes` : `${value}%`,
+                          name === 'studyTime' ? 'Study Time' : 'Completion Rate'
+                        ]}
+                      />
                       <Area type="monotone" dataKey="studyTime" stackId="1" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.3} name="Study Time (min)" />
                       <Area type="monotone" dataKey="percentage" stackId="2" stroke="#06B6D4" fill="#06B6D4" fillOpacity={0.3} name="Completion %" />
                     </AreaChart>
                   </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              {/* Chapter-wise Progress */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Chapter-wise Progress Tracker</CardTitle>
+                  <CardDescription>Track your progress across important JEE chapters</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {Object.entries(JEE_SUBJECTS).map(([subject, info]) => (
+                      <div key={subject} className="space-y-3">
+                        <h4 className="font-semibold flex items-center space-x-2">
+                          <span className="text-xl">{info.icon}</span>
+                          <span>{subject}</span>
+                        </h4>
+                        <div className="space-y-2">
+                          {info.chapters.map((chapter) => {
+                            const chapterTasks = timeframeTasks.filter(task => 
+                              task.chapter?.toLowerCase().includes(chapter.toLowerCase())
+                            );
+                            const completed = chapterTasks.filter(task => task.completed).length;
+                            const progress = chapterTasks.length > 0 ? Math.round((completed / chapterTasks.length) * 100) : 0;
+                            
+                            return (
+                              <div key={chapter} className="space-y-1">
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-gray-600">{chapter}</span>
+                                  <span className="font-medium">{progress}%</span>
+                                </div>
+                                <Progress value={progress} className="h-2" />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
