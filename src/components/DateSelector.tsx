@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -17,38 +17,55 @@ export const DateSelector = ({ selectedDate, onDateChange, onAddTask }: DateSele
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
-  const formatDate = (date: Date) => {
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    if (date.toDateString() === today.toDateString()) {
-      return "Today";
-    } else if (date.toDateString() === tomorrow.toDateString()) {
-      return "Tomorrow";
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      return "Yesterday";
-    } else {
-      return date.toLocaleDateString('en-US', {
-        weekday: 'long',
-        month: 'short',
-        day: 'numeric'
-      });
+  // Get week dates starting from Monday
+  const getWeekDates = (date: Date) => {
+    const week = [];
+    const startOfWeek = new Date(date);
+    const day = startOfWeek.getDay();
+    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Monday start
+    startOfWeek.setDate(diff);
+    
+    for (let i = 0; i < 7; i++) {
+      const weekDate = new Date(startOfWeek);
+      weekDate.setDate(startOfWeek.getDate() + i);
+      week.push(weekDate);
     }
+    return week;
   };
 
-  const goToPreviousDay = () => {
-    const previousDay = new Date(selectedDate);
-    previousDay.setDate(previousDay.getDate() - 1);
-    onDateChange(previousDay);
+  const weekDates = getWeekDates(selectedDate);
+  const today = new Date();
+  
+  const formatMonth = (date: Date) => {
+    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
   };
 
-  const goToNextDay = () => {
-    const nextDay = new Date(selectedDate);
-    nextDay.setDate(nextDay.getDate() + 1);
-    onDateChange(nextDay);
+  const formatDayName = (date: Date) => {
+    return date.toLocaleDateString('en-US', { weekday: 'short' });
+  };
+
+  const formatDayNumber = (date: Date) => {
+    return date.getDate().toString().padStart(2, '0');
+  };
+
+  const isToday = (date: Date) => {
+    return date.toDateString() === today.toDateString();
+  };
+
+  const isSameDate = (date1: Date, date2: Date) => {
+    return date1.toDateString() === date2.toDateString();
+  };
+
+  const goToPreviousWeek = () => {
+    const previousWeek = new Date(selectedDate);
+    previousWeek.setDate(selectedDate.getDate() - 7);
+    onDateChange(previousWeek);
+  };
+
+  const goToNextWeek = () => {
+    const nextWeek = new Date(selectedDate);
+    nextWeek.setDate(selectedDate.getDate() + 7);
+    onDateChange(nextWeek);
   };
 
   const goToToday = () => {
@@ -56,26 +73,46 @@ export const DateSelector = ({ selectedDate, onDateChange, onAddTask }: DateSele
   };
 
   return (
-    <div className={`${themeColors.card} rounded-2xl shadow-xl ${themeColors.border} border p-4 sm:p-6 mb-6`}>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto">
+    <div className={`${themeColors.card} rounded-2xl shadow-xl ${themeColors.border} border p-4 sm:p-6 mb-6 transition-all duration-300 hover:shadow-2xl`}>
+      {/* Header with Month/Year and Navigation */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">
+            {formatMonth(selectedDate)}
+          </h2>
+          {!isToday(selectedDate) && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={goToToday}
+              className="text-xs px-3 py-1 rounded-full transition-all duration-200 hover:scale-105"
+            >
+              Today
+            </Button>
+          )}
+        </div>
+        
+        <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             size="sm"
-            onClick={goToPreviousDay}
-            className="h-8 w-8 sm:h-10 sm:w-10 p-0 flex-shrink-0"
+            onClick={goToPreviousWeek}
+            className="h-9 w-9 p-0 rounded-full transition-all duration-200 hover:scale-110"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
           
           <Popover open={showCalendar} onOpenChange={setShowCalendar}>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="flex items-center space-x-2 min-w-0 flex-1 sm:flex-initial sm:min-w-[200px]">
-                <Calendar className="h-4 w-4 flex-shrink-0" />
-                <span className="font-medium truncate">{formatDate(selectedDate)}</span>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="h-9 w-9 p-0 rounded-full transition-all duration-200 hover:scale-110"
+              >
+                <Calendar className="h-4 w-4" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className="w-auto p-0" align="center">
               <CalendarComponent
                 mode="single"
                 selected={selectedDate}
@@ -86,52 +123,106 @@ export const DateSelector = ({ selectedDate, onDateChange, onAddTask }: DateSele
                   }
                 }}
                 initialFocus
+                className="pointer-events-auto"
               />
             </PopoverContent>
           </Popover>
-
+          
           <Button
             variant="outline"
             size="sm"
-            onClick={goToNextDay}
-            className="h-8 w-8 sm:h-10 sm:w-10 p-0 flex-shrink-0"
+            onClick={goToNextWeek}
+            className="h-9 w-9 p-0 rounded-full transition-all duration-200 hover:scale-110"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
-
-          {selectedDate.toDateString() !== new Date().toDateString() && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={goToToday}
-              className="text-xs px-2 sm:px-3 flex-shrink-0"
-            >
-              Today
-            </Button>
-          )}
         </div>
+      </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-          <div className="text-left sm:text-right">
-            <div className="text-sm text-gray-500">Planning for</div>
-            <div className="text-base sm:text-lg font-semibold text-gray-800">
-              {selectedDate.toLocaleDateString('en-US', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric'
-              })}
-            </div>
-          </div>
+      {/* Week View */}
+      <div className="grid grid-cols-7 gap-2 sm:gap-4 mb-6">
+        {weekDates.map((date, index) => {
+          const isSelected = isSameDate(date, selectedDate);
+          const isTodayDate = isToday(date);
           
-          <Button
-            onClick={onAddTask}
-            className={`bg-gradient-to-r ${themeColors.primary} hover:opacity-90 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full sm:w-auto`}
-            size="sm"
-          >
-            <Calendar className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-            <span className="text-sm sm:text-base">Add Task</span>
-          </Button>
+          return (
+            <div
+              key={index}
+              onClick={() => onDateChange(date)}
+              className={`
+                relative flex flex-col items-center justify-center p-2 sm:p-3 rounded-2xl cursor-pointer
+                transition-all duration-300 hover:scale-105 group
+                ${isSelected 
+                  ? `bg-gradient-to-br ${themeColors.primary} text-white shadow-lg transform scale-105` 
+                  : isTodayDate
+                  ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700/50'
+                }
+              `}
+            >
+              {/* Day name */}
+              <span className={`
+                text-xs font-medium mb-1 transition-colors duration-200
+                ${isSelected 
+                  ? 'text-white/90' 
+                  : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
+                }
+              `}>
+                {formatDayName(date)}
+              </span>
+              
+              {/* Day number */}
+              <span className={`
+                text-lg sm:text-xl font-bold transition-colors duration-200
+                ${isSelected 
+                  ? 'text-white' 
+                  : isTodayDate
+                  ? 'text-blue-600 dark:text-blue-400'
+                  : 'text-gray-800 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white'
+                }
+              `}>
+                {formatDayNumber(date)}
+              </span>
+              
+              {/* Today indicator */}
+              {isTodayDate && !isSelected && (
+                <div className="absolute -bottom-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+              )}
+              
+              {/* Selection indicator */}
+              {isSelected && (
+                <div className="absolute inset-0 rounded-2xl ring-2 ring-white/30 ring-offset-2 ring-offset-transparent" />
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Bottom section with date info and add task button */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col">
+          <span className="text-sm text-gray-500 dark:text-gray-400">Planning for</span>
+          <span className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+            {selectedDate.toLocaleDateString('en-US', {
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric'
+            })}
+          </span>
         </div>
+        
+        <Button
+          onClick={onAddTask}
+          className={`
+            bg-gradient-to-r ${themeColors.primary} hover:opacity-90 text-white 
+            shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105
+            rounded-xl px-6 py-2 w-full sm:w-auto
+          `}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Task
+        </Button>
       </div>
     </div>
   );
