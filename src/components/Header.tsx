@@ -1,4 +1,4 @@
-import { Calendar, Plus, Target } from "lucide-react";
+import { Calendar, Plus, Target, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeSelector } from "@/components/ThemeSelector";
 import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
@@ -26,9 +26,13 @@ export const Header = ({
           </div>
           
           <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
+            <Button variant="outline" size="sm" asChild>
+              <a href="/practice-analytics" className="gap-2">
+                <BarChart3 className="h-4 w-4" />
+                Practice Analytics
+              </a>
+            </Button>
             <ThemeSelector />
-            
-            
           </div>
         </div>
       </div>
