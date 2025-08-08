@@ -20,7 +20,7 @@ interface EnhancedTargetTrackerProps {
 export const EnhancedTargetTracker = ({ targets, onAddTarget, sessions }: EnhancedTargetTrackerProps) => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [newTarget, setNewTarget] = useState({
-    target_type: 'Daily',
+    target_type: 'Daily' as 'Daily' | 'Weekly' | 'Monthly',
     subject: '',
     questions_target: 50,
     time_target: 120,
@@ -96,7 +96,7 @@ export const EnhancedTargetTracker = ({ targets, onAddTarget, sessions }: Enhanc
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Target Type</Label>
-                  <Select value={newTarget.target_type} onValueChange={(value) => 
+                  <Select value={newTarget.target_type} onValueChange={(value: 'Daily' | 'Weekly' | 'Monthly') => 
                     setNewTarget(prev => ({ ...prev, target_type: value }))
                   }>
                     <SelectTrigger>
@@ -213,7 +213,7 @@ export const EnhancedTargetTracker = ({ targets, onAddTarget, sessions }: Enhanc
                           <span className="text-sm font-semibold">{target.streak_count} day streak</span>
                         </div>
                       )}
-                      {target.best_streak && target.best_streak > target.streak_count! && (
+                      {target.best_streak && target.best_streak > (target.streak_count || 0) && (
                         <div className="flex items-center gap-1 text-amber-500">
                           <Trophy className="h-4 w-4" />
                           <span className="text-sm">Best: {target.best_streak}</span>

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,7 @@ interface AddPracticeSessionModalProps {
   chapters: any[];
 }
 
-const DIFFICULTY_MAP: Record<string, string> = {
+const DIFFICULTY_MAP: Record<string, 'Easy' | 'Medium' | 'Hard' | 'Mixed'> = {
   'Module-Ex 1': 'Easy',
   'Module-Ex 1A': 'Medium', 
   'Module-Ex 2': 'Mixed',
@@ -35,14 +34,14 @@ export const AddPracticeSessionModal = ({ onAddSession, chapters }: AddPracticeS
   const [currentStep, setCurrentStep] = useState(1);
   const [sessionData, setSessionData] = useState({
     date: new Date().toISOString().split('T')[0],
-    subject: '',
+    subject: '' as 'Physics' | 'Chemistry' | 'Mathematics' | '',
     chapter: '',
-    source: '',
+    source: '' as 'Module' | 'PYQs' | 'CPPs' | 'NCERT' | 'Other' | '',
     source_details: '',
     questions_target: 0,
     questions_solved: 0,
     time_spent: 0,
-    difficulty_level: '',
+    difficulty_level: '' as 'Easy' | 'Medium' | 'Hard' | 'Mixed' | '',
     accuracy_percentage: 0,
     notes: ''
   });
@@ -52,8 +51,8 @@ export const AddPracticeSessionModal = ({ onAddSession, chapters }: AddPracticeS
   const [showCustomQuestions, setShowCustomQuestions] = useState(false);
   const [showCustomTime, setShowCustomTime] = useState(false);
 
-  const subjects = ['Physics', 'Chemistry', 'Mathematics'];
-  const sources = ['Module', 'PYQs', 'CPPs', 'NCERT', 'Other'];
+  const subjects: ('Physics' | 'Chemistry' | 'Mathematics')[] = ['Physics', 'Chemistry', 'Mathematics'];
+  const sources: ('Module' | 'PYQs' | 'CPPs' | 'NCERT' | 'Other')[] = ['Module', 'PYQs', 'CPPs', 'NCERT', 'Other'];
   
   const getSourceDetails = (source: string) => {
     switch (source) {
@@ -72,20 +71,12 @@ export const AddPracticeSessionModal = ({ onAddSession, chapters }: AddPracticeS
     setSessionData(prev => ({ ...prev, difficulty_level: difficulty }));
   };
 
-  const getDateLabel = (date: string) => {
-    const today = new Date().toISOString().split('T')[0];
-    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    
-    if (date === today) return 'Today';
-    if (date === yesterday) return 'Yesterday';
-    if (date === tomorrow) return 'Tomorrow';
-    return new Date(date).toLocaleDateString();
-  };
-
   const handleSubmit = () => {
     onAddSession({
       ...sessionData,
+      subject: sessionData.subject as 'Physics' | 'Chemistry' | 'Mathematics',
+      source: sessionData.source as 'Module' | 'PYQs' | 'CPPs' | 'Reference Books' | 'Custom',
+      difficulty_level: sessionData.difficulty_level as 'Easy' | 'Medium' | 'Hard' | 'Mixed',
       questions_target: sessionData.questions_solved // Set target same as solved
     });
     setIsOpen(false);
@@ -238,7 +229,10 @@ export const AddPracticeSessionModal = ({ onAddSession, chapters }: AddPracticeS
             )}
 
             {sessionData.source && sessionData.source !== 'Other' && getSourceDetails(sessionData.source).length === 0 && (
-              updateDifficulty(sessionData.source, '')
+              (() => {
+                updateDifficulty(sessionData.source, '');
+                return null;
+              })()
             )}
 
             {sessionData.difficulty_level && (
@@ -346,6 +340,17 @@ export const AddPracticeSessionModal = ({ onAddSession, chapters }: AddPracticeS
         );
 
       case 4:
+        const getDateLabel = (date: string) => {
+          const today = new Date().toISOString().split('T')[0];
+          const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+          const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+          
+          if (date === today) return 'Today';
+          if (date === yesterday) return 'Yesterday';
+          if (date === tomorrow) return 'Tomorrow';
+          return new Date(date).toLocaleDateString();
+        };
+
         return (
           <div className="space-y-6">
             <div className="space-y-4">

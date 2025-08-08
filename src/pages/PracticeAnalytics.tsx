@@ -1,304 +1,326 @@
-import { useState, useMemo, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
-import { CalendarDays, Clock, Target, TrendingUp, BookOpen, Award, Zap, Brain } from 'lucide-react';
+
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { CalendarDays, TrendingUp, Target, BookOpen, Clock, BarChart3, Plus } from 'lucide-react';
 import { usePractice } from '@/hooks/usePractice';
 import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from '@/contexts/ThemeContext';
+import { PracticeInputModal } from '@/components/PracticeInputModal';
 import { LoadingSkeleton } from '@/components/practice/LoadingSkeleton';
 import { EnhancedTargetTracker } from '@/components/practice/EnhancedTargetTracker';
 import { AddPracticeSessionModal } from '@/components/practice/AddPracticeSessionModal';
 import { PracticeCelebration } from '@/components/practice/PracticeCelebration';
-import { useTheme } from '@/contexts/ThemeContext';
 
-const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))'];
-
-const PracticeAnalytics = () => {
+export default function PracticeAnalytics() {
   const { user } = useAuth();
   const { theme } = useTheme();
-  const {
-    sessions,
-    chapters,
-    targets,
-    loading,
-    analytics,
-    addSession,
-    addTarget,
-  } = usePractice();
-
-  const [celebrationTrigger, setCelebrationTrigger] = useState<any>(null);
-
-  const handleAddSession = useCallback(async (sessionData: any) => {
-    try {
-      await addSession(sessionData);
-      // Trigger celebration
-      setCelebrationTrigger({
-        type: 'session_added',
-        value: 1,
-        context: sessionData
-      });
-    } catch (error) {
-      console.error('Error adding session:', error);
-    }
-  }, [addSession]);
-
-  const handleAddTarget = useCallback(async (targetData: any) => {
-    try {
-      await addTarget(targetData);
-    } catch (error) {
-      console.error('Error adding target:', error);
-    }
-  }, [addTarget]);
-
-  const recentSessions = useMemo(() => {
-    return sessions
-      .slice(0, 10)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [sessions]);
-
-  const weeklyData = useMemo(() => {
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      return date.toISOString().split('T')[0];
-    }).reverse();
-
-    return last7Days.map(date => {
-      const daySessions = sessions.filter(s => s.date === date);
-      return {
-        date: new Date(date).toLocaleDateString('en-US', { weekday: 'short' }),
-        questions: daySessions.reduce((sum, s) => sum + s.questions_solved, 0),
-        time: daySessions.reduce((sum, s) => sum + s.time_spent, 0),
-      };
-    });
-  }, [sessions]);
-
-  const subjectData = useMemo(() => {
-    return analytics.subjects.map((subject, index) => ({
-      ...subject,
-      color: COLORS[index % COLORS.length]
-    }));
-  }, [analytics.subjects]);
-
-  if (loading) {
-    return (
-      <div className="container mx-auto p-6">
-        <LoadingSkeleton />
-      </div>
-    );
-  }
+  const { sessions, chapters, targets, loading, analytics, addSession, addTarget } = usePractice();
+  const [showInputModal, setShowInputModal] = useState(false);
+  const [celebrationData, setCelebrationData] = useState<{
+    type: 'session' | 'streak' | 'target';
+    message: string;
+    show: boolean;
+  }>({ type: 'session', message: '', show: false });
 
   if (!user) {
     return (
-      <div className="container mx-auto p-6 text-center">
-        <p>Please log in to view your practice analytics.</p>
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 p-6">
+        <div className="max-w-6xl mx-auto">
+          <Card>
+            <CardContent className="text-center py-12">
+              <p className="text-lg text-muted-foreground">Please log in to view your practice analytics.</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
 
+  if (loading) {
+    return <LoadingSkeleton />;
+  }
+
+  const handleAddSession = async (sessionData: any) => {
+    try {
+      await addSession(sessionData);
+      // Show celebration
+      setCelebrationData({
+        type: 'session',
+        message: `Great job! You solved ${sessionData.questions_solved} questions in ${sessionData.time_spent} minutes!`,
+        show: true
+      });
+    } catch (error) {
+      console.error('Failed to add session:', error);
+    }
+  };
+
+  const handleAddTarget = async (targetData: any) => {
+    try {
+      await addTarget(targetData);
+      setCelebrationData({
+        type: 'target',
+        message: `New ${targetData.target_type.toLowerCase()} target set for ${targetData.subject}!`,
+        show: true
+      });
+    } catch (error) {
+      console.error('Failed to add target:', error);
+    }
+  };
+
+  const todayStats = {
+    sessions: analytics.today.sessionsCount,
+    questions: analytics.today.questionsTotal,
+    time: Math.round(analytics.today.timeTotal / 60 * 10) / 10,
+  };
+
+  const weekStats = {
+    sessions: analytics.week.sessionsCount,
+    questions: analytics.week.questionsTotal,
+    time: Math.round(analytics.week.timeTotal / 60 * 10) / 10,
+  };
+
+  const isDarkMode = theme === 'dark';
+
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'dark' : ''}`}>
-      <div className="container mx-auto p-6 space-y-8">
+    <div className={`min-h-screen transition-all duration-300 ${
+      isDarkMode 
+        ? 'bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950' 
+        : 'bg-gradient-to-br from-blue-50 via-white to-purple-50'
+    } p-4 sm:p-6`}>
+      <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
               Practice Analytics
             </h1>
-            <p className="text-muted-foreground mt-1">
-              Track your progress and stay motivated
+            <p className="text-muted-foreground mt-2">
+              Track your progress, set targets, and stay accountable
             </p>
           </div>
-          <AddPracticeSessionModal 
-            onAddSession={handleAddSession} 
-            chapters={chapters}
-          />
+          <div className="flex flex-col sm:flex-row gap-3">
+            <AddPracticeSessionModal onAddSession={handleAddSession} chapters={chapters} />
+          </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent" />
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Today's Questions</CardTitle>
-              <Target className="h-4 w-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                {analytics.today.questionsTotal}
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Card className={`transition-all duration-200 hover:shadow-lg ${
+            isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 backdrop-blur-sm'
+          }`}>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                  <CalendarDays className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Today</p>
+                  <p className="text-xl font-semibold">{todayStats.sessions} sessions</p>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {analytics.today.sessionsCount} sessions today
-              </p>
             </CardContent>
           </Card>
 
-          <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent" />
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Today's Time</CardTitle>
-              <Clock className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                {Math.round(analytics.today.timeTotal / 60 * 10) / 10}h
+          <Card className={`transition-all duration-200 hover:shadow-lg ${
+            isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 backdrop-blur-sm'
+          }`}>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                  <BookOpen className="h-5 w-5 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Questions Today</p>
+                  <p className="text-xl font-semibold">{todayStats.questions}</p>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {analytics.today.timeTotal} minutes total
-              </p>
             </CardContent>
           </Card>
 
-          <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent" />
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Weekly Questions</CardTitle>
-              <TrendingUp className="h-4 w-4 text-purple-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                {analytics.week.questionsTotal}
+          <Card className={`transition-all duration-200 hover:shadow-lg ${
+            isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 backdrop-blur-sm'
+          }`}>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                  <Clock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Hours Today</p>
+                  <p className="text-xl font-semibold">{todayStats.time}h</p>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {analytics.week.sessionsCount} sessions this week
-              </p>
             </CardContent>
           </Card>
 
-          <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent" />
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Chapters</CardTitle>
-              <BookOpen className="h-4 w-4 text-orange-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-                {chapters.length}
+          <Card className={`transition-all duration-200 hover:shadow-lg ${
+            isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 backdrop-blur-sm'
+          }`}>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">This Week</p>
+                  <p className="text-xl font-semibold">{weekStats.questions} questions</p>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Chapters practiced
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="hover:shadow-lg transition-shadow duration-300">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5" />
-                Weekly Progress
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={weeklyData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="questions" fill="hsl(var(--chart-1))" radius={4} />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow duration-300">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Brain className="h-5 w-5" />
-                Subject Distribution
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={subjectData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="questions"
-                  >
-                    {subjectData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
             </CardContent>
           </Card>
         </div>
 
-        {/* Target Tracker */}
-        <EnhancedTargetTracker 
-          targets={targets} 
-          onAddTarget={handleAddTarget}
-          sessions={sessions}
-        />
-
-        {/* Recent Sessions */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CalendarDays className="h-5 w-5" />
-              Recent Sessions
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {recentSessions.length === 0 ? (
-              <div className="text-center py-8">
-                <Award className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">No practice sessions yet</p>
-                <p className="text-sm text-muted-foreground">Start adding sessions to see your progress!</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {recentSessions.map((session) => (
-                  <div
-                    key={session.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">{session.subject}</span>
-                        <span className="text-sm text-muted-foreground">•</span>
-                        <span className="text-sm text-muted-foreground">{session.chapter}</span>
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {new Date(session.date).toLocaleDateString()} • {session.source}
-                        {session.source_details && ` - ${session.source_details}`}
-                      </div>
-                    </div>
-                    <div className="text-right space-y-1">
-                      <div className="text-sm font-medium">
-                        {session.questions_solved} questions
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {session.time_spent} min
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+        {/* Enhanced Target Tracker */}
+        <Card className={`transition-all duration-200 ${
+          isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 backdrop-blur-sm'
+        }`}>
+          <CardContent className="p-6">
+            <EnhancedTargetTracker 
+              targets={targets} 
+              onAddTarget={handleAddTarget}
+              sessions={sessions}
+            />
           </CardContent>
         </Card>
 
-        {/* Celebration */}
-        {celebrationTrigger && (
-          <PracticeCelebration
-            trigger={celebrationTrigger}
-            onComplete={() => setCelebrationTrigger(null)}
-          />
-        )}
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 lg:w-auto lg:grid-cols-3">
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="sessions" className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              Sessions
+            </TabsTrigger>
+            <TabsTrigger value="chapters" className="flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              Chapters
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            {/* Subject Analytics */}
+            <Card className={`${isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 backdrop-blur-sm'}`}>
+              <CardHeader>
+                <CardTitle>Subject Progress</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4">
+                  {analytics.subjects.map((subject) => (
+                    <div key={subject.name} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium">{subject.name}</span>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <span>{subject.questions} questions</span>
+                          <span>{Math.round(subject.time / 60 * 10) / 10}h</span>
+                        </div>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-300"
+                          style={{ 
+                            width: `${Math.min((subject.questions / Math.max(...analytics.subjects.map(s => s.questions))) * 100, 100)}%` 
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="sessions" className="space-y-6">
+            <Card className={`${isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 backdrop-blur-sm'}`}>
+              <CardHeader>
+                <CardTitle>Recent Practice Sessions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {sessions.length === 0 ? (
+                  <div className="text-center py-8">
+                    <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground mb-4">No practice sessions yet</p>
+                    <AddPracticeSessionModal onAddSession={handleAddSession} chapters={chapters} />
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {sessions.slice(0, 10).map((session) => (
+                      <div key={session.id} className="flex items-center justify-between p-4 rounded-lg border">
+                        <div className="flex items-center gap-4">
+                          <Badge variant="outline">{session.subject}</Badge>
+                          <div>
+                            <p className="font-medium">{session.chapter}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {session.questions_solved} questions • {session.time_spent} mins
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right text-sm text-muted-foreground">
+                          {new Date(session.date).toLocaleDateString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="chapters" className="space-y-6">
+            <Card className={`${isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/80 backdrop-blur-sm'}`}>
+              <CardHeader>
+                <CardTitle>Chapter Progress</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {chapters.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Target className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <p className="text-muted-foreground">No chapters tracked yet</p>
+                    <p className="text-sm text-muted-foreground">Start practicing to see chapter progress!</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-4">
+                    {chapters.map((chapter) => (
+                      <Card key={chapter.id} className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <Badge variant="outline">{chapter.subject}</Badge>
+                              <h3 className="font-medium">{chapter.chapter_name}</h3>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              {chapter.total_questions} questions • {Math.round(chapter.total_time / 60 * 10) / 10}h practiced
+                            </p>
+                          </div>
+                          <div className="text-right text-sm text-muted-foreground">
+                            {chapter.last_practiced && `Last: ${new Date(chapter.last_practiced).toLocaleDateString()}`}
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
+
+      {/* Celebration Component */}
+      <PracticeCelebration 
+        show={celebrationData.show}
+        type={celebrationData.type}
+        message={celebrationData.message}
+        onComplete={() => setCelebrationData(prev => ({ ...prev, show: false }))}
+      />
+
+      {/* Legacy Modal */}
+      <PracticeInputModal open={showInputModal} onOpenChange={setShowInputModal} />
     </div>
   );
-};
-
-export default PracticeAnalytics;
+}

@@ -18,6 +18,8 @@ export interface PracticeSession {
   notes?: string;
   created_at: string;
   updated_at: string;
+  celebration_shown?: boolean;
+  streak_day?: number;
 }
 
 export interface PracticeChapter {
@@ -45,6 +47,12 @@ export interface PracticeTarget {
   end_date: string;
   created_at: string;
   updated_at: string;
+  streak_count?: number;
+  best_streak?: number;
+  motivation_level?: string;
+  reminder_enabled?: boolean;
+  last_reminder?: string;
+  accountability_score?: number;
 }
 
 export const usePractice = () => {
