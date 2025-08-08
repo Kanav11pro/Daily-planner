@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      celebration_triggers: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          trigger_type: string
+          trigger_value: number
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          trigger_type: string
+          trigger_value: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          trigger_type?: string
+          trigger_value?: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       practice_chapters: {
         Row: {
           chapter_name: string
@@ -59,6 +89,7 @@ export type Database = {
       practice_sessions: {
         Row: {
           accuracy_percentage: number | null
+          celebration_shown: boolean | null
           chapter: string
           created_at: string
           date: string
@@ -69,6 +100,7 @@ export type Database = {
           questions_target: number
           source: string
           source_details: string | null
+          streak_day: number | null
           subject: string
           time_spent: number
           updated_at: string
@@ -76,6 +108,7 @@ export type Database = {
         }
         Insert: {
           accuracy_percentage?: number | null
+          celebration_shown?: boolean | null
           chapter: string
           created_at?: string
           date: string
@@ -86,6 +119,7 @@ export type Database = {
           questions_target?: number
           source: string
           source_details?: string | null
+          streak_day?: number | null
           subject: string
           time_spent?: number
           updated_at?: string
@@ -93,6 +127,7 @@ export type Database = {
         }
         Update: {
           accuracy_percentage?: number | null
+          celebration_shown?: boolean | null
           chapter?: string
           created_at?: string
           date?: string
@@ -103,6 +138,7 @@ export type Database = {
           questions_target?: number
           source?: string
           source_details?: string | null
+          streak_day?: number | null
           subject?: string
           time_spent?: number
           updated_at?: string
@@ -112,11 +148,17 @@ export type Database = {
       }
       practice_targets: {
         Row: {
+          accountability_score: number | null
+          best_streak: number | null
           created_at: string
           end_date: string
           id: string
+          last_reminder: string | null
+          motivation_level: string | null
           questions_target: number
+          reminder_enabled: boolean | null
           start_date: string
+          streak_count: number | null
           subject: string
           target_type: string
           time_target: number
@@ -124,11 +166,17 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          accountability_score?: number | null
+          best_streak?: number | null
           created_at?: string
           end_date: string
           id?: string
+          last_reminder?: string | null
+          motivation_level?: string | null
           questions_target?: number
+          reminder_enabled?: boolean | null
           start_date: string
+          streak_count?: number | null
           subject: string
           target_type: string
           time_target?: number
@@ -136,11 +184,17 @@ export type Database = {
           user_id: string
         }
         Update: {
+          accountability_score?: number | null
+          best_streak?: number | null
           created_at?: string
           end_date?: string
           id?: string
+          last_reminder?: string | null
+          motivation_level?: string | null
           questions_target?: number
+          reminder_enabled?: boolean | null
           start_date?: string
+          streak_count?: number | null
           subject?: string
           target_type?: string
           time_target?: number

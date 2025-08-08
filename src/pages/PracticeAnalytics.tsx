@@ -1,155 +1,304 @@
-import { useState } from 'react';
-import { Plus, TrendingUp, Target, Calendar, BarChart3 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/hooks/useAuth';
+import { useState, useMemo, useCallback } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import { CalendarDays, Clock, Target, TrendingUp, BookOpen, Award, Zap, Brain } from 'lucide-react';
 import { usePractice } from '@/hooks/usePractice';
+import { useAuth } from '@/hooks/useAuth';
+import { LoadingSkeleton } from '@/components/practice/LoadingSkeleton';
+import { EnhancedTargetTracker } from '@/components/practice/EnhancedTargetTracker';
+import { AddPracticeSessionModal } from '@/components/practice/AddPracticeSessionModal';
+import { PracticeCelebration } from '@/components/practice/PracticeCelebration';
 import { useTheme } from '@/contexts/ThemeContext';
-import { AuthForm } from '@/components/AuthForm';
-import { PracticeInputModal } from '@/components/PracticeInputModal';
-import { PracticeCalendar } from '@/components/PracticeCalendar';
-import { SubjectAnalytics } from '@/components/SubjectAnalytics';
-import { ChapterTracker } from '@/components/ChapterTracker';
-import { TargetTracker } from '@/components/TargetTracker';
 
-export default function PracticeAnalytics() {
+const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))'];
+
+const PracticeAnalytics = () => {
   const { user } = useAuth();
-  const { analytics, loading } = usePractice();
   const { theme } = useTheme();
-  const [showInputModal, setShowInputModal] = useState(false);
+  const {
+    sessions,
+    chapters,
+    targets,
+    loading,
+    analytics,
+    addSession,
+    addTarget,
+  } = usePractice();
 
-  if (!user) {
-    return <AuthForm />;
-  }
+  const [celebrationTrigger, setCelebrationTrigger] = useState<any>(null);
+
+  const handleAddSession = useCallback(async (sessionData: any) => {
+    try {
+      await addSession(sessionData);
+      // Trigger celebration
+      setCelebrationTrigger({
+        type: 'session_added',
+        value: 1,
+        context: sessionData
+      });
+    } catch (error) {
+      console.error('Error adding session:', error);
+    }
+  }, [addSession]);
+
+  const handleAddTarget = useCallback(async (targetData: any) => {
+    try {
+      await addTarget(targetData);
+    } catch (error) {
+      console.error('Error adding target:', error);
+    }
+  }, [addTarget]);
+
+  const recentSessions = useMemo(() => {
+    return sessions
+      .slice(0, 10)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [sessions]);
+
+  const weeklyData = useMemo(() => {
+    const last7Days = Array.from({ length: 7 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      return date.toISOString().split('T')[0];
+    }).reverse();
+
+    return last7Days.map(date => {
+      const daySessions = sessions.filter(s => s.date === date);
+      return {
+        date: new Date(date).toLocaleDateString('en-US', { weekday: 'short' }),
+        questions: daySessions.reduce((sum, s) => sum + s.questions_solved, 0),
+        time: daySessions.reduce((sum, s) => sum + s.time_spent, 0),
+      };
+    });
+  }, [sessions]);
+
+  const subjectData = useMemo(() => {
+    return analytics.subjects.map((subject, index) => ({
+      ...subject,
+      color: COLORS[index % COLORS.length]
+    }));
+  }, [analytics.subjects]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading your practice data...</p>
-        </div>
+      <div className="container mx-auto p-6">
+        <LoadingSkeleton />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="container mx-auto p-6 text-center">
+        <p>Please log in to view your practice analytics.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-      <div className="container mx-auto px-4 py-6 space-y-6">
+    <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'dark' : ''}`}>
+      <div className="container mx-auto p-6 space-y-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              JEE Practice Analytics
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+              Practice Analytics
             </h1>
             <p className="text-muted-foreground mt-1">
-              Track your daily question practice and analyze your preparation
+              Track your progress and stay motivated
             </p>
           </div>
-          <Button onClick={() => setShowInputModal(true)} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Add Practice Session
-          </Button>
+          <AddPracticeSessionModal 
+            onAddSession={handleAddSession} 
+            chapters={chapters}
+          />
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent" />
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Today's Questions</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <Target className="h-4 w-4 text-blue-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{analytics.today.questionsTotal}</div>
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                {analytics.today.questionsTotal}
+              </div>
               <p className="text-xs text-muted-foreground">
-                {analytics.today.sessionsCount} session{analytics.today.sessionsCount !== 1 ? 's' : ''}
+                {analytics.today.sessionsCount} sessions today
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent" />
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Today's Time</CardTitle>
-              <Target className="h-4 w-4 text-muted-foreground" />
+              <Clock className="h-4 w-4 text-green-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">
-                {Math.floor(analytics.today.timeTotal / 60)}h {analytics.today.timeTotal % 60}m
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                {Math.round(analytics.today.timeTotal / 60 * 10) / 10}h
               </div>
               <p className="text-xs text-muted-foreground">
-                Avg: {analytics.today.sessionsCount > 0 ? Math.round(analytics.today.timeTotal / analytics.today.sessionsCount) : 0}min/session
+                {analytics.today.timeTotal} minutes total
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-transparent" />
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">This Week</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Weekly Questions</CardTitle>
+              <TrendingUp className="h-4 w-4 text-purple-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{analytics.week.questionsTotal}</div>
+              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                {analytics.week.questionsTotal}
+              </div>
               <p className="text-xs text-muted-foreground">
-                {analytics.week.sessionsCount} total sessions
+                {analytics.week.sessionsCount} sessions this week
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="relative overflow-hidden group hover:shadow-lg transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent" />
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Total Chapters</CardTitle>
+              <BookOpen className="h-4 w-4 text-orange-500" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">
-                {Math.round(analytics.week.questionsTotal / 7)}
+              <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                {chapters.length}
               </div>
-              <p className="text-xs text-muted-foreground">questions/day</p>
+              <p className="text-xs text-muted-foreground">
+                Chapters practiced
+              </p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Main Analytics Tabs */}
-        <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="subjects">Subjects</TabsTrigger>
-            <TabsTrigger value="chapters">Chapters</TabsTrigger>
-            <TabsTrigger value="calendar">Calendar</TabsTrigger>
-            <TabsTrigger value="targets">Targets</TabsTrigger>
-          </TabsList>
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="hover:shadow-lg transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Weekly Progress
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={weeklyData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="questions" fill="hsl(var(--chart-1))" radius={4} />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
 
-          <TabsContent value="overview" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <SubjectAnalytics />
-              <TargetTracker />
-            </div>
-          </TabsContent>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5" />
+                Subject Distribution
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={subjectData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value }) => `${name}: ${value}`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="questions"
+                  >
+                    {subjectData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
 
-          <TabsContent value="subjects">
-            <SubjectAnalytics detailed />
-          </TabsContent>
-
-          <TabsContent value="chapters">
-            <ChapterTracker />
-          </TabsContent>
-
-          <TabsContent value="calendar">
-            <PracticeCalendar />
-          </TabsContent>
-
-          <TabsContent value="targets">
-            <TargetTracker detailed />
-          </TabsContent>
-        </Tabs>
-
-        {/* Practice Input Modal */}
-        <PracticeInputModal
-          open={showInputModal}
-          onOpenChange={setShowInputModal}
+        {/* Target Tracker */}
+        <EnhancedTargetTracker 
+          targets={targets} 
+          onAddTarget={handleAddTarget}
+          sessions={sessions}
         />
+
+        {/* Recent Sessions */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CalendarDays className="h-5 w-5" />
+              Recent Sessions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {recentSessions.length === 0 ? (
+              <div className="text-center py-8">
+                <Award className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground">No practice sessions yet</p>
+                <p className="text-sm text-muted-foreground">Start adding sessions to see your progress!</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {recentSessions.map((session) => (
+                  <div
+                    key={session.id}
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{session.subject}</span>
+                        <span className="text-sm text-muted-foreground">•</span>
+                        <span className="text-sm text-muted-foreground">{session.chapter}</span>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {new Date(session.date).toLocaleDateString()} • {session.source}
+                        {session.source_details && ` - ${session.source_details}`}
+                      </div>
+                    </div>
+                    <div className="text-right space-y-1">
+                      <div className="text-sm font-medium">
+                        {session.questions_solved} questions
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {session.time_spent} min
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Celebration */}
+        {celebrationTrigger && (
+          <PracticeCelebration
+            trigger={celebrationTrigger}
+            onComplete={() => setCelebrationTrigger(null)}
+          />
+        )}
       </div>
     </div>
   );
-}
+};
+
+export default PracticeAnalytics;

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
@@ -53,9 +53,34 @@ export const usePractice = () => {
   const [chapters, setChapters] = useState<PracticeChapter[]>([]);
   const [targets, setTargets] = useState<PracticeTarget[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  const dataFreshnessRef = useRef<{
+    sessions: number;
+    chapters: number;
+    targets: number;
+  }>({
+    sessions: 0,
+    chapters: 0,
+    targets: 0
+  });
+  
+  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-  const fetchSessions = async () => {
+  const isDataFresh = (dataType: 'sessions' | 'chapters' | 'targets') => {
+    const lastFetch = dataFreshnessRef.current[dataType];
+    return Date.now() - lastFetch < CACHE_DURATION;
+  };
+
+  const markDataFresh = (dataType: 'sessions' | 'chapters' | 'targets') => {
+    dataFreshnessRef.current[dataType] = Date.now();
+  };
+
+  const fetchSessions = async (force = false) => {
     if (!user) return;
+    
+    if (!force && isDataFresh('sessions') && sessions.length > 0) {
+      return;
+    }
     
     const { data, error } = await supabase
       .from('practice_sessions')
@@ -69,10 +94,15 @@ export const usePractice = () => {
     }
     
     setSessions((data as PracticeSession[]) || []);
+    markDataFresh('sessions');
   };
 
-  const fetchChapters = async () => {
+  const fetchChapters = async (force = false) => {
     if (!user) return;
+    
+    if (!force && isDataFresh('chapters') && chapters.length > 0) {
+      return;
+    }
     
     const { data, error } = await supabase
       .from('practice_chapters')
@@ -86,10 +116,15 @@ export const usePractice = () => {
     }
     
     setChapters((data as PracticeChapter[]) || []);
+    markDataFresh('chapters');
   };
 
-  const fetchTargets = async () => {
+  const fetchTargets = async (force = false) => {
     if (!user) return;
+    
+    if (!force && isDataFresh('targets') && targets.length > 0) {
+      return;
+    }
     
     const { data, error } = await supabase
       .from('practice_targets')
@@ -103,6 +138,7 @@ export const usePractice = () => {
     }
     
     setTargets((data as PracticeTarget[]) || []);
+    markDataFresh('targets');
   };
 
   const addSession = async (sessionData: Omit<PracticeSession, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
@@ -120,6 +156,7 @@ export const usePractice = () => {
     }
 
     setSessions(prev => [data as PracticeSession, ...prev]);
+    markDataFresh('sessions');
     
     // Update or create chapter record
     await updateChapterProgress(sessionData.subject, sessionData.chapter, sessionData.questions_solved, sessionData.time_spent);
@@ -148,6 +185,7 @@ export const usePractice = () => {
 
       if (!error && data) {
         setChapters(prev => prev.map(c => c.id === existingChapter.id ? data as PracticeChapter : c));
+        markDataFresh('chapters');
       }
     } else {
       const { data, error } = await supabase
@@ -165,6 +203,7 @@ export const usePractice = () => {
 
       if (!error && data) {
         setChapters(prev => [...prev, data as PracticeChapter]);
+        markDataFresh('chapters');
       }
     }
   };
@@ -184,6 +223,7 @@ export const usePractice = () => {
     }
 
     setTargets(prev => [...prev, data as PracticeTarget]);
+    markDataFresh('targets');
     return data;
   };
 
@@ -201,6 +241,7 @@ export const usePractice = () => {
     }
 
     setSessions(prev => prev.map(s => s.id === id ? data as PracticeSession : s));
+    markDataFresh('sessions');
     return data;
   };
 
@@ -216,17 +257,39 @@ export const usePractice = () => {
     }
 
     setSessions(prev => prev.filter(s => s.id !== id));
+    markDataFresh('sessions');
   };
 
   useEffect(() => {
     if (user) {
       const loadData = async () => {
-        setLoading(true);
+        // Only show loading if we don't have any cached data
+        const hasAnyData = sessions.length > 0 || chapters.length > 0 || targets.length > 0;
+        if (!hasAnyData) {
+          setLoading(true);
+        }
+        
         await Promise.all([fetchSessions(), fetchChapters(), fetchTargets()]);
         setLoading(false);
       };
       loadData();
     }
+
+    // Handle page visibility changes to refresh stale data
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && user) {
+        // Only refresh if data is stale
+        const needsRefresh = !isDataFresh('sessions') || !isDataFresh('chapters') || !isDataFresh('targets');
+        if (needsRefresh) {
+          fetchSessions(true);
+          fetchChapters(true);
+          fetchTargets(true);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [user]);
 
   const analytics = useMemo(() => {
