@@ -15,6 +15,7 @@ import { ChapterTracker } from '@/components/ChapterTracker';
 import { TargetTracker } from '@/components/TargetTracker';
 import { Header } from '@/components/Header';
 import { PracticeLoadingSkeleton } from '@/components/PracticeLoadingSkeleton';
+import { CelebrationController } from '@/components/celebrations/CelebrationController';
 
 export default function PracticeAnalytics() {
   const { user } = useAuth();
@@ -22,10 +23,15 @@ export default function PracticeAnalytics() {
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
   const [showInputModal, setShowInputModal] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+
+  const handleTaskComplete = () => {
+    setShowCelebration(true);
+  };
 
   if (!user) {
     return (
-      <div className={`min-h-screen bg-gradient-to-br ${themeColors.background}`}>
+      <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} transition-all duration-500 ease-in-out`}>
         <div className="flex items-center justify-center min-h-screen">
           <AuthForm />
         </div>
@@ -34,19 +40,18 @@ export default function PracticeAnalytics() {
   }
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${themeColors.background}`}>
-      {/* Use the same header as main site but with practice analytics specific button */}
+    <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} transition-all duration-500 ease-in-out`}>
       <Header onAddTask={() => setShowInputModal(true)} />
       
-      <div className="container mx-auto px-4 py-6 space-y-6">
+      <div className="container mx-auto px-4 py-6 space-y-6 animate-fade-in">
         {loading ? (
           <PracticeLoadingSkeleton />
         ) : (
           <>
-            {/* Enhanced Header with gradient text and animations */}
+            {/* Enhanced Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
               <div className="space-y-2">
-                <h1 className={`text-3xl md:text-4xl font-bold bg-gradient-to-r ${themeColors.primary} bg-clip-text text-transparent animate-fade-in`}>
+                <h1 className={`text-2xl md:text-4xl font-bold bg-gradient-to-r ${themeColors.primary} bg-clip-text text-transparent animate-fade-in`}>
                   JEE Practice Analytics
                 </h1>
                 <p className={`${theme === 'midnight' || theme === 'obsidian' ? 'text-gray-300' : 'text-gray-600'} text-sm md:text-base animate-fade-in`}>
@@ -63,7 +68,7 @@ export default function PracticeAnalytics() {
               </Button>
             </div>
 
-            {/* Enhanced Quick Stats with animations */}
+            {/* Enhanced Quick Stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in`}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 md:px-6 pt-3 md:pt-6">
@@ -124,37 +129,39 @@ export default function PracticeAnalytics() {
               </Card>
             </div>
 
-            {/* Enhanced Main Analytics Tabs with responsive design */}
+            {/* Enhanced Mobile-Responsive Tabs */}
             <Tabs defaultValue="overview" className="space-y-4 animate-fade-in" style={{animationDelay: '0.4s'}}>
-              <TabsList className={`grid w-full grid-cols-2 md:grid-cols-5 ${themeColors.card} ${themeColors.border} border`}>
-                <TabsTrigger value="overview" className="text-xs md:text-sm">Overview</TabsTrigger>
-                <TabsTrigger value="subjects" className="text-xs md:text-sm">Subjects</TabsTrigger>
-                <TabsTrigger value="chapters" className="text-xs md:text-sm">Chapters</TabsTrigger>
-                <TabsTrigger value="calendar" className="text-xs md:text-sm">Calendar</TabsTrigger>
-                <TabsTrigger value="targets" className="text-xs md:text-sm">Targets</TabsTrigger>
+              <TabsList className={`grid w-full ${themeColors.card} ${themeColors.border} border overflow-x-auto`}>
+                <div className="flex min-w-max md:grid md:grid-cols-5 gap-1 p-1">
+                  <TabsTrigger value="overview" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Overview</TabsTrigger>
+                  <TabsTrigger value="subjects" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Subjects</TabsTrigger>
+                  <TabsTrigger value="chapters" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Chapters</TabsTrigger>
+                  <TabsTrigger value="calendar" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Calendar</TabsTrigger>
+                  <TabsTrigger value="targets" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Targets</TabsTrigger>
+                </div>
               </TabsList>
 
-              <TabsContent value="overview" className="space-y-4">
+              <TabsContent value="overview" className="space-y-4 transition-all duration-300 ease-in-out">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <SubjectAnalytics />
-                  <TargetTracker />
+                  <TargetTracker onTargetComplete={handleTaskComplete} />
                 </div>
               </TabsContent>
 
-              <TabsContent value="subjects">
+              <TabsContent value="subjects" className="transition-all duration-300 ease-in-out">
                 <SubjectAnalytics detailed />
               </TabsContent>
 
-              <TabsContent value="chapters">
+              <TabsContent value="chapters" className="transition-all duration-300 ease-in-out">
                 <ChapterTracker />
               </TabsContent>
 
-              <TabsContent value="calendar">
+              <TabsContent value="calendar" className="transition-all duration-300 ease-in-out">
                 <PracticeCalendar />
               </TabsContent>
 
-              <TabsContent value="targets">
-                <TargetTracker detailed />
+              <TabsContent value="targets" className="transition-all duration-300 ease-in-out">
+                <TargetTracker detailed onTargetComplete={handleTaskComplete} />
               </TabsContent>
             </Tabs>
           </>
@@ -164,7 +171,13 @@ export default function PracticeAnalytics() {
         <PracticeInputModal
           open={showInputModal}
           onOpenChange={setShowInputModal}
+          onSessionComplete={handleTaskComplete}
         />
+
+        {/* Celebration */}
+        {showCelebration && (
+          <CelebrationController onComplete={() => setShowCelebration(false)} />
+        )}
       </div>
     </div>
   );
