@@ -71,7 +71,7 @@ export const DateSelector = ({
   };
   return <div className={`${themeColors.card} rounded-2xl shadow-xl ${themeColors.border} border p-4 sm:p-6 mb-6 transition-all duration-300 hover:shadow-2xl`}>
       {/* Header with Month/Year and Navigation */}
-      <div className="flex items-center justify-between mb-6 bg-teal-100">
+      <div className="flex items-center justify-between mb-6 bg-gray-50">
         <div className="flex items-center space-x-4">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">
             {formatMonth(selectedDate)}
