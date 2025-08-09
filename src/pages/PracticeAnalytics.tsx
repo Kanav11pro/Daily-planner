@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Plus, TrendingUp, Target, Calendar, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,38 +15,35 @@ import { TargetTracker } from '@/components/TargetTracker';
 import { Header } from '@/components/Header';
 import { PracticeLoadingSkeleton } from '@/components/PracticeLoadingSkeleton';
 import { CelebrationController } from '@/components/celebrations/CelebrationController';
-
 export default function PracticeAnalytics() {
-  const { user } = useAuth();
-  const { analytics, loading } = usePractice();
-  const { theme } = useTheme();
+  const {
+    user
+  } = useAuth();
+  const {
+    analytics,
+    loading
+  } = usePractice();
+  const {
+    theme
+  } = useTheme();
   const themeColors = getThemeColors(theme);
   const [showInputModal, setShowInputModal] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
-
   const handleTaskComplete = () => {
     setShowCelebration(true);
   };
-
   if (!user) {
-    return (
-      <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} transition-all duration-500 ease-in-out`}>
+    return <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} transition-all duration-500 ease-in-out`}>
         <div className="flex items-center justify-center min-h-screen">
           <AuthForm />
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} transition-all duration-500 ease-in-out`}>
+  return <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} transition-all duration-500 ease-in-out`}>
       <Header onAddTask={() => setShowInputModal(true)} />
       
       <div className="container mx-auto px-4 py-6 space-y-6 animate-fade-in">
-        {loading ? (
-          <PracticeLoadingSkeleton />
-        ) : (
-          <>
+        {loading ? <PracticeLoadingSkeleton /> : <>
             {/* Enhanced Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
               <div className="space-y-2">
@@ -58,10 +54,7 @@ export default function PracticeAnalytics() {
                   Track your daily question practice and analyze your preparation journey
                 </p>
               </div>
-              <Button 
-                onClick={() => setShowInputModal(true)} 
-                className={`gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-r ${themeColors.primary} text-white border-0`}
-              >
+              <Button onClick={() => setShowInputModal(true)} className={`gap-2 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-r ${themeColors.primary} text-white border-0`}>
                 <Plus className="h-4 w-4" />
                 <span className="hidden sm:inline">Add Practice Session</span>
                 <span className="sm:hidden">Add Session</span>
@@ -85,7 +78,9 @@ export default function PracticeAnalytics() {
                 </CardContent>
               </Card>
 
-              <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in`} style={{animationDelay: '0.1s'}}>
+              <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in`} style={{
+            animationDelay: '0.1s'
+          }}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 md:px-6 pt-3 md:pt-6">
                   <CardTitle className="text-xs md:text-sm font-medium">Today's Time</CardTitle>
                   <Target className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
@@ -100,7 +95,9 @@ export default function PracticeAnalytics() {
                 </CardContent>
               </Card>
 
-              <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in`} style={{animationDelay: '0.2s'}}>
+              <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in`} style={{
+            animationDelay: '0.2s'
+          }}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 md:px-6 pt-3 md:pt-6">
                   <CardTitle className="text-xs md:text-sm font-medium">This Week</CardTitle>
                   <Calendar className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
@@ -115,7 +112,9 @@ export default function PracticeAnalytics() {
                 </CardContent>
               </Card>
 
-              <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in`} style={{animationDelay: '0.3s'}}>
+              <Card className={`${themeColors.card} ${themeColors.glow} shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-fade-in`} style={{
+            animationDelay: '0.3s'
+          }}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-3 md:px-6 pt-3 md:pt-6">
                   <CardTitle className="text-xs md:text-sm font-medium">Weekly Average</CardTitle>
                   <BarChart3 className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
@@ -130,14 +129,16 @@ export default function PracticeAnalytics() {
             </div>
 
             {/* Enhanced Mobile-Responsive Tabs */}
-            <Tabs defaultValue="overview" className="space-y-4 animate-fade-in" style={{animationDelay: '0.4s'}}>
+            <Tabs defaultValue="overview" className="space-y-4 animate-fade-in" style={{
+          animationDelay: '0.4s'
+        }}>
               <TabsList className={`grid w-full ${themeColors.card} ${themeColors.border} border overflow-x-auto`}>
                 <div className="flex min-w-max md:grid md:grid-cols-5 gap-1 p-1">
                   <TabsTrigger value="overview" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Overview</TabsTrigger>
                   <TabsTrigger value="subjects" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Subjects</TabsTrigger>
                   <TabsTrigger value="chapters" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Chapters</TabsTrigger>
                   <TabsTrigger value="calendar" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Calendar</TabsTrigger>
-                  <TabsTrigger value="targets" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Targets</TabsTrigger>
+                  <TabsTrigger value="targets" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4 text-slate-200 bg-gray-950 hover:bg-gray-800">Targets</TabsTrigger>
                 </div>
               </TabsList>
 
@@ -164,21 +165,13 @@ export default function PracticeAnalytics() {
                 <TargetTracker detailed onTargetComplete={handleTaskComplete} />
               </TabsContent>
             </Tabs>
-          </>
-        )}
+          </>}
 
         {/* Practice Input Modal */}
-        <PracticeInputModal
-          open={showInputModal}
-          onOpenChange={setShowInputModal}
-          onSessionComplete={handleTaskComplete}
-        />
+        <PracticeInputModal open={showInputModal} onOpenChange={setShowInputModal} onSessionComplete={handleTaskComplete} />
 
         {/* Celebration */}
-        {showCelebration && (
-          <CelebrationController onComplete={() => setShowCelebration(false)} />
-        )}
+        {showCelebration && <CelebrationController onComplete={() => setShowCelebration(false)} />}
       </div>
-    </div>
-  );
+    </div>;
 }
