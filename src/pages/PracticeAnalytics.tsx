@@ -19,11 +19,11 @@ export default function PracticeAnalytics() {
   const { theme } = useTheme();
   const { sessions, chapters, targets, loading, analytics, addSession, addTarget } = usePractice();
   const [showInputModal, setShowInputModal] = useState(false);
-  const [celebrationData, setCelebrationData] = useState<{
-    type: 'session' | 'streak' | 'target';
-    message: string;
-    show: boolean;
-  }>({ type: 'session', message: '', show: false });
+  const [celebrationTrigger, setCelebrationTrigger] = useState<{
+    type: 'session_added' | 'daily_goal' | 'streak' | 'target_complete';
+    value: number;
+    context?: any;
+  } | null>(null);
 
   if (!user) {
     return (
@@ -46,11 +46,11 @@ export default function PracticeAnalytics() {
   const handleAddSession = async (sessionData: any) => {
     try {
       await addSession(sessionData);
-      // Show celebration
-      setCelebrationData({
-        type: 'session',
-        message: `Great job! You solved ${sessionData.questions_solved} questions in ${sessionData.time_spent} minutes!`,
-        show: true
+      // Trigger celebration
+      setCelebrationTrigger({
+        type: 'session_added',
+        value: sessionData.questions_solved,
+        context: sessionData
       });
     } catch (error) {
       console.error('Failed to add session:', error);
@@ -60,10 +60,10 @@ export default function PracticeAnalytics() {
   const handleAddTarget = async (targetData: any) => {
     try {
       await addTarget(targetData);
-      setCelebrationData({
-        type: 'target',
-        message: `New ${targetData.target_type.toLowerCase()} target set for ${targetData.subject}!`,
-        show: true
+      setCelebrationTrigger({
+        type: 'target_complete',
+        value: 100,
+        context: targetData
       });
     } catch (error) {
       console.error('Failed to add target:', error);
@@ -82,7 +82,7 @@ export default function PracticeAnalytics() {
     time: Math.round(analytics.week.timeTotal / 60 * 10) / 10,
   };
 
-  const isDarkMode = theme === 'dark';
+  const isDarkMode = theme === 'midnight' || theme === 'obsidian';
 
   return (
     <div className={`min-h-screen transition-all duration-300 ${
@@ -312,12 +312,12 @@ export default function PracticeAnalytics() {
       </div>
 
       {/* Celebration Component */}
-      <PracticeCelebration 
-        show={celebrationData.show}
-        type={celebrationData.type}
-        message={celebrationData.message}
-        onComplete={() => setCelebrationData(prev => ({ ...prev, show: false }))}
-      />
+      {celebrationTrigger && (
+        <PracticeCelebration 
+          trigger={celebrationTrigger}
+          onComplete={() => setCelebrationTrigger(null)}
+        />
+      )}
 
       {/* Legacy Modal */}
       <PracticeInputModal open={showInputModal} onOpenChange={setShowInputModal} />
