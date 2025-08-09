@@ -132,16 +132,83 @@ export default function PracticeAnalytics() {
             <Tabs defaultValue="overview" className="space-y-4 animate-fade-in" style={{
           animationDelay: '0.4s'
         }}>
-              <TabsList className={`grid w-full ${themeColors.card} ${themeColors.border} border overflow-x-auto`}>
-                <div className="flex min-w-max md:grid md:grid-cols-5 gap-1 p-1">
-                  <TabsTrigger value="overview" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Overview</TabsTrigger>
-                  <TabsTrigger value="subjects" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Subjects</TabsTrigger>
-                  <TabsTrigger value="chapters" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Chapters</TabsTrigger>
-                  <TabsTrigger value="calendar" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4">Calendar</TabsTrigger>
-                  <TabsTrigger value="targets" className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4 text-slate-200 bg-gray-950 hover:bg-gray-800">Targets</TabsTrigger>
-                </div>
-              </TabsList>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              
+         <TabsList
+  className={`grid w-full ${themeColors.card} ${themeColors.border} border`}
+  style={{ padding: 0, minWidth: 0 }}
+>
+  {/* Responsive grid for tabs */}
+  <div
+    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-1 w-full p-1"
+    style={{ minWidth: 0 }}
+  >
+    <TabsTrigger
+      value="overview"
+      className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4 w-full"
+    >
+      Overview
+    </TabsTrigger>
+    <TabsTrigger
+      value="subjects"
+      className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4 w-full"
+    >
+      Subjects
+    </TabsTrigger>
+    <TabsTrigger
+      value="chapters"
+      className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4 w-full"
+    >
+      Chapters
+    </TabsTrigger>
+    <TabsTrigger
+      value="calendar"
+      className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4 w-full"
+    >
+      Calendar
+    </TabsTrigger>
+    <TabsTrigger
+      value="targets"
+      className="text-xs sm:text-sm whitespace-nowrap px-2 sm:px-4 w-full text-slate-200 bg-gray-950 hover:bg-gray-800"
+    >
+      Targets
+    </TabsTrigger>
+  </div>
+</TabsList>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              
               <TabsContent value="overview" className="space-y-4 transition-all duration-300 ease-in-out">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   <SubjectAnalytics />
