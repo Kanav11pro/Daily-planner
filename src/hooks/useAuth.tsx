@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { secureLog } from '@/utils/secureLogger';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -17,6 +18,9 @@ export const useAuth = () => {
         setUser(session?.user ?? null);
         setUserMetadata(session?.user?.user_metadata ?? null);
         setLoading(false);
+        
+        // Secure logging for auth state changes
+        secureLog.debug('Auth state change:', { event, userId: session?.user?.id });
       }
     );
 
@@ -32,34 +36,74 @@ export const useAuth = () => {
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          onboarding_completed: false,
+    try {
+      // Security improvement: Add emailRedirectTo for proper email confirmation
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: fullName,
+            onboarding_completed: false,
+          },
         },
-      },
-    });
-    return { data, error };
+      });
+      
+      if (error) {
+        secureLog.error('Sign up error:', error);
+        return { data, error };
+      }
+      
+      secureLog.info('User signed up successfully');
+      return { data, error };
+    } catch (error) {
+      secureLog.error('Unexpected sign up error:', error);
+      return { data: null, error };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { data, error };
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) {
+        secureLog.error('Sign in error:', error);
+        return { data, error };
+      }
+      
+      secureLog.info('User signed in successfully');
+      return { data, error };
+    } catch (error) {
+      secureLog.error('Unexpected sign in error:', error);
+      return { data: null, error };
+    }
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    return { error };
+    try {
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        secureLog.error('Sign out error:', error);
+        return { error };
+      }
+      
+      secureLog.info('User signed out successfully');
+      return { error };
+    } catch (error) {
+      secureLog.error('Unexpected sign out error:', error);
+      return { error };
+    }
   };
 
   const updateUserMetadata = async (metadata: any) => {
-    console.log('Updating user metadata with:', metadata);
+    secureLog.debug('Updating user metadata');
     
     try {
       // Update auth metadata
@@ -68,7 +112,7 @@ export const useAuth = () => {
       });
       
       if (authError) {
-        console.error('Auth metadata update error:', authError);
+        secureLog.error('Auth metadata update error:', authError);
         return { data: authData, error: authError };
       }
 
@@ -98,7 +142,7 @@ export const useAuth = () => {
           updated_at: new Date().toISOString()
         };
 
-        console.log('Updating profiles table with:', profileUpdateData);
+        secureLog.debug('Updating profiles table');
 
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
@@ -106,24 +150,24 @@ export const useAuth = () => {
           .select();
 
         if (profileError) {
-          console.error('Profile update error:', profileError);
+          secureLog.error('Profile update error:', profileError);
           // Don't return error here as auth update succeeded
         } else {
-          console.log('Profile updated successfully:', profileData);
+          secureLog.info('Profile updated successfully');
         }
       }
 
-      console.log('User metadata updated successfully');
+      secureLog.info('User metadata updated successfully');
       return { data: authData, error: null };
     } catch (error) {
-      console.error('Error updating user metadata:', error);
+      secureLog.error('Error updating user metadata:', error);
       return { data: null, error };
     }
   };
 
   const isOnboardingCompleted = () => {
     const completed = user?.user_metadata?.onboarding_completed === true;
-    console.log('Checking onboarding completion:', completed, user?.user_metadata);
+    secureLog.debug('Checking onboarding completion:', completed);
     return completed;
   };
 
