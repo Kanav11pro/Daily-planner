@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
@@ -52,58 +53,72 @@ export const usePractice = () => {
   const [sessions, setSessions] = useState<PracticeSession[]>([]);
   const [chapters, setChapters] = useState<PracticeChapter[]>([]);
   const [targets, setTargets] = useState<PracticeTarget[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
-  const fetchSessions = async () => {
+  // Memoize fetch functions to prevent unnecessary re-renders
+  const fetchSessions = useCallback(async () => {
     if (!user) return;
     
-    const { data, error } = await supabase
-      .from('practice_sessions')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('date', { ascending: false });
-    
-    if (error) {
-      console.error('Error fetching practice sessions:', error);
-      return;
+    try {
+      const { data, error } = await supabase
+        .from('practice_sessions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('date', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching practice sessions:', error);
+        return;
+      }
+      
+      setSessions((data as PracticeSession[]) || []);
+    } catch (error) {
+      console.error('Unexpected error fetching sessions:', error);
     }
-    
-    setSessions((data as PracticeSession[]) || []);
-  };
+  }, [user?.id]);
 
-  const fetchChapters = async () => {
+  const fetchChapters = useCallback(async () => {
     if (!user) return;
     
-    const { data, error } = await supabase
-      .from('practice_chapters')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('subject', { ascending: true });
-    
-    if (error) {
-      console.error('Error fetching practice chapters:', error);
-      return;
+    try {
+      const { data, error } = await supabase
+        .from('practice_chapters')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('subject', { ascending: true });
+      
+      if (error) {
+        console.error('Error fetching practice chapters:', error);
+        return;
+      }
+      
+      setChapters((data as PracticeChapter[]) || []);
+    } catch (error) {
+      console.error('Unexpected error fetching chapters:', error);
     }
-    
-    setChapters((data as PracticeChapter[]) || []);
-  };
+  }, [user?.id]);
 
-  const fetchTargets = async () => {
+  const fetchTargets = useCallback(async () => {
     if (!user) return;
     
-    const { data, error } = await supabase
-      .from('practice_targets')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('target_type', { ascending: true });
-    
-    if (error) {
-      console.error('Error fetching practice targets:', error);
-      return;
+    try {
+      const { data, error } = await supabase
+        .from('practice_targets')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('target_type', { ascending: true });
+      
+      if (error) {
+        console.error('Error fetching practice targets:', error);
+        return;
+      }
+      
+      setTargets((data as PracticeTarget[]) || []);
+    } catch (error) {
+      console.error('Unexpected error fetching targets:', error);
     }
-    
-    setTargets((data as PracticeTarget[]) || []);
-  };
+  }, [user?.id]);
 
   const addSession = async (sessionData: Omit<PracticeSession, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     if (!user) return;
@@ -218,16 +233,30 @@ export const usePractice = () => {
     setSessions(prev => prev.filter(s => s.id !== id));
   };
 
+  // Only load data once when user changes and not already initialized
   useEffect(() => {
-    if (user) {
+    if (user && !initialized) {
       const loadData = async () => {
         setLoading(true);
-        await Promise.all([fetchSessions(), fetchChapters(), fetchTargets()]);
-        setLoading(false);
+        try {
+          await Promise.all([fetchSessions(), fetchChapters(), fetchTargets()]);
+        } catch (error) {
+          console.error('Error loading practice data:', error);
+        } finally {
+          setLoading(false);
+          setInitialized(true);
+        }
       };
       loadData();
+    } else if (!user) {
+      // Reset state when user logs out
+      setSessions([]);
+      setChapters([]);
+      setTargets([]);
+      setInitialized(false);
+      setLoading(false);
     }
-  }, [user]);
+  }, [user, initialized, fetchSessions, fetchChapters, fetchTargets]);
 
   const analytics = useMemo(() => {
     const today = new Date().toISOString().split('T')[0];
@@ -270,5 +299,5 @@ export const usePractice = () => {
     fetchSessions,
     fetchChapters,
     fetchTargets,
-  }), [sessions, chapters, targets, loading, analytics, user]);
+  }), [sessions, chapters, targets, loading, analytics, user, fetchSessions, fetchChapters, fetchTargets]);
 };
