@@ -147,67 +147,77 @@ export default function PracticeAnalytics() {
 
 
 
-
 <TabsList
-  className={`w-full ${themeColors.card} ${themeColors.border} border rounded-lg shadow-md flex`}
+  className={`w-full ${themeColors.card} ${themeColors.border} border rounded-lg shadow-md bg-gradient-to-r from-blue-50 to-blue-100`}
   style={{ padding: 0 }}
 >
-  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 w-full gap-2 p-2 rounded-lg bg-gradient-to-r from-blue-50 to-blue-100">
+  <div
+    className="
+      flex gap-1 p-1 w-full
+      overflow-x-auto scrollbar-hide
+      rounded-lg
+      sm:grid sm:grid-cols-3 md:grid-cols-5
+      sm:overflow-x-visible
+    "
+    style={{ WebkitOverflowScrolling: "touch" }}
+  >
     <TabsTrigger
       value="overview"
-      className="flex items-center justify-center gap-1 px-3 py-2 w-full font-semibold rounded-lg transition-all duration-200 ease-in-out
+      className="flex items-center justify-center gap-1 px-2 py-2 sm:px-3 w-full font-semibold rounded-lg transition-all duration-200 ease-in-out
         bg-white hover:bg-blue-50 hover:shadow active:scale-95
         data-[state=active]:bg-blue-700 data-[state=active]:text-white data-[state=active]:shadow-lg
-        data-[state=active]:border-b-4 data-[state=active]:border-blue-400"
+        data-[state=active]:border-b-4 data-[state=active]:border-blue-400
+        text-xs sm:text-sm min-w-[100px]"
     >
       <BarChart3 size={16} className="mr-1" />
       Overview
     </TabsTrigger>
     <TabsTrigger
       value="subjects"
-      className="flex items-center justify-center gap-1 px-3 py-2 w-full font-semibold rounded-lg transition-all duration-200 ease-in-out
+      className="flex items-center justify-center gap-1 px-2 py-2 sm:px-3 w-full font-semibold rounded-lg transition-all duration-200 ease-in-out
         bg-white hover:bg-blue-50 hover:shadow active:scale-95
         data-[state=active]:bg-blue-700 data-[state=active]:text-white data-[state=active]:shadow-lg
-        data-[state=active]:border-b-4 data-[state=active]:border-blue-400"
+        data-[state=active]:border-b-4 data-[state=active]:border-blue-400
+        text-xs sm:text-sm min-w-[100px]"
     >
       <TrendingUp size={16} className="mr-1" />
       Subjects
     </TabsTrigger>
     <TabsTrigger
       value="chapters"
-      className="flex items-center justify-center gap-1 px-3 py-2 w-full font-semibold rounded-lg transition-all duration-200 ease-in-out
+      className="flex items-center justify-center gap-1 px-2 py-2 sm:px-3 w-full font-semibold rounded-lg transition-all duration-200 ease-in-out
         bg-white hover:bg-blue-50 hover:shadow active:scale-95
         data-[state=active]:bg-blue-700 data-[state=active]:text-white data-[state=active]:shadow-lg
-        data-[state=active]:border-b-4 data-[state=active]:border-blue-400"
+        data-[state=active]:border-b-4 data-[state=active]:border-blue-400
+        text-xs sm:text-sm min-w-[100px]"
     >
       <BarChart3 size={16} className="mr-1" />
       Chapters
     </TabsTrigger>
     <TabsTrigger
       value="calendar"
-      className="flex items-center justify-center gap-1 px-3 py-2 w-full font-semibold rounded-lg transition-all duration-200 ease-in-out
+      className="flex items-center justify-center gap-1 px-2 py-2 sm:px-3 w-full font-semibold rounded-lg transition-all duration-200 ease-in-out
         bg-white hover:bg-blue-50 hover:shadow active:scale-95
         data-[state=active]:bg-blue-700 data-[state=active]:text-white data-[state=active]:shadow-lg
-        data-[state=active]:border-b-4 data-[state=active]:border-blue-400"
+        data-[state=active]:border-b-4 data-[state=active]:border-blue-400
+        text-xs sm:text-sm min-w-[100px]"
     >
       <Calendar size={16} className="mr-1" />
       Calendar
     </TabsTrigger>
     <TabsTrigger
       value="targets"
-      className="flex items-center justify-center gap-1 px-3 py-2 w-full font-semibold rounded-lg transition-all duration-200 ease-in-out
+      className="flex items-center justify-center gap-1 px-2 py-2 sm:px-3 w-full font-semibold rounded-lg transition-all duration-200 ease-in-out
         bg-white hover:bg-blue-50 hover:shadow active:scale-95
         data-[state=active]:bg-blue-700 data-[state=active]:text-white data-[state=active]:shadow-lg
-        data-[state=active]:border-b-4 data-[state=active]:border-blue-400"
+        data-[state=active]:border-b-4 data-[state=active]:border-blue-400
+        text-xs sm:text-sm min-w-[100px]"
     >
       <Target size={16} className="mr-1" />
       Targets
     </TabsTrigger>
   </div>
 </TabsList>
-
-
-
 
 
 
