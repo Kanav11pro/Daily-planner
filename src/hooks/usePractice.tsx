@@ -56,7 +56,6 @@ export const usePractice = () => {
   const [loading, setLoading] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
-  // Memoize fetch functions to prevent unnecessary re-renders
   const fetchSessions = useCallback(async () => {
     if (!user) return;
     
@@ -134,6 +133,7 @@ export const usePractice = () => {
       throw error;
     }
 
+    // Immediately update the sessions state for instant UI update
     setSessions(prev => [data as PracticeSession, ...prev]);
     
     // Update or create chapter record
@@ -150,12 +150,19 @@ export const usePractice = () => {
     );
 
     if (existingChapter) {
+      const updatedChapter = {
+        ...existingChapter,
+        total_questions: existingChapter.total_questions + questions,
+        total_time: existingChapter.total_time + time,
+        last_practiced: new Date().toISOString().split('T')[0],
+      };
+
       const { data, error } = await supabase
         .from('practice_chapters')
         .update({
-          total_questions: existingChapter.total_questions + questions,
-          total_time: existingChapter.total_time + time,
-          last_practiced: new Date().toISOString().split('T')[0],
+          total_questions: updatedChapter.total_questions,
+          total_time: updatedChapter.total_time,
+          last_practiced: updatedChapter.last_practiced,
         })
         .eq('id', existingChapter.id)
         .select()
@@ -198,8 +205,40 @@ export const usePractice = () => {
       throw error;
     }
 
+    // Immediately update targets state
     setTargets(prev => [...prev, data as PracticeTarget]);
     return data;
+  };
+
+  const updateTarget = async (id: string, updates: Partial<PracticeTarget>) => {
+    const { data, error } = await supabase
+      .from('practice_targets')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating practice target:', error);
+      throw error;
+    }
+
+    setTargets(prev => prev.map(t => t.id === id ? data as PracticeTarget : t));
+    return data;
+  };
+
+  const deleteTarget = async (id: string) => {
+    const { error } = await supabase
+      .from('practice_targets')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting practice target:', error);
+      throw error;
+    }
+
+    setTargets(prev => prev.filter(t => t.id !== id));
   };
 
   const updateSession = async (id: string, updates: Partial<PracticeSession>) => {
@@ -233,7 +272,6 @@ export const usePractice = () => {
     setSessions(prev => prev.filter(s => s.id !== id));
   };
 
-  // Only load data once when user changes and not already initialized
   useEffect(() => {
     if (user && !initialized) {
       const loadData = async () => {
@@ -249,7 +287,6 @@ export const usePractice = () => {
       };
       loadData();
     } else if (!user) {
-      // Reset state when user logs out
       setSessions([]);
       setChapters([]);
       setTargets([]);
@@ -296,6 +333,8 @@ export const usePractice = () => {
     updateSession,
     deleteSession,
     addTarget,
+    updateTarget,
+    deleteTarget,
     fetchSessions,
     fetchChapters,
     fetchTargets,
