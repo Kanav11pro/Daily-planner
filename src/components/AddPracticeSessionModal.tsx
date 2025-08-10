@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { X, Calendar, BookOpen, FileText, Target, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -50,8 +51,8 @@ const sourceOptions = {
   Module: ['Ex 1', 'Ex 1A', 'Ex 2', 'Ex 2A', 'Ex 3', 'Ex 3A', 'Misc'],
   PYQs: ['Mains', 'Advanced'],
   CPPs: ['Core Practice Problems'],
-  NCERT: ['NCERT Questions'],
-  Other: []
+  'Reference Books': ['NCERT Questions'],
+  Custom: []
 };
 
 export const AddPracticeSessionModal = ({ open, onClose, onSessionComplete }: AddPracticeSessionModalProps) => {
@@ -65,7 +66,7 @@ export const AddPracticeSessionModal = ({ open, onClose, onSessionComplete }: Ad
     date: new Date(),
     subject: '' as 'Physics' | 'Chemistry' | 'Mathematics',
     chapter: '',
-    source: '' as 'Module' | 'PYQs' | 'CPPs' | 'NCERT' | 'Other',
+    source: '' as 'Module' | 'PYQs' | 'CPPs' | 'Reference Books' | 'Custom',
     sourceDetails: '',
     questionsTarget: 0,
     questionsSolved: 0,
@@ -80,7 +81,7 @@ export const AddPracticeSessionModal = ({ open, onClose, onSessionComplete }: Ad
       date: new Date(),
       subject: '' as 'Physics' | 'Chemistry' | 'Mathematics',
       chapter: '',
-      source: '' as 'Module' | 'PYQs' | 'CPPs' | 'NCERT' | 'Other',
+      source: '' as 'Module' | 'PYQs' | 'CPPs' | 'Reference Books' | 'Custom',
       sourceDetails: '',
       questionsTarget: 0,
       questionsSolved: 0,
@@ -282,13 +283,14 @@ export const AddPracticeSessionModal = ({ open, onClose, onSessionComplete }: Ad
                 <button
                   key={source}
                   onClick={() => {
-                    setFormData({ ...formData, source: source as 'Module' | 'PYQs' | 'CPPs' | 'NCERT' | 'Other', sourceDetails: '' });
+                    setFormData({ ...formData, source: source as 'Module' | 'PYQs' | 'CPPs' | 'Reference Books' | 'Custom', sourceDetails: '' });
                     setStep(5);
                   }}
                   className="p-4 rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] hover:border-indigo-300 hover:bg-gray-50 border-gray-200"
                 >
                   <div className="font-medium">{source}</div>
                   {source === 'CPPs' && <div className="text-sm text-gray-500">Core Practice Problems</div>}
+                  {source === 'Reference Books' && <div className="text-sm text-gray-500">NCERT & Other Books</div>}
                 </button>
               ))}
             </div>
@@ -304,7 +306,7 @@ export const AddPracticeSessionModal = ({ open, onClose, onSessionComplete }: Ad
             </div>
 
             {/* Source Details */}
-            {formData.source !== 'Other' ? (
+            {formData.source !== 'Custom' ? (
               <div>
                 <Label className="text-base font-medium mb-3 block">Source Details</Label>
                 <div className="grid grid-cols-2 gap-2">

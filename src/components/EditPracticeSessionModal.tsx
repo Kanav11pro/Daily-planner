@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { X, Save, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,7 @@ export const EditPracticeSessionModal = ({ session, open, onClose, onSessionUpda
     date: new Date(),
     subject: '' as 'Physics' | 'Chemistry' | 'Mathematics',
     chapter: '',
-    source: '' as 'Module' | 'PYQs' | 'CPPs' | 'NCERT' | 'Other',
+    source: '' as 'Module' | 'PYQs' | 'CPPs' | 'Reference Books' | 'Custom',
     sourceDetails: '',
     questionsTarget: 0,
     questionsSolved: 0,
@@ -177,8 +178,8 @@ export const EditPracticeSessionModal = ({ session, open, onClose, onSessionUpda
                     <SelectItem value="Module">Module</SelectItem>
                     <SelectItem value="PYQs">PYQs</SelectItem>
                     <SelectItem value="CPPs">CPPs</SelectItem>
-                    <SelectItem value="NCERT">NCERT</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
+                    <SelectItem value="Reference Books">Reference Books</SelectItem>
+                    <SelectItem value="Custom">Custom</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
