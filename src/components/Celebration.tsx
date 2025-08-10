@@ -7,8 +7,10 @@ interface CelebrationProps {
 
 export const Celebration = ({ onComplete }: CelebrationProps) => {
   return (
-    <CelebrationController 
-      onComplete={onComplete || (() => {})}
-    />
+    <div className="fixed inset-0 z-[9999] pointer-events-auto">
+      <CelebrationController 
+        onComplete={onComplete || (() => {})}
+      />
+    </div>
   );
 };

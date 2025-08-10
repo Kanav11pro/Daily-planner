@@ -1,5 +1,3 @@
-
-
 import { useState } from 'react';
 import {
   ArrowLeft,
@@ -34,10 +32,12 @@ export const PracticeAnalytics = () => {
   const [showCelebration, setShowCelebration] = useState(false);
 
   const handleSessionComplete = () => {
+    console.log('Session completed, showing celebration');
     setShowCelebration(true);
   };
 
   const handleCelebrationComplete = () => {
+    console.log('Celebration completed, hiding celebration');
     setShowCelebration(false);
   };
 
@@ -284,12 +284,13 @@ export const PracticeAnalytics = () => {
         onSessionComplete={handleSessionComplete}
       />
 
-      <Celebration
-        onComplete={handleCelebrationComplete}
-      />
+      {showCelebration && (
+        <Celebration
+          onComplete={handleCelebrationComplete}
+        />
+      )}
     </div>
   );
 };
 
 export default PracticeAnalytics;
-
