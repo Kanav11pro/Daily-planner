@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import {
   ArrowLeft,
@@ -13,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ThemeSelector } from '@/components/ThemeSelector';
 import { useTheme, getThemeColors } from '@/contexts/ThemeContext';
-import { PracticeLoadingSkeleton } from '@/components/skeletons';
+import { PracticeLoadingSkeleton } from '@/components/PracticeLoadingSkeleton';
 import { TargetTracker } from '@/components/TargetTracker';
 import { ChapterTracker } from '@/components/ChapterTracker';
 import { SubjectAnalytics } from '@/components/SubjectAnalytics';
@@ -151,7 +152,7 @@ export const PracticeAnalytics = () => {
       case 'analytics':
         return (
           <div className="space-y-6">
-            <WeeklyAnalytics />
+            <WeeklyAnalytics tasks={[]} onClose={() => {}} />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <SubjectAnalytics />
               <ChapterTracker />
@@ -167,7 +168,7 @@ export const PracticeAnalytics = () => {
   return (
     <div className={`min-h-screen ${themeColors.background} transition-colors duration-300`}>
       {/* Header */}
-      <div className={`${themeColors.header} shadow-sm border-b transition-colors duration-300`}>
+      <div className={`${themeColors.card} shadow-sm border-b transition-colors duration-300`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -212,7 +213,7 @@ export const PracticeAnalytics = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center justify-center space-x-2 px-6 py-3 whitespace-nowrap transition-all duration-200 ${
                   activeTab === tab.id
-                    ? `${themeColors.activeTab} border-b-2 border-indigo-500`
+                    ? `${themeColors.text} border-b-2 border-indigo-500`
                     : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                 }`}
               >
@@ -245,7 +246,7 @@ export const PracticeAnalytics = () => {
                         onClick={() => setActiveTab(tab.id)}
                         className={`w-full flex items-center space-x-3 px-4 py-3 text-left transition-all duration-200 hover:scale-[1.02] ${
                           activeTab === tab.id
-                            ? `${themeColors.activeTab} border-r-2 border-indigo-500`
+                            ? `${themeColors.text} border-r-2 border-indigo-500`
                             : 'text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-800'
                         }`}
                       >
@@ -283,9 +284,11 @@ export const PracticeAnalytics = () => {
       />
 
       <Celebration
-        show={showCelebration}
+        visible={showCelebration}
         onComplete={handleCelebrationComplete}
       />
     </div>
   );
 };
+
+export default PracticeAnalytics;
