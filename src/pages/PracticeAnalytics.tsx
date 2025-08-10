@@ -1,4 +1,5 @@
 
+
 import { useState } from 'react';
 import {
   ArrowLeft,
@@ -284,7 +285,6 @@ export const PracticeAnalytics = () => {
       />
 
       <Celebration
-        visible={showCelebration}
         onComplete={handleCelebrationComplete}
       />
     </div>
@@ -292,3 +292,4 @@ export const PracticeAnalytics = () => {
 };
 
 export default PracticeAnalytics;
+

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { X, Calendar, BookOpen, FileText, Target, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -282,7 +283,7 @@ export const AddPracticeSessionModal = ({ open, onClose, onSessionComplete }: Ad
                 <button
                   key={source}
                   onClick={() => {
-                    setFormData({ ...formData, source: source as any, sourceDetails: '' });
+                    setFormData({ ...formData, source: source as 'Module' | 'PYQs' | 'CPPs' | 'NCERT' | 'Other', sourceDetails: '' });
                     setStep(5);
                   }}
                   className="p-4 rounded-lg border-2 transition-all duration-200 hover:scale-[1.02] hover:border-indigo-300 hover:bg-gray-50 border-gray-200"
