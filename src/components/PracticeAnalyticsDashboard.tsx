@@ -21,6 +21,130 @@ import {
   Flame
 } from 'lucide-react';
 
+// Helper functions defined before they are used
+const calculateStreak = (sessions: any[]) => {
+  const dates = [...new Set(sessions.map(s => s.date))].sort().reverse();
+  let currentStreak = 0;
+  let maxStreak = 0;
+  let tempStreak = 0;
+
+  const today = new Date().toISOString().split('T')[0];
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+  // Calculate current streak
+  for (let i = 0; i < dates.length; i++) {
+    const date = dates[i];
+    if (i === 0 && (date === today || date === yesterdayStr)) {
+      currentStreak = 1;
+      tempStreak = 1;
+    } else if (i > 0) {
+      const prevDate = new Date(dates[i-1]);
+      const currentDate = new Date(date);
+      const diffTime = Math.abs(prevDate.getTime() - currentDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 1) {
+        if (i === 1) currentStreak++;
+        tempStreak++;
+      } else {
+        if (tempStreak > maxStreak) maxStreak = tempStreak;
+        tempStreak = 1;
+      }
+    }
+  }
+
+  return { currentStreak, maxStreak: Math.max(maxStreak, tempStreak) };
+};
+
+const calculateTimeDistribution = (sessions: any[]) => {
+  const timeSlots = {
+    'Morning (6-12)': 0,
+    'Afternoon (12-18)': 0,
+    'Evening (18-24)': 0,
+    'Night (0-6)': 0,
+  };
+
+  sessions.forEach(session => {
+    const hour = new Date(session.created_at).getHours();
+    if (hour >= 6 && hour < 12) timeSlots['Morning (6-12)']++;
+    else if (hour >= 12 && hour < 18) timeSlots['Afternoon (12-18)']++;
+    else if (hour >= 18 && hour < 24) timeSlots['Evening (18-24)']++;
+    else timeSlots['Night (0-6)']++;
+  });
+
+  return Object.entries(timeSlots).map(([slot, count]) => ({ slot, count }));
+};
+
+const generateInsights = (analytics: any, insightData: any) => {
+  const insights = [];
+
+  // Streak insights
+  if (insightData.streakData.currentStreak >= 7) {
+    insights.push({
+      type: 'positive',
+      icon: <Trophy className="h-4 w-4 text-green-600" />,
+      title: 'Amazing Consistency!',
+      description: `You're on a ${insightData.streakData.currentStreak}-day streak. Keep it up!`
+    });
+  } else if (insightData.streakData.currentStreak === 0) {
+    insights.push({
+      type: 'warning',
+      icon: <Flame className="h-4 w-4 text-yellow-600" />,
+      title: 'Time to Get Back',
+      description: 'Start a new practice session today to begin your streak!'
+    });
+  }
+
+  // Daily performance
+  if (analytics.today.questionsTotal > 20) {
+    insights.push({
+      type: 'positive',
+      icon: <Star className="h-4 w-4 text-green-600" />,
+      title: 'Productive Day!',
+      description: `You've solved ${analytics.today.questionsTotal} questions today. Excellent work!`
+    });
+  }
+
+  // Subject balance
+  const subjectQuestions = analytics.subjects.map(s => s.questions);
+  const maxQuestions = Math.max(...subjectQuestions);
+  const minQuestions = Math.min(...subjectQuestions);
+  
+  if (maxQuestions - minQuestions > 50) {
+    const weakSubject = analytics.subjects.find(s => s.questions === minQuestions);
+    insights.push({
+      type: 'tip',
+      icon: <BookOpen className="h-4 w-4 text-blue-600" />,
+      title: 'Balance Your Studies',
+      description: `Consider focusing more on ${weakSubject?.name} to maintain balance.`
+    });
+  }
+
+  // Time insights
+  if (analytics.today.timeTotal > 120) {
+    insights.push({
+      type: 'positive',
+      icon: <Clock className="h-4 w-4 text-green-600" />,
+      title: 'Great Focus Time!',
+      description: `You've studied for ${Math.round(analytics.today.timeTotal / 60)} hours today.`
+    });
+  }
+
+  // Weekly progress
+  if (analytics.week.questionsTotal > 100) {
+    insights.push({
+      type: 'positive',
+      icon: <TrendingUp className="h-4 w-4 text-green-600" />,
+      title: 'Weekly Champion!',
+      description: `${analytics.week.questionsTotal} questions this week. You're crushing it!`
+    });
+  }
+
+  return insights.slice(0, 6); // Limit to 6 insights
+};
+
 export const PracticeAnalyticsDashboard = () => {
   const { sessions, analytics, targets } = usePractice();
   const { theme } = useTheme();
@@ -72,61 +196,6 @@ export const PracticeAnalyticsDashboard = () => {
       timeDistribution,
     };
   }, [sessions]);
-
-  const calculateStreak = (sessions: any[]) => {
-    const dates = [...new Set(sessions.map(s => s.date))].sort().reverse();
-    let currentStreak = 0;
-    let maxStreak = 0;
-    let tempStreak = 0;
-
-    const today = new Date().toISOString().split('T')[0];
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
-
-    // Calculate current streak
-    for (let i = 0; i < dates.length; i++) {
-      const date = dates[i];
-      if (i === 0 && (date === today || date === yesterdayStr)) {
-        currentStreak = 1;
-        tempStreak = 1;
-      } else if (i > 0) {
-        const prevDate = new Date(dates[i-1]);
-        const currentDate = new Date(date);
-        const diffTime = Math.abs(prevDate.getTime() - currentDate.getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        if (diffDays === 1) {
-          if (i === 1) currentStreak++;
-          tempStreak++;
-        } else {
-          if (tempStreak > maxStreak) maxStreak = tempStreak;
-          tempStreak = 1;
-        }
-      }
-    }
-
-    return { currentStreak, maxStreak: Math.max(maxStreak, tempStreak) };
-  };
-
-  const calculateTimeDistribution = (sessions: any[]) => {
-    const timeSlots = {
-      'Morning (6-12)': 0,
-      'Afternoon (12-18)': 0,
-      'Evening (18-24)': 0,
-      'Night (0-6)': 0,
-    };
-
-    sessions.forEach(session => {
-      const hour = new Date(session.created_at).getHours();
-      if (hour >= 6 && hour < 12) timeSlots['Morning (6-12)']++;
-      else if (hour >= 12 && hour < 18) timeSlots['Afternoon (12-18)']++;
-      else if (hour >= 18 && hour < 24) timeSlots['Evening (18-24)']++;
-      else timeSlots['Night (0-6)']++;
-    });
-
-    return Object.entries(timeSlots).map(([slot, count]) => ({ slot, count }));
-  };
 
   const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7c7c'];
 
@@ -322,72 +391,4 @@ export const PracticeAnalyticsDashboard = () => {
       </Card>
     </div>
   );
-};
-
-const generateInsights = (analytics: any, insightData: any) => {
-  const insights = [];
-
-  // Streak insights
-  if (insightData.streakData.currentStreak >= 7) {
-    insights.push({
-      type: 'positive',
-      icon: <Trophy className="h-4 w-4 text-green-600" />,
-      title: 'Amazing Consistency!',
-      description: `You're on a ${insightData.streakData.currentStreak}-day streak. Keep it up!`
-    });
-  } else if (insightData.streakData.currentStreak === 0) {
-    insights.push({
-      type: 'warning',
-      icon: <Flame className="h-4 w-4 text-yellow-600" />,
-      title: 'Time to Get Back',
-      description: 'Start a new practice session today to begin your streak!'
-    });
-  }
-
-  // Daily performance
-  if (analytics.today.questionsTotal > 20) {
-    insights.push({
-      type: 'positive',
-      icon: <Star className="h-4 w-4 text-green-600" />,
-      title: 'Productive Day!',
-      description: `You've solved ${analytics.today.questionsTotal} questions today. Excellent work!`
-    });
-  }
-
-  // Subject balance
-  const subjectQuestions = analytics.subjects.map(s => s.questions);
-  const maxQuestions = Math.max(...subjectQuestions);
-  const minQuestions = Math.min(...subjectQuestions);
-  
-  if (maxQuestions - minQuestions > 50) {
-    const weakSubject = analytics.subjects.find(s => s.questions === minQuestions);
-    insights.push({
-      type: 'tip',
-      icon: <BookOpen className="h-4 w-4 text-blue-600" />,
-      title: 'Balance Your Studies',
-      description: `Consider focusing more on ${weakSubject?.name} to maintain balance.`
-    });
-  }
-
-  // Time insights
-  if (analytics.today.timeTotal > 120) {
-    insights.push({
-      type: 'positive',
-      icon: <Clock className="h-4 w-4 text-green-600" />,
-      title: 'Great Focus Time!',
-      description: `You've studied for ${Math.round(analytics.today.timeTotal / 60)} hours today.`
-    });
-  }
-
-  // Weekly progress
-  if (analytics.week.questionsTotal > 100) {
-    insights.push({
-      type: 'positive',
-      icon: <TrendingUp className="h-4 w-4 text-green-600" />,
-      title: 'Weekly Champion!',
-      description: `${analytics.week.questionsTotal} questions this week. You're crushing it!`
-    });
-  }
-
-  return insights.slice(0, 6); // Limit to 6 insights
 };
