@@ -58,75 +58,34 @@ const themes = {
     text: 'text-indigo-900',
     glow: 'shadow-indigo-300/60'
   },
-
-  // --------- Midnight (dark) - updated for contrast ----------
+  // UPDATED MIDNIGHT THEME: Proper dark backgrounds and white text contrast
   midnight: {
-    // Primary gradient for highlights/buttons
-    primary: 'from-slate-800 to-indigo-900',
-
-    // Subtle dark surface gradient for large areas
-    secondary: 'from-slate-800 via-slate-900 to-indigo-950',
-
-    // Page/background gradient (deep even tones)
-    background: 'from-slate-900 via-gray-900 to-indigo-950',
-
-    // Accent (badges/pills) - dark blue with white text
-    accent: 'bg-indigo-600 text-white',
-
-    // Card: dark slate surface, high contrast text, clear border
-    // Use this for task cards / panels so they are noticeably dark (not white)
-    card: 'bg-slate-800/95 backdrop-blur-md border border-slate-700/60 text-slate-100 shadow-lg',
-
-    // Border utility for components
-    border: 'border-slate-700/60',
-
-    // Default text color for the theme
-    text: 'text-slate-100',
-
-    // Glow/shadow for focused elements (soft and colored)
-    glow: 'shadow-indigo-700/40 shadow-lg',
-
-    // Button tokens — use these on <button> elements to guarantee contrast
-    button: 'bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-md px-4 py-2',
-    buttonOutline: 'bg-transparent border border-indigo-600 text-indigo-100 hover:bg-indigo-700/20 rounded-md px-4 py-2'
+    primary: 'from-blue-700 to-indigo-900',
+    secondary: 'from-slate-800 via-blue-950 to-indigo-900',
+    background: 'from-slate-950 via-blue-950 to-indigo-950',
+    accent: 'bg-blue-800 text-white font-semibold',
+    card: 'bg-slate-900/95 backdrop-blur-md border border-blue-500/60 text-white shadow-2xl',
+    border: 'border-blue-400/60',
+    text: 'text-white',
+    glow: 'shadow-blue-400/40 shadow-2xl'
   },
-
-  // --------- Obsidian (deep black/purple) - updated ----------
+  // UPDATED OBSIDIAN THEME: True black background, crisp white/purple accents
   obsidian: {
-    // Primary gradient (deep purples)
-    primary: 'from-gray-900 to-purple-900',
-
-    // Secondary surfaces (dark slate tones)
-    secondary: 'from-gray-900 via-slate-800 to-zinc-900',
-
-    // Background: true-black to deep-slate
-    background: 'from-black via-gray-900 to-slate-950',
-
-    // Accent: readable purple background with white text
-    accent: 'bg-purple-700 text-white',
-
-    // Card: near-black card with subtle purple border and high contrast text
-    card: 'bg-neutral-900/95 backdrop-blur-md border border-purple-700/20 text-purple-50 shadow-lg',
-
-    // Border utility
-    border: 'border-purple-700/30',
-
-    // Default text color
-    text: 'text-purple-50',
-
-    // Glow/shadow for emphasis
-    glow: 'shadow-purple-700/35 shadow-lg',
-
-    // Button tokens
-    button: 'bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-md px-4 py-2',
-    buttonOutline: 'bg-transparent border border-purple-600 text-purple-100 hover:bg-purple-700/20 rounded-md px-4 py-2'
+    primary: 'from-purple-700 to-pink-700',
+    secondary: 'from-zinc-900 via-slate-900 to-black',
+    background: 'from-black via-neutral-950 to-gray-950',
+    accent: 'bg-purple-800 text-white font-semibold',
+    card: 'bg-gray-950/95 backdrop-blur-md border border-purple-500/70 text-white shadow-2xl',
+    border: 'border-purple-400/70',
+    text: 'text-white',
+    glow: 'shadow-purple-500/40 shadow-2xl'
   }
 };
 
 const validThemes: Theme[] = ['ocean', 'forest', 'aurora', 'cosmic', 'midnight', 'obsidian'];
 
 export const getThemeColors = (theme: Theme) => {
-  const themeColors = (themes as Record<string, any>)[theme];
+  const themeColors = themes[theme];
   if (!themeColors) {
     console.warn(`Theme "${theme}" not found, falling back to ocean theme`);
     return themes.ocean;
@@ -136,7 +95,7 @@ export const getThemeColors = (theme: Theme) => {
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('examPrepTheme') as Theme | null;
+    const saved = localStorage.getItem('examPrepTheme') as Theme;
     // Check if the saved theme is valid, otherwise default to 'ocean'
     if (saved && validThemes.includes(saved)) {
       return saved;
@@ -146,7 +105,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     // Clear invalid theme from localStorage if it exists
-    const saved = localStorage.getItem('examPrepTheme') as Theme | null;
+    const saved = localStorage.getItem('examPrepTheme') as Theme;
     if (saved && !validThemes.includes(saved)) {
       localStorage.removeItem('examPrepTheme');
     }
