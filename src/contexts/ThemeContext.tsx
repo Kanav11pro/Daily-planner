@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export type Theme = 'ocean' | 'forest' | 'aurora' | 'cosmic' | 'midnight' | 'obsidian';
@@ -59,32 +58,65 @@ const themes = {
     text: 'text-indigo-900',
     glow: 'shadow-indigo-300/60'
   },
+
+  // ---- Improved dark themes: Midnight & Obsidian ----
   midnight: {
-    primary: 'from-blue-400 to-indigo-500',
-    secondary: 'from-slate-600 via-blue-700 to-indigo-700',
-    background: 'from-slate-900 via-blue-950 to-indigo-950',
-    accent: 'bg-slate-600 text-blue-100',
-    card: 'bg-slate-800/95 backdrop-blur-md border border-blue-400/30 text-white shadow-xl',
-    border: 'border-blue-400/30',
-    text: 'text-white',
-    glow: 'shadow-blue-400/30 shadow-lg'
+    // primary gradient for buttons / highlights
+    primary: 'from-slate-800 to-indigo-900',
+
+    // subtle dark secondary gradient for backgrounds/overlays
+    secondary: 'from-slate-800 via-slate-900 to-indigo-950',
+
+    // main page background gradient (deep, even tones)
+    background: 'from-slate-900 via-gray-900 to-indigo-950',
+
+    // accent pills / badges (dark but legible)
+    accent: 'bg-indigo-700 text-indigo-100',
+
+    // card style: almost-black with high contrast text, clear border
+    card: 'bg-slate-900/95 backdrop-blur-md border border-slate-700 text-slate-100 shadow',
+
+    // border utility for components
+    border: 'border-slate-700',
+
+    // default text color for this theme
+    text: 'text-slate-100',
+
+    // glow for subtle UI emphasis (kept soft so it doesn't wash out)
+    glow: 'shadow-indigo-700/40 shadow-lg'
   },
+
   obsidian: {
-    primary: 'from-purple-400 to-pink-500',
-    secondary: 'from-gray-700 via-slate-700 to-zinc-800',
-    background: 'from-black via-gray-950 to-slate-950',
-    accent: 'bg-slate-600 text-purple-100',
-    card: 'bg-gray-800/95 backdrop-blur-md border border-purple-300/30 text-white shadow-xl',
-    border: 'border-purple-300/30',
-    text: 'text-white',
-    glow: 'shadow-purple-400/30 shadow-lg'
+    // primary gradient (deep purples)
+    primary: 'from-gray-900 to-purple-900',
+
+    // dark secondary gradient for large surfaces
+    secondary: 'from-gray-900 via-slate-800 to-zinc-900',
+
+    // richer black-to-deep-slate background
+    background: 'from-black via-gray-900 to-slate-950',
+
+    // accent uses a darker purple with light text for readability
+    accent: 'bg-purple-700 text-purple-50',
+
+    // card is near-black with a hint of purple border and readable text
+    card: 'bg-black/85 backdrop-blur-md border border-purple-700/20 text-purple-50 shadow',
+
+    // border utility with a subtle purple tint
+    border: 'border-purple-700/30',
+
+    // default text color (soft purple-tinged white)
+    text: 'text-purple-50',
+
+    // subtle purple glow for focus / emphasis
+    glow: 'shadow-purple-700/35 shadow-lg'
   }
 };
 
 const validThemes: Theme[] = ['ocean', 'forest', 'aurora', 'cosmic', 'midnight', 'obsidian'];
 
 export const getThemeColors = (theme: Theme) => {
-  const themeColors = themes[theme];
+  const themeColors = (themes as Record<string, any>)[theme];
   if (!themeColors) {
     console.warn(`Theme "${theme}" not found, falling back to ocean theme`);
     return themes.ocean;
@@ -94,7 +126,7 @@ export const getThemeColors = (theme: Theme) => {
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('examPrepTheme') as Theme;
+    const saved = localStorage.getItem('examPrepTheme') as Theme | null;
     // Check if the saved theme is valid, otherwise default to 'ocean'
     if (saved && validThemes.includes(saved)) {
       return saved;
@@ -104,7 +136,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     // Clear invalid theme from localStorage if it exists
-    const saved = localStorage.getItem('examPrepTheme') as Theme;
+    const saved = localStorage.getItem('examPrepTheme') as Theme | null;
     if (saved && !validThemes.includes(saved)) {
       localStorage.removeItem('examPrepTheme');
     }
