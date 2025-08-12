@@ -59,57 +59,67 @@ const themes = {
     glow: 'shadow-indigo-300/60'
   },
 
-  // ---- Improved dark themes: Midnight & Obsidian ----
+  // --------- Midnight (dark) - updated for contrast ----------
   midnight: {
-    // primary gradient for buttons / highlights
+    // Primary gradient for highlights/buttons
     primary: 'from-slate-800 to-indigo-900',
 
-    // subtle dark secondary gradient for backgrounds/overlays
+    // Subtle dark surface gradient for large areas
     secondary: 'from-slate-800 via-slate-900 to-indigo-950',
 
-    // main page background gradient (deep, even tones)
+    // Page/background gradient (deep even tones)
     background: 'from-slate-900 via-gray-900 to-indigo-950',
 
-    // accent pills / badges (dark but legible)
-    accent: 'bg-indigo-700 text-indigo-100',
+    // Accent (badges/pills) - dark blue with white text
+    accent: 'bg-indigo-600 text-white',
 
-    // card style: almost-black with high contrast text, clear border
-    card: 'bg-slate-900/95 backdrop-blur-md border border-slate-700 text-slate-100 shadow',
+    // Card: dark slate surface, high contrast text, clear border
+    // Use this for task cards / panels so they are noticeably dark (not white)
+    card: 'bg-slate-800/95 backdrop-blur-md border border-slate-700/60 text-slate-100 shadow-lg',
 
-    // border utility for components
-    border: 'border-slate-700',
+    // Border utility for components
+    border: 'border-slate-700/60',
 
-    // default text color for this theme
+    // Default text color for the theme
     text: 'text-slate-100',
 
-    // glow for subtle UI emphasis (kept soft so it doesn't wash out)
-    glow: 'shadow-indigo-700/40 shadow-lg'
+    // Glow/shadow for focused elements (soft and colored)
+    glow: 'shadow-indigo-700/40 shadow-lg',
+
+    // Button tokens — use these on <button> elements to guarantee contrast
+    button: 'bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-md px-4 py-2',
+    buttonOutline: 'bg-transparent border border-indigo-600 text-indigo-100 hover:bg-indigo-700/20 rounded-md px-4 py-2'
   },
 
+  // --------- Obsidian (deep black/purple) - updated ----------
   obsidian: {
-    // primary gradient (deep purples)
+    // Primary gradient (deep purples)
     primary: 'from-gray-900 to-purple-900',
 
-    // dark secondary gradient for large surfaces
+    // Secondary surfaces (dark slate tones)
     secondary: 'from-gray-900 via-slate-800 to-zinc-900',
 
-    // richer black-to-deep-slate background
+    // Background: true-black to deep-slate
     background: 'from-black via-gray-900 to-slate-950',
 
-    // accent uses a darker purple with light text for readability
-    accent: 'bg-purple-700 text-purple-50',
+    // Accent: readable purple background with white text
+    accent: 'bg-purple-700 text-white',
 
-    // card is near-black with a hint of purple border and readable text
-    card: 'bg-black/85 backdrop-blur-md border border-purple-700/20 text-purple-50 shadow',
+    // Card: near-black card with subtle purple border and high contrast text
+    card: 'bg-neutral-900/95 backdrop-blur-md border border-purple-700/20 text-purple-50 shadow-lg',
 
-    // border utility with a subtle purple tint
+    // Border utility
     border: 'border-purple-700/30',
 
-    // default text color (soft purple-tinged white)
+    // Default text color
     text: 'text-purple-50',
 
-    // subtle purple glow for focus / emphasis
-    glow: 'shadow-purple-700/35 shadow-lg'
+    // Glow/shadow for emphasis
+    glow: 'shadow-purple-700/35 shadow-lg',
+
+    // Button tokens
+    button: 'bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-md px-4 py-2',
+    buttonOutline: 'bg-transparent border border-purple-600 text-purple-100 hover:bg-purple-700/20 rounded-md px-4 py-2'
   }
 };
 
