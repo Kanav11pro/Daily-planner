@@ -83,5 +83,49 @@ export const QuoteSection = () => {
     return () => clearInterval(interval);
   }, []);
   const currentQuoteData = powerfulQuotes[currentQuote];
-  return;
+  return (
+    <div className={`relative ${themeColors.card} backdrop-blur-xl border ${themeColors.border} rounded-2xl shadow-2xl p-6 sm:p-8 overflow-hidden transform transition-all duration-700 hover:scale-[1.02]`}>
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+      <div className="relative z-10">
+        <div className={`transition-all duration-700 ${isAnimating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 bg-gradient-to-br from-amber-400/20 to-orange-500/20 rounded-xl backdrop-blur-sm border border-amber-200/30">
+                <Flame className="h-6 w-6 text-amber-600" />
+              </div>
+              <div>
+                <div className="text-sm font-bold text-amber-600 tracking-wider uppercase">
+                  {currentQuoteData.category}
+                </div>
+                <div className="text-xs text-gray-500 mt-1">Daily Motivation</div>
+              </div>
+            </div>
+            <div className="flex items-center space-x-1">
+              <Target className="h-4 w-4 text-indigo-500" />
+              <Trophy className="h-4 w-4 text-yellow-500" />
+              <Zap className="h-4 w-4 text-blue-500" />
+            </div>
+          </div>
+          
+          <blockquote className="text-lg sm:text-xl font-semibold text-gray-800 leading-relaxed mb-4">
+            "{currentQuoteData.text}"
+          </blockquote>
+          
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-gray-600">
+              — <span className="font-medium">{currentQuoteData.author}</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="px-3 py-1 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-full border border-indigo-200/50">
+                <span className="text-xs font-bold text-indigo-600">
+                  {motivationalActions[currentAction]}
+                </span>
+              </div>
+              <ChevronRight className="h-4 w-4 text-indigo-500 animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
