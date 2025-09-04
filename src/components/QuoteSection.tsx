@@ -83,39 +83,5 @@ export const QuoteSection = () => {
     return () => clearInterval(interval);
   }, []);
   const currentQuoteData = powerfulQuotes[currentQuote];
-  
-  return (
-    <div className={`relative overflow-hidden rounded-2xl ${themeColors.card} ${themeColors.glow} transition-all duration-500 hover:scale-[1.02] group`}>
-      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
-      <div className="relative p-6 sm:p-8">
-        <div className="flex items-center justify-between mb-6">
-          <div className={`inline-flex items-center px-4 py-2 rounded-full text-xs font-bold tracking-wider ${themeColors.accent} animate-pulse`}>
-            <Flame className="w-4 h-4 mr-2" />
-            {currentQuoteData.category}
-          </div>
-          <div className="flex space-x-2">
-            <Target className="w-5 h-5 text-yellow-500 animate-bounce" />
-            <Trophy className="w-5 h-5 text-amber-500 animate-pulse" />
-            <Zap className="w-5 h-5 text-orange-500 animate-bounce" />
-          </div>
-        </div>
-        
-        <div className={`transition-all duration-500 ${isAnimating ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'}`}>
-          <blockquote className={`text-lg sm:text-xl font-semibold leading-relaxed mb-4 ${themeColors.text}`}>
-            "{currentQuoteData.text}"
-          </blockquote>
-          <cite className={`text-sm font-medium opacity-80 ${themeColors.text}`}>
-            — {currentQuoteData.author}
-          </cite>
-        </div>
-        
-        <div className="mt-6 pt-6 border-t border-gray-200/20">
-          <div className={`inline-flex items-center px-6 py-3 rounded-full font-bold text-sm transition-all duration-300 group-hover:scale-105 ${themeColors.accent} cursor-pointer`}>
-            <span className="mr-2">{motivationalActions[currentAction]}</span>
-            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return;
 };
