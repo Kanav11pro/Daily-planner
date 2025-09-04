@@ -2,42 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-<style>
-  html, body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    overflow: hidden; /* if you don’t want scrolling at all */
-    touch-action: none; /* disables pinch + double-tap zoom */
-  }
-</style>
-
-<script>
-  // 1) Block pinch zoom
-  window.addEventListener('touchstart', function (e) {
-    if (e.touches.length > 1) {
-      e.preventDefault();  // block multi-finger gestures
-    }
-  }, { passive: false });
-
-  // 2) Block zoom gestures on iOS
-  window.addEventListener('gesturestart', function (e) {
-    e.preventDefault();
-  });
-
-  // 3) Block double-tap zoom
-  let lastTouchEnd = 0;
-  document.addEventListener('touchend', function (e) {
-    const now = Date.now();
-    if (now - lastTouchEnd <= 300) {
-      e.preventDefault();
-    }
-    lastTouchEnd = now;
-  }, { passive: false });
-</script>
-
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Exam Ace - Plan you Day</title>
     <meta name="description" content="Lovable Generated Project" />
     <meta name="author" content="Lovable" />
