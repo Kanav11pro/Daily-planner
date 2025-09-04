@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -63,8 +64,7 @@ export const usePractice = () => {
         .from('practice_sessions')
         .select('*')
         .eq('user_id', user.id)
-        .order('date', { ascending: false })
-        .limit(100); // Limit for better performance
+        .order('date', { ascending: false });
       
       if (error) {
         console.error('Error fetching practice sessions:', error);
@@ -272,13 +272,11 @@ export const usePractice = () => {
     setSessions(prev => prev.filter(s => s.id !== id));
   };
 
-  // Optimized data loading with parallel execution and caching
   useEffect(() => {
     if (user && !initialized) {
       const loadData = async () => {
         setLoading(true);
         try {
-          // Load data in parallel for better performance
           await Promise.all([fetchSessions(), fetchChapters(), fetchTargets()]);
         } catch (error) {
           console.error('Error loading practice data:', error);

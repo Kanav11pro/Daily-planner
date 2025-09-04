@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export type Theme = 'ocean' | 'forest' | 'aurora' | 'cosmic' | 'midnight' | 'obsidian';
@@ -58,27 +59,25 @@ const themes = {
     text: 'text-indigo-900',
     glow: 'shadow-indigo-300/60'
   },
-  // UPDATED MIDNIGHT THEME: Proper dark backgrounds and white text contrast
   midnight: {
-    primary: 'from-blue-700 to-indigo-900',
-    secondary: 'from-slate-800 via-blue-950 to-indigo-900',
-    background: 'from-slate-950 via-blue-950 to-indigo-950',
-    accent: 'bg-blue-800 text-white font-semibold',
-    card: 'bg-slate-900/95 backdrop-blur-md border border-blue-500/60 text-white shadow-2xl',
-    border: 'border-blue-400/60',
+    primary: 'from-blue-400 to-indigo-500',
+    secondary: 'from-slate-600 via-blue-700 to-indigo-700',
+    background: 'from-slate-900 via-blue-950 to-indigo-950',
+    accent: 'bg-slate-600 text-blue-100',
+    card: 'bg-slate-800/95 backdrop-blur-md border border-blue-400/30 text-white shadow-xl',
+    border: 'border-blue-400/30',
     text: 'text-white',
-    glow: 'shadow-blue-400/40 shadow-2xl'
+    glow: 'shadow-blue-400/30 shadow-lg'
   },
-  // UPDATED OBSIDIAN THEME: True black background, crisp white/purple accents
   obsidian: {
-    primary: 'from-purple-700 to-pink-700',
-    secondary: 'from-zinc-900 via-slate-900 to-black',
-    background: 'from-black via-neutral-950 to-gray-950',
-    accent: 'bg-purple-800 text-white font-semibold',
-    card: 'bg-gray-950/95 backdrop-blur-md border border-purple-500/70 text-white shadow-2xl',
-    border: 'border-purple-400/70',
+    primary: 'from-purple-400 to-pink-500',
+    secondary: 'from-gray-700 via-slate-700 to-zinc-800',
+    background: 'from-black via-gray-950 to-slate-950',
+    accent: 'bg-slate-600 text-purple-100',
+    card: 'bg-gray-800/95 backdrop-blur-md border border-purple-300/30 text-white shadow-xl',
+    border: 'border-purple-300/30',
     text: 'text-white',
-    glow: 'shadow-purple-500/40 shadow-2xl'
+    glow: 'shadow-purple-400/30 shadow-lg'
   }
 };
 

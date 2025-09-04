@@ -10,7 +10,6 @@ import {
   TrendingUp,
   BookOpen,
   Settings,
-  Brain,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,14 +17,14 @@ import { ThemeSelector } from '@/components/ThemeSelector';
 import { useTheme, getThemeColors } from '@/contexts/ThemeContext';
 import { PracticeLoadingSkeleton } from '@/components/PracticeLoadingSkeleton';
 import { TargetTracker } from '@/components/TargetTracker';
+import { ChapterTracker } from '@/components/ChapterTracker';
 import { SubjectAnalytics } from '@/components/SubjectAnalytics';
 import { PracticeAnalyticsDashboard } from '@/components/PracticeAnalyticsDashboard';
-import { ComprehensiveChapterTracker } from '@/components/ComprehensiveChapterTracker';
 import { usePractice } from '@/hooks/usePractice';
 import { Celebration } from '@/components/Celebration';
 import { AddPracticeSessionModal } from '@/components/AddPracticeSessionModal';
 import { PracticeSessionsList } from '@/components/PracticeSessionsList';
-import { EnhancedTargetManagement } from '@/components/EnhancedTargetManagement';
+import { TargetManagementModal } from '@/components/TargetManagementModal';
 
 export const PracticeAnalytics = () => {
   const { sessions, loading, analytics } = usePractice();
@@ -53,9 +52,8 @@ export const PracticeAnalytics = () => {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BarChart },
     { id: 'sessions', label: 'Sessions', icon: Calendar },
-    { id: 'chapters', label: 'Chapter Progress', icon: Brain },
-    { id: 'targets', label: 'Smart Targets', icon: Target },
-    { id: 'analytics', label: 'Advanced Analytics', icon: TrendingUp },
+    { id: 'targets', label: 'Targets', icon: Target },
+    { id: 'analytics', label: 'Analytics', icon: TrendingUp },
   ];
 
   const renderTabContent = () => {
@@ -135,9 +133,11 @@ export const PracticeAnalytics = () => {
                 <TargetTracker onTargetComplete={handleSessionComplete} />
               </div>
               <div>
-                <SubjectAnalytics />
+                <ChapterTracker />
               </div>
             </div>
+
+            <SubjectAnalytics />
           </div>
         );
 
@@ -163,18 +163,15 @@ export const PracticeAnalytics = () => {
           </div>
         );
 
-      case 'chapters':
-        return <ComprehensiveChapterTracker />;
-
       case 'targets':
         return (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  Smart Target Management
+                  Practice Targets
                 </h2>
-                <p className="text-muted-foreground mt-2">Set intelligent, period-specific practice goals</p>
+                <p className="text-muted-foreground mt-2">Set and manage your practice goals</p>
               </div>
               <Button 
                 onClick={() => setShowTargetModal(true)}
@@ -193,7 +190,7 @@ export const PracticeAnalytics = () => {
           <div className="space-y-6">
             <div className="mb-6">
               <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Advanced Analytics Dashboard
+                Advanced Analytics
               </h2>
               <p className="text-muted-foreground mt-2">Deep insights into your practice patterns and performance</p>
             </div>
@@ -207,13 +204,13 @@ export const PracticeAnalytics = () => {
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${themeColors.background} transition-all duration-500`}>
+    <div className={`min-h-screen ${themeColors.background} transition-colors duration-300`}>
       {/* Enhanced Header */}
-      <div className={`${themeColors.card} shadow-2xl border-b-2 transition-all duration-300 ${
+      <div className={`${themeColors.card} shadow-lg border-b-2 transition-colors duration-300 ${
         theme === 'midnight' || theme === 'obsidian' 
           ? 'border-gray-700/50 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900' 
           : 'border-gray-200 bg-gradient-to-r from-white via-gray-50 to-white'
-      } backdrop-blur-lg`}>
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
@@ -221,16 +218,16 @@ export const PracticeAnalytics = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => window.history.back()}
-                className={`flex items-center space-x-2 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-800 dark:hover:to-gray-700 transition-all duration-200 px-4 py-2 rounded-lg shadow-md hover:shadow-lg`}
+                className={`flex items-center space-x-2 hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200 dark:hover:from-gray-800 dark:hover:to-gray-700 transition-all duration-200 px-4 py-2 rounded-lg`}
               >
                 <ArrowLeft className="h-4 w-4" />
                 <span className="hidden sm:inline font-medium">Back to Planner</span>
               </Button>
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  Practice Analytics Hub
+                  Practice Analytics
                 </h1>
-                <p className="text-sm text-muted-foreground mt-1">Advanced tracking and insights for JEE preparation</p>
+                <p className="text-sm text-muted-foreground mt-1">Track your practice progress and insights</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -248,7 +245,7 @@ export const PracticeAnalytics = () => {
       </div>
 
       {/* Enhanced Mobile Tabs */}
-      <div className={`${themeColors.card} shadow-lg border-b lg:hidden overflow-x-auto backdrop-blur-md`}>
+      <div className={`${themeColors.card} shadow-md border-b lg:hidden overflow-x-auto`}>
         <div className="flex min-w-max">
           {tabs.map((tab) => {
             const IconComponent = tab.icon;
@@ -256,9 +253,9 @@ export const PracticeAnalytics = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center justify-center space-x-3 px-6 py-4 whitespace-nowrap transition-all duration-300 ${
+                className={`flex items-center justify-center space-x-3 px-8 py-4 whitespace-nowrap transition-all duration-300 ${
                   activeTab === tab.id
-                    ? `${themeColors.text} border-b-3 border-indigo-500 bg-gradient-to-t from-indigo-50 to-transparent dark:from-indigo-900/20 shadow-md`
+                    ? `${themeColors.text} border-b-3 border-indigo-500 bg-gradient-to-t from-indigo-50 to-transparent dark:from-indigo-900/20`
                     : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
                 }`}
               >
@@ -274,13 +271,13 @@ export const PracticeAnalytics = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Enhanced Desktop Sidebar */}
           <div className="hidden lg:block lg:col-span-3">
-            <Card className={`${themeColors.card} ${themeColors.glow} shadow-2xl sticky top-8 backdrop-blur-lg`}>
+            <Card className={`${themeColors.card} ${themeColors.glow} shadow-xl sticky top-8`}>
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-3">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 shadow-lg">
-                    <BarChart className="h-6 w-6 text-white" />
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500">
+                    <BarChart className="h-5 w-5 text-white" />
                   </div>
-                  <span className="text-xl font-bold">Navigation</span>
+                  <span className="text-lg">Navigation</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
@@ -291,20 +288,20 @@ export const PracticeAnalytics = () => {
                       <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`w-full flex items-center space-x-4 px-6 py-4 text-left transition-all duration-300 hover:scale-[1.02] rounded-xl mx-2 ${
+                        className={`w-full flex items-center space-x-4 px-6 py-4 text-left transition-all duration-300 hover:scale-[1.02] rounded-lg mx-2 ${
                           activeTab === tab.id
-                            ? `${themeColors.text} bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 border-l-4 border-indigo-500 shadow-lg transform scale-105`
-                            : 'text-gray-600 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:text-gray-400 dark:hover:from-gray-800/50 dark:hover:to-gray-700/50 hover:shadow-md'
+                            ? `${themeColors.text} bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 border-l-4 border-indigo-500 shadow-md`
+                            : 'text-gray-600 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:text-gray-400 dark:hover:from-gray-800/50 dark:hover:to-gray-700/50'
                         }`}
                       >
-                        <div className={`p-3 rounded-xl transition-all duration-300 ${
+                        <div className={`p-2 rounded-lg ${
                           activeTab === tab.id 
-                            ? 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white shadow-lg' 
-                            : 'bg-gray-100 dark:bg-gray-700 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-900/20'
+                            ? 'bg-gradient-to-br from-indigo-500 to-purple-500 text-white' 
+                            : 'bg-gray-100 dark:bg-gray-700'
                         }`}>
-                          <IconComponent className="h-5 w-5" />
+                          <IconComponent className="h-4 w-4" />
                         </div>
-                        <span className="font-semibold text-lg">{tab.label}</span>
+                        <span className="font-medium">{tab.label}</span>
                       </button>
                     );
                   })}
@@ -336,7 +333,7 @@ export const PracticeAnalytics = () => {
         onSessionComplete={handleSessionComplete}
       />
 
-      <EnhancedTargetManagement
+      <TargetManagementModal
         open={showTargetModal}
         onOpenChange={setShowTargetModal}
         onTargetComplete={handleSessionComplete}
