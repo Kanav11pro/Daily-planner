@@ -7,7 +7,6 @@ import { ParticleBurstCelebration } from './ParticleBurstCelebration';
 import { GlowingRingCelebration } from './GlowingRingCelebration';
 import { TypewriterCelebration } from './TypewriterCelebration';
 import { NeonGlowCelebration } from './NeonGlowCelebration';
-import { CosmicExplosionCelebration } from './CosmicExplosionCelebration';
 import { BookFlipCelebration } from './BookFlipCelebration';
 import { QuantumFieldCelebration } from './QuantumFieldCelebration';
 import { HologramCelebration } from './HologramCelebration';
