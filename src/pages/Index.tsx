@@ -183,7 +183,7 @@ const IndexContent = () => {
                   />
                 </div>
                 <div className="space-y-6">
-                  <MemoizedProgressOverview tasks={tasks} />
+                  <MemoizedProgressOverview tasks={tasks} selectedDate={selectedDate} />
                   <MemoizedTaskAnalytics 
                     tasks={tasks} 
                     onOpenWeeklyAnalytics={handleOpenWeeklyAnalytics}
@@ -227,7 +227,7 @@ const IndexContent = () => {
               />
             </div>
             <div className="space-y-6">
-              <MemoizedProgressOverview tasks={tasks} />
+              <MemoizedProgressOverview tasks={tasks} selectedDate={selectedDate} />
               <MemoizedTaskAnalytics 
                 tasks={tasks} 
                 onOpenWeeklyAnalytics={handleOpenWeeklyAnalytics}

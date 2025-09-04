@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -251,6 +251,42 @@ export type Database = {
         }
         Relationships: []
       }
+      quick_tags: {
+        Row: {
+          color_class: string | null
+          created_at: string
+          icon: string | null
+          id: string
+          is_default: boolean | null
+          name: string
+          study_nature: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          color_class?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_default?: boolean | null
+          name: string
+          study_nature: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          color_class?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_default?: boolean | null
+          name?: string
+          study_nature?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       tasks: {
         Row: {
           chapter: string | null
@@ -261,7 +297,9 @@ export type Database = {
           id: string
           priority: string | null
           scheduled_date: string
+          study_nature: string | null
           subject: string
+          tag_ids: string[] | null
           title: string
           updated_at: string
           user_id: string
@@ -275,7 +313,9 @@ export type Database = {
           id?: string
           priority?: string | null
           scheduled_date: string
+          study_nature?: string | null
           subject: string
+          tag_ids?: string[] | null
           title: string
           updated_at?: string
           user_id: string
@@ -289,7 +329,9 @@ export type Database = {
           id?: string
           priority?: string | null
           scheduled_date?: string
+          study_nature?: string | null
           subject?: string
+          tag_ids?: string[] | null
           title?: string
           updated_at?: string
           user_id?: string

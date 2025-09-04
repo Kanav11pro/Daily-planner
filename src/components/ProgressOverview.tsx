@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { format } from "date-fns";
 import { formatInTimeZone, toZonedTime } from "date-fns-tz";
 import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
+import { StudyDistribution } from "./StudyDistribution";
 
 interface Task {
   id: string;
@@ -15,14 +16,17 @@ interface Task {
   scheduled_date: string;
   created_at: string;
   duration?: number;
+  study_nature?: string;
 }
 
 interface ProgressOverviewProps {
   tasks: Task[];
+  selectedDate?: Date;
 }
 
 export const ProgressOverview = ({
-  tasks
+  tasks,
+  selectedDate = new Date()
 }: ProgressOverviewProps) => {
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
@@ -210,6 +214,8 @@ export const ProgressOverview = ({
           </div>
         </CardContent>
       </Card>
+
+      <StudyDistribution tasks={tasks} selectedDate={selectedDate} />
     </div>
   );
 };

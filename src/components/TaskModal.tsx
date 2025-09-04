@@ -1,9 +1,11 @@
-import { useState } from "react";
-import { X, Search, BookOpen, FileText, GraduationCap, RotateCcw, Package, ClipboardList } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { CustomTagManager } from "./CustomTagManager";
+import { useQuickTags } from "@/hooks/useQuickTags";
 
 interface TaskModalProps {
   onClose: () => void;
@@ -145,14 +147,7 @@ const subjectsWithChapters = {
   ]
 };
 
-const taskTags = [
-  { value: 'hw', label: 'HW', emoji: '📝', icon: ClipboardList },
-  { value: 'notes', label: 'Notes', emoji: '📔', icon: FileText },
-  { value: 'lecture', label: 'Lecture', emoji: '🎓', icon: GraduationCap },
-  { value: 'revision', label: 'Revision', emoji: '🔄', icon: RotateCcw },
-  { value: 'module', label: 'Module', emoji: '📦', icon: Package },
-  { value: 'dpps', label: 'DPPs', emoji: '📊', icon: BookOpen }
-];
+// Remove the static taskTags array - now using dynamic tags from database
 
 const priorityOptions = [
   { value: 'high', label: 'High', color: 'bg-red-100 border-red-300 text-red-700 hover:bg-red-200', emoji: '🔴' },
@@ -172,6 +167,7 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
   const [step, setStep] = useState(1);
   const [chapterSearch, setChapterSearch] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [tagsChanged, setTagsChanged] = useState(false);
   const [formData, setFormData] = useState({
     subject: '',
     chapter: '',
@@ -181,6 +177,8 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
     duration: '',
     scheduled_date: selectedDate.toISOString().split('T')[0]
   });
+  
+  const { tags } = useQuickTags();
 
   const handleNext = () => {
     if (step === 1 && formData.subject) setStep(2);
@@ -188,15 +186,18 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
     else if (step === 3 && formData.title) setStep(4);
   };
 
-  const handleTagToggle = (tagValue: string) => {
+  const handleTagSelect = (tagId: string) => {
     setSelectedTags(prev => {
-      const newTags = prev.includes(tagValue)
-        ? prev.filter(tag => tag !== tagValue)
-        : [...prev, tagValue];
+      const newTags = prev.includes(tagId)
+        ? prev.filter(id => id !== tagId)
+        : [...prev, tagId];
       
       // Update title based on selected tags
       if (newTags.length > 0) {
-        const tagLabels = newTags.map(tag => taskTags.find(t => t.value === tag)?.label).join(' + ');
+        const tagLabels = newTags
+          .map(id => tags.find(t => t.id === id)?.name)
+          .filter(Boolean)
+          .join(' + ');
         setFormData({ ...formData, title: tagLabels });
       } else {
         setFormData({ ...formData, title: '' });
@@ -206,13 +207,40 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
     });
   };
 
+  const handleTagsChange = () => {
+    setTagsChanged(!tagsChanged);
+  };
+
+  // Calculate study nature based on selected tags
+  const getStudyNature = () => {
+    if (selectedTags.length === 0) return null;
+    
+    const selectedTagObjects = selectedTags.map(id => tags.find(t => t.id === id)).filter(Boolean);
+    if (selectedTagObjects.length === 0) return null;
+    
+    // If all tags have the same study nature, use that
+    const natures = selectedTagObjects.map(tag => tag.study_nature);
+    const uniqueNatures = [...new Set(natures)];
+    
+    if (uniqueNatures.length === 1) {
+      return uniqueNatures[0];
+    }
+    
+    // If mixed, prioritize in order: Practice > Theory > Revision
+    if (natures.includes('Practice')) return 'Practice';
+    if (natures.includes('Theory')) return 'Theory';
+    return 'Revision';
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title.trim() || !formData.subject || !formData.chapter) return;
     
     const taskData = {
       ...formData,
-      duration: formData.duration ? parseInt(formData.duration) : null
+      duration: formData.duration ? parseInt(formData.duration) : null,
+      tag_ids: selectedTags,
+      study_nature: getStudyNature(),
     };
     
     onAddTask(taskData);
@@ -305,33 +333,11 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
               <p className="text-sm text-gray-600">{formData.subject} - {formData.chapter}</p>
             </div>
 
-            <div>
-              <Label htmlFor="tags" className="text-base font-medium mb-3 block">Quick Tags</Label>
-              <div className="grid grid-cols-2 gap-3">
-                {taskTags.map(tag => {
-                  const IconComponent = tag.icon;
-                  const isSelected = selectedTags.includes(tag.value);
-                  return (
-                    <button
-                      key={tag.value}
-                      type="button"
-                      onClick={() => handleTagToggle(tag.value)}
-                      className={`p-4 rounded-xl border-2 transition-all duration-200 hover:scale-[1.02] ${
-                        isSelected
-                          ? 'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-md'
-                          : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex flex-col items-center space-y-2">
-                        <IconComponent className="h-6 w-6" />
-                        <div className="text-sm font-medium">{tag.label}</div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="text-xs text-gray-500 mt-3">Select one or more tags to auto-fill the title, or write your own below</p>
-            </div>
+            <CustomTagManager
+              selectedTags={selectedTags}
+              onTagSelect={handleTagSelect}
+              onTagsChange={handleTagsChange}
+            />
 
             <div>
               <Label htmlFor="title" className="text-base font-medium">Task Title</Label>
