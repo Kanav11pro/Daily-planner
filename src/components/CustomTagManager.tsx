@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, X, Edit3, Palette, BookOpen, Brain, RotateCcw } from 'lucide-react';
+import { Plus, X, Edit3, Palette, BookOpen, Brain, RotateCcw, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -237,35 +237,55 @@ export const CustomTagManager: React.FC<CustomTagManagerProps> = ({ selectedTags
           return (
             <div
               key={tag.id}
-              className={`relative p-3 rounded-xl border-2 transition-all duration-200 hover:scale-[1.02] ${
+              className={`relative p-4 rounded-xl border-2 transition-all duration-300 hover:scale-105 hover:shadow-lg cursor-pointer ${
                 isSelected
-                  ? 'border-indigo-500 bg-indigo-50 shadow-md'
-                  : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
-              } ${tag.color_class}`}
+                  ? 'border-indigo-500 bg-gradient-to-br from-indigo-50 to-purple-50 shadow-lg scale-105'
+                  : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50 hover:shadow-md'
+              } ${tag.color_class} group`}
             >
               <button
                 type="button"
                 onClick={() => onTagSelect(tag.id)}
-                className="w-full"
+                className="w-full h-full"
               >
-                <div className="flex items-center space-x-2">
-                  <IconComponent className="h-5 w-5" />
-                  <span className="font-medium text-sm">{tag.name}</span>
-                  <StudyNatureIcon className="h-3 w-3 ml-auto opacity-70" />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className={`p-2 rounded-lg ${isSelected ? 'bg-white/50' : 'bg-white/30'} group-hover:bg-white/50 transition-colors`}>
+                      <IconComponent className="h-5 w-5" />
+                    </div>
+                    <div className="text-left">
+                      <span className="font-semibold text-sm block">{tag.name}</span>
+                      <span className="text-xs opacity-70 flex items-center">
+                        <StudyNatureIcon className="h-3 w-3 mr-1" />
+                        {tag.study_nature}
+                      </span>
+                    </div>
+                  </div>
+                  {isSelected && (
+                    <div className="bg-indigo-500 text-white rounded-full p-1">
+                      <Check className="h-4 w-4" />
+                    </div>
+                  )}
                 </div>
               </button>
               
               {!tag.is_default && (
-                <div className="absolute -top-2 -right-2 flex gap-1">
+                <div className="absolute -top-2 -right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
-                    onClick={() => startEditing(tag)}
-                    className="p-1 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      startEditing(tag);
+                    }}
+                    className="p-1.5 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors shadow-lg"
                   >
                     <Edit3 className="h-3 w-3" />
                   </button>
                   <button
-                    onClick={() => handleDeleteTag(tag.id)}
-                    className="p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteTag(tag.id);
+                    }}
+                    className="p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-lg"
                   >
                     <X className="h-3 w-3" />
                   </button>

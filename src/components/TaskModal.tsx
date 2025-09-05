@@ -198,9 +198,9 @@ export const TaskModal = ({ onClose, onAddTask, selectedDate }: TaskModalProps) 
           .map(id => tags.find(t => t.id === id)?.name)
           .filter(Boolean)
           .join(' + ');
-        setFormData({ ...formData, title: tagLabels });
+        setFormData(prevFormData => ({ ...prevFormData, title: tagLabels }));
       } else {
-        setFormData({ ...formData, title: '' });
+        setFormData(prevFormData => ({ ...prevFormData, title: '' }));
       }
       
       return newTags;

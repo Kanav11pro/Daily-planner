@@ -1,8 +1,7 @@
-
 import { Check, Clock, X, Plus, BookOpen, Sparkles, Edit, Trash2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { EditTaskModal } from "./EditTaskModal";
 import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
 import { MoveTaskModal } from "./MoveTaskModal";
@@ -38,6 +37,7 @@ const priorityIcons = {
 
 export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddTask, title }: TaskListProps) => {
   const [completingTasks, setCompletingTasks] = useState<Set<string>>(new Set());
+  const [shreddingTasks, setShreddingTasks] = useState<Set<string>>(new Set());
   const [editingTask, setEditingTask] = useState<any>(null);
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
   const [movingTask, setMovingTask] = useState<any>(null);
@@ -46,16 +46,26 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
 
   const handleToggleTask = (taskId: string, isCompleted: boolean) => {
     if (!isCompleted) {
+      // Start paper shredder animation
+      setShreddingTasks(prev => new Set(prev).add(taskId));
       setCompletingTasks(prev => new Set(prev).add(taskId));
+      
       setTimeout(() => {
+        onToggleTask(taskId);
+        setShreddingTasks(prev => {
+          const next = new Set(prev);
+          next.delete(taskId);
+          return next;
+        });
         setCompletingTasks(prev => {
           const next = new Set(prev);
           next.delete(taskId);
           return next;
         });
-      }, 1000);
+      }, 1500); // Longer delay for animation
+    } else {
+      onToggleTask(taskId);
     }
-    onToggleTask(taskId);
   };
 
   const handleEditTask = (updatedTask: any) => {
@@ -100,14 +110,123 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
     );
   }
 
-  // Group tasks by subject
-  const tasksBySubject = tasks.reduce((acc, task) => {
+  // Separate tasks into pending and completed
+  const pendingTasks = tasks.filter(task => !task.completed);
+  const completedTasks = tasks.filter(task => task.completed);
+
+  // Group pending tasks by subject
+  const pendingTasksBySubject = pendingTasks.reduce((acc, task) => {
     if (!acc[task.subject]) {
       acc[task.subject] = [];
     }
     acc[task.subject].push(task);
     return acc;
   }, {});
+
+  // Group completed tasks by subject
+  const completedTasksBySubject = completedTasks.reduce((acc, task) => {
+    if (!acc[task.subject]) {
+      acc[task.subject] = [];
+    }
+    acc[task.subject].push(task);
+    return acc;
+  }, {});
+
+  const renderTask = (task: any, isCompleted: boolean = false) => {
+    const isCompleting = completingTasks.has(task.id);
+    const isShredding = shreddingTasks.has(task.id);
+    
+    return (
+      <div
+        key={task.id}
+        className={`group border-l-4 ${priorityColors[task.priority]} rounded-r-lg shadow-sm hover:shadow-lg transition-all duration-300 p-3 sm:p-4 bg-white transform hover:scale-[1.01] ${
+          isCompleted ? 'opacity-75' : ''
+        } ${isCompleting && !isCompleted ? 'animate-pulse bg-gradient-to-r from-green-100 to-emerald-100' : ''} ${
+          isShredding ? 'animate-shredder-tear' : ''
+        } dark:bg-gray-800 dark:text-gray-100 overflow-hidden relative`}
+        style={{
+          animation: isShredding ? 'shredderTear 1.5s ease-in-out forwards' : undefined
+        }}
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex items-start space-x-3 flex-1">
+            <button
+              onClick={() => handleToggleTask(task.id, task.completed)}
+              className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+                task.completed
+                  ? 'bg-green-500 border-green-500 text-white animate-bounce'
+                  : 'border-gray-300 hover:border-indigo-500 hover:bg-indigo-50'
+              }`}
+            >
+              {task.completed && <Check className="h-4 w-4" />}
+              {isCompleting && !task.completed && <Sparkles className="h-4 w-4 text-indigo-500" />}
+            </button>
+            
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <h5 className={`font-semibold break-words ${isCompleted ? 'line-through' : ''} text-gray-800 dark:text-gray-100`}>
+                    {task.title}
+                  </h5>
+                  {task.chapter && (
+                    <p className={`text-sm break-words ${isCompleted ? 'line-through' : ''} text-gray-600 dark:text-gray-300`}>
+                      Chapter: {task.chapter}
+                    </p>
+                  )}
+                  {task.description && (
+                    <p className={`mt-1 text-sm break-words ${isCompleted ? 'line-through' : ''} text-gray-600 dark:text-gray-300`}>
+                      {task.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-2 sm:space-x-3 mt-3 flex-wrap gap-2">
+                <Badge variant="outline" className="text-xs">
+                  {priorityIcons[task.priority]} {task.priority} priority
+                </Badge>
+                
+                {task.duration && (
+                  <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                    <Clock className="h-4 w-4 mr-1" />
+                    {task.duration} min
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          <div className={`flex space-x-1 ${isCompleted ? 'opacity-60' : 'opacity-0 group-hover:opacity-100'} transition-all duration-300 ml-2`}>
+            {!isCompleted && (
+              <>
+                <button
+                  onClick={() => setMovingTask(task)}
+                  className="text-purple-500 hover:text-purple-700 p-1 hover:scale-110 transition-all duration-300"
+                  title="Move to different date"
+                >
+                  <Calendar className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => setEditingTask(task)}
+                  className="text-blue-500 hover:text-blue-700 p-1 hover:scale-110 transition-all duration-300"
+                  title="Edit task"
+                >
+                  <Edit className="h-4 w-4" />
+                </button>
+              </>
+            )}
+            <button
+              onClick={() => setDeletingTaskId(task.id)}
+              className="text-red-500 hover:text-red-700 p-1 hover:scale-110 transition-all duration-300"
+              title="Delete task"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="animate-fade-in">
@@ -118,106 +237,55 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
         </div>
       </div>
 
-      <div className="space-y-6">
-        {Object.entries(tasksBySubject).map(([subject, subjectTasks]: [string, any[]]) => (
-          <div key={subject} className="space-y-3 animate-fade-in">
-            <div className="flex items-center space-x-2 flex-wrap">
-              <BookOpen className={`h-5 w-5 ${themeColors.text}`} />
-              <h4 className={`text-base sm:text-lg font-semibold ${themeColors.text}`}>{subject}</h4>
-              <Badge className={`${subjectColors[subject] || "bg-gray-100 text-gray-800"} text-xs`}>
-                {subjectTasks.length} task{subjectTasks.length !== 1 ? 's' : ''}
-              </Badge>
+      {/* Pending Tasks Section */}
+      {Object.keys(pendingTasksBySubject).length > 0 && (
+        <div className="space-y-6 mb-8">
+          <h4 className={`text-lg font-semibold ${themeColors.text} flex items-center gap-2`}>
+            <Clock className="h-5 w-5" />
+            Pending Tasks
+          </h4>
+          {Object.entries(pendingTasksBySubject).map(([subject, subjectTasks]: [string, any[]]) => (
+            <div key={subject} className="space-y-3 animate-fade-in">
+              <div className="flex items-center space-x-2 flex-wrap">
+                <BookOpen className={`h-5 w-5 ${themeColors.text}`} />
+                <h5 className={`text-base sm:text-lg font-semibold ${themeColors.text}`}>{subject}</h5>
+                <Badge className={`${subjectColors[subject] || "bg-gray-100 text-gray-800"} text-xs`}>
+                  {subjectTasks.length} task{subjectTasks.length !== 1 ? 's' : ''}
+                </Badge>
+              </div>
+              
+              <div className="space-y-3 ml-0 sm:ml-7">
+                {subjectTasks.map((task) => renderTask(task, false))}
+              </div>
             </div>
-            
-            <div className="space-y-3 ml-0 sm:ml-7">
-              {subjectTasks.map((task) => {
-                const isCompleting = completingTasks.has(task.id);
-                return (
-                  <div
-                    key={task.id}
-                    className={`group border-l-4 ${priorityColors[task.priority]} rounded-r-lg shadow-sm hover:shadow-lg transition-all duration-300 p-3 sm:p-4 bg-white transform hover:scale-[1.01] ${
-                      task.completed ? 'opacity-75' : ''
-                    } ${isCompleting ? 'animate-pulse bg-gradient-to-r from-green-100 to-emerald-100' : ''} dark:bg-gray-800 dark:text-gray-100`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-3 flex-1">
-                        <button
-                          onClick={() => handleToggleTask(task.id, task.completed)}
-                          className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 hover:scale-110 ${
-                            task.completed
-                              ? 'bg-green-500 border-green-500 text-white animate-bounce'
-                              : 'border-gray-300 hover:border-indigo-500 hover:bg-indigo-50'
-                          }`}
-                        >
-                          {task.completed && <Check className="h-4 w-4" />}
-                          {isCompleting && !task.completed && <Sparkles className="h-4 w-4 text-indigo-500" />}
-                        </button>
-                        
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1 min-w-0">
-                              <h5 className={`font-semibold break-words ${task.completed ? 'line-through' : ''} text-gray-800 dark:text-gray-100`}>
-                                {task.title}
-                              </h5>
-                              {task.chapter && (
-                                <p className={`text-sm break-words ${task.completed ? 'line-through' : ''} text-gray-600 dark:text-gray-300`}>
-                                  Chapter: {task.chapter}
-                                </p>
-                              )}
-                              {task.description && (
-                                <p className={`mt-1 text-sm break-words ${task.completed ? 'line-through' : ''} text-gray-600 dark:text-gray-300`}>
-                                  {task.description}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center space-x-2 sm:space-x-3 mt-3 flex-wrap gap-2">
-                            <Badge variant="outline" className="text-xs">
-                              {priorityIcons[task.priority]} {task.priority} priority
-                            </Badge>
-                            
-                            {task.duration && (
-                              <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                                <Clock className="h-4 w-4 mr-1" />
-                                {task.duration} min
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300 ml-2">
-                        <button
-                          onClick={() => setMovingTask(task)}
-                          className="text-purple-500 hover:text-purple-700 p-1 hover:scale-110 transition-all duration-300"
-                          title="Move to different date"
-                        >
-                          <Calendar className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => setEditingTask(task)}
-                          className="text-blue-500 hover:text-blue-700 p-1 hover:scale-110 transition-all duration-300"
-                          title="Edit task"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => setDeletingTaskId(task.id)}
-                          className="text-red-500 hover:text-red-700 p-1 hover:scale-110 transition-all duration-300"
-                          title="Delete task"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+          ))}
+        </div>
+      )}
+
+      {/* Completed Tasks Section */}
+      {Object.keys(completedTasksBySubject).length > 0 && (
+        <div className="space-y-6">
+          <h4 className={`text-lg font-semibold ${themeColors.text} flex items-center gap-2`}>
+            <Check className="h-5 w-5 text-green-500" />
+            Completed Tasks ({completedTasks.length})
+          </h4>
+          {Object.entries(completedTasksBySubject).map(([subject, subjectTasks]: [string, any[]]) => (
+            <div key={`completed-${subject}`} className="space-y-3 animate-fade-in">
+              <div className="flex items-center space-x-2 flex-wrap">
+                <BookOpen className={`h-5 w-5 ${themeColors.text} opacity-60`} />
+                <h5 className={`text-base sm:text-lg font-semibold ${themeColors.text} opacity-60`}>{subject}</h5>
+                <Badge className={`${subjectColors[subject] || "bg-gray-100 text-gray-800"} text-xs opacity-60`}>
+                  {subjectTasks.length} completed
+                </Badge>
+              </div>
+              
+              <div className="space-y-3 ml-0 sm:ml-7">
+                {subjectTasks.map((task) => renderTask(task, true))}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <div className="mt-8 text-center">
         <Button

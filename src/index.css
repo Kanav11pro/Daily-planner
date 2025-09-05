@@ -166,6 +166,41 @@
   animation: wiggle 2s ease-in-out;
 }
 
+@keyframes shredderTear {
+  0% { 
+    transform: scale(1) rotateZ(0deg); 
+    opacity: 1;
+    filter: blur(0px);
+  }
+  25% { 
+    transform: scale(0.98) rotateZ(-1deg); 
+    opacity: 0.9;
+    filter: blur(0.5px);
+  }
+  50% { 
+    transform: scale(0.95) rotateZ(1deg); 
+    opacity: 0.7;
+    filter: blur(1px);
+    background: linear-gradient(45deg, #fef3c7, #fde68a, #fbbf24);
+  }
+  75% { 
+    transform: scale(0.9) rotateZ(-2deg) scaleY(0.8); 
+    opacity: 0.4;
+    filter: blur(2px);
+    background: linear-gradient(90deg, #fed7aa, #fdba74, #fb923c);
+  }
+  100% { 
+    transform: scale(0.1) rotateZ(5deg) scaleY(0.1) translateY(50px); 
+    opacity: 0;
+    filter: blur(5px);
+    background: linear-gradient(135deg, #fecaca, #fca5a5, #f87171);
+  }
+}
+
+.animate-shredder-tear {
+  animation: shredderTear 1.5s ease-in-out forwards;
+}
+
 @media (max-width: 640px) {
   .container {
     padding-left: 1rem;
