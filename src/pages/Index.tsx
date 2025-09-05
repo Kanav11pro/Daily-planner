@@ -1,7 +1,6 @@
 
 import React, { useState, useCallback, useMemo } from "react";
 import { Header } from "@/components/Header";
-import { QuoteSection } from "@/components/QuoteSection";
 import { TaskDashboard } from "@/components/TaskDashboard";
 import { TaskAnalytics } from "@/components/TaskAnalytics";
 import { WeeklyAnalytics } from "@/components/WeeklyAnalytics";
@@ -21,7 +20,6 @@ import { formatInTimeZone } from "date-fns-tz";
 
 // Memoized components for better performance
 const MemoizedHeader = React.memo(Header);
-const MemoizedQuoteSection = React.memo(QuoteSection);
 const MemoizedProfileSection = React.memo(ProfileSection);
 const MemoizedDateSelector = React.memo(DateSelector);
 const MemoizedTaskDashboard = React.memo(TaskDashboard);
@@ -163,9 +161,8 @@ const IndexContent = () => {
             
             <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
               <MemoizedProfileSection />
-              <MemoizedQuoteSection />
               
-              <MemoizedDateSelector 
+              <MemoizedDateSelector
                 selectedDate={selectedDate}
                 onDateChange={setSelectedDate}
                 onAddTask={handleOpenTaskModal}
@@ -207,9 +204,8 @@ const IndexContent = () => {
         
         <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
           <MemoizedProfileSection />
-          <MemoizedQuoteSection />
           
-          <MemoizedDateSelector 
+          <MemoizedDateSelector
             selectedDate={selectedDate}
             onDateChange={setSelectedDate}
             onAddTask={handleOpenTaskModal}
