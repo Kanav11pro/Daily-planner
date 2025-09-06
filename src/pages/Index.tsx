@@ -68,13 +68,8 @@ const IndexContent = () => {
   }, [updateTask, formatDateForComparison]);
 
   const handleToggleTask = useCallback(async (taskId: string) => {
-    const task = tasks.find(t => t.id === taskId);
-    if (task && !task.completed) {
-      setShowCelebration(true);
-      setTimeout(() => setShowCelebration(false), 5000);
-    }
     await toggleTask(taskId);
-  }, [tasks, toggleTask]);
+  }, [toggleTask]);
 
   const handleDeleteTask = useCallback(async (taskId: string) => {
     await deleteTask(taskId);
@@ -180,7 +175,6 @@ const IndexContent = () => {
                   />
                 </div>
                 <div className="space-y-6">
-                  <MemoizedProgressOverview tasks={tasks} selectedDate={selectedDate} />
                   <MemoizedTaskAnalytics 
                     tasks={tasks} 
                     onOpenWeeklyAnalytics={handleOpenWeeklyAnalytics}
@@ -223,7 +217,6 @@ const IndexContent = () => {
               />
             </div>
             <div className="space-y-6">
-              <MemoizedProgressOverview tasks={tasks} selectedDate={selectedDate} />
               <MemoizedTaskAnalytics 
                 tasks={tasks} 
                 onOpenWeeklyAnalytics={handleOpenWeeklyAnalytics}

@@ -262,28 +262,35 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
         </div>
       )}
 
-      {/* Completed Tasks Section */}
+      {/* Completed Tasks Section - Collapsible */}
       {Object.keys(completedTasksBySubject).length > 0 && (
-        <div className="space-y-6">
-          <h4 className={`text-lg font-semibold ${themeColors.text} flex items-center gap-2`}>
-            <Check className="h-5 w-5 text-green-500" />
-            Completed Tasks ({completedTasks.length})
-          </h4>
-          {Object.entries(completedTasksBySubject).map(([subject, subjectTasks]: [string, any[]]) => (
-            <div key={`completed-${subject}`} className="space-y-3 animate-fade-in">
-              <div className="flex items-center space-x-2 flex-wrap">
-                <BookOpen className={`h-5 w-5 ${themeColors.text} opacity-60`} />
-                <h5 className={`text-base sm:text-lg font-semibold ${themeColors.text} opacity-60`}>{subject}</h5>
-                <Badge className={`${subjectColors[subject] || "bg-gray-100 text-gray-800"} text-xs opacity-60`}>
-                  {subjectTasks.length} completed
-                </Badge>
-              </div>
-              
-              <div className="space-y-3 ml-0 sm:ml-7">
-                {subjectTasks.map((task) => renderTask(task, true))}
-              </div>
+        <div className="space-y-4">
+          <details className="group">
+            <summary className={`cursor-pointer list-none flex items-center gap-2 text-lg font-semibold ${themeColors.text} hover:opacity-80 transition-opacity`}>
+              <Check className="h-5 w-5 text-green-500" />
+              <span>Completed Tasks ({completedTasks.length})</span>
+              <svg className="w-4 h-4 ml-auto transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div className="mt-4 space-y-6">
+              {Object.entries(completedTasksBySubject).map(([subject, subjectTasks]: [string, any[]]) => (
+                <div key={`completed-${subject}`} className="space-y-3 animate-fade-in">
+                  <div className="flex items-center space-x-2 flex-wrap">
+                    <BookOpen className={`h-5 w-5 ${themeColors.text} opacity-60`} />
+                    <h5 className={`text-base sm:text-lg font-semibold ${themeColors.text} opacity-60`}>{subject}</h5>
+                    <Badge className={`${subjectColors[subject] || "bg-gray-100 text-gray-800"} text-xs opacity-60`}>
+                      {subjectTasks.length} completed
+                    </Badge>
+                  </div>
+                  
+                  <div className="space-y-3 ml-0 sm:ml-7">
+                    {subjectTasks.map((task) => renderTask(task, true))}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </details>
         </div>
       )}
 
