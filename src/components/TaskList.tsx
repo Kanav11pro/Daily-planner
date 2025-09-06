@@ -1,4 +1,4 @@
-import { Check, Clock, X, Plus, BookOpen, Sparkles, Edit, Trash2, Calendar } from "lucide-react";
+import { Check, Clock, X, Plus, BookOpen, Sparkles, Edit, Trash2, Calendar, ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
@@ -41,6 +41,7 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
   const [editingTask, setEditingTask] = useState<any>(null);
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
   const [movingTask, setMovingTask] = useState<any>(null);
+  const [isCompletedExpanded, setIsCompletedExpanded] = useState(false);
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
@@ -262,28 +263,41 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
         </div>
       )}
 
-      {/* Completed Tasks Section */}
+      {/* Completed Tasks Section - Collapsible */}
       {Object.keys(completedTasksBySubject).length > 0 && (
         <div className="space-y-6">
-          <h4 className={`text-lg font-semibold ${themeColors.text} flex items-center gap-2`}>
+          <button
+            onClick={() => setIsCompletedExpanded(!isCompletedExpanded)}
+            className={`w-full text-left text-lg font-semibold ${themeColors.text} flex items-center gap-2 hover:opacity-80 transition-opacity`}
+          >
+            {isCompletedExpanded ? (
+              <ChevronDown className="h-5 w-5 text-green-500" />
+            ) : (
+              <ChevronRight className="h-5 w-5 text-green-500" />
+            )}
             <Check className="h-5 w-5 text-green-500" />
             Completed Tasks ({completedTasks.length})
-          </h4>
-          {Object.entries(completedTasksBySubject).map(([subject, subjectTasks]: [string, any[]]) => (
-            <div key={`completed-${subject}`} className="space-y-3 animate-fade-in">
-              <div className="flex items-center space-x-2 flex-wrap">
-                <BookOpen className={`h-5 w-5 ${themeColors.text} opacity-60`} />
-                <h5 className={`text-base sm:text-lg font-semibold ${themeColors.text} opacity-60`}>{subject}</h5>
-                <Badge className={`${subjectColors[subject] || "bg-gray-100 text-gray-800"} text-xs opacity-60`}>
-                  {subjectTasks.length} completed
-                </Badge>
-              </div>
-              
-              <div className="space-y-3 ml-0 sm:ml-7">
-                {subjectTasks.map((task) => renderTask(task, true))}
-              </div>
+          </button>
+          
+          {isCompletedExpanded && (
+            <div className="animate-fade-in">
+              {Object.entries(completedTasksBySubject).map(([subject, subjectTasks]: [string, any[]]) => (
+                <div key={`completed-${subject}`} className="space-y-3 animate-fade-in mb-6">
+                  <div className="flex items-center space-x-2 flex-wrap">
+                    <BookOpen className={`h-5 w-5 ${themeColors.text} opacity-60`} />
+                    <h5 className={`text-base sm:text-lg font-semibold ${themeColors.text} opacity-60`}>{subject}</h5>
+                    <Badge className={`${subjectColors[subject] || "bg-gray-100 text-gray-800"} text-xs opacity-60`}>
+                      {subjectTasks.length} completed
+                    </Badge>
+                  </div>
+                  
+                  <div className="space-y-3 ml-0 sm:ml-7">
+                    {subjectTasks.map((task) => renderTask(task, true))}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
 

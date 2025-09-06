@@ -28,7 +28,6 @@ const MemoizedTaskAnalytics = React.memo(TaskAnalytics);
 
 const IndexContent = () => {
   const [showTaskModal, setShowTaskModal] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
   const [showWeeklyAnalytics, setShowWeeklyAnalytics] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showGuidedTour, setShowGuidedTour] = useState(false);
@@ -68,13 +67,8 @@ const IndexContent = () => {
   }, [updateTask, formatDateForComparison]);
 
   const handleToggleTask = useCallback(async (taskId: string) => {
-    const task = tasks.find(t => t.id === taskId);
-    if (task && !task.completed) {
-      setShowCelebration(true);
-      setTimeout(() => setShowCelebration(false), 5000);
-    }
     await toggleTask(taskId);
-  }, [tasks, toggleTask]);
+  }, [toggleTask]);
 
   const handleDeleteTask = useCallback(async (taskId: string) => {
     await deleteTask(taskId);
@@ -84,7 +78,7 @@ const IndexContent = () => {
   const handleCloseTaskModal = useCallback(() => setShowTaskModal(false), []);
   const handleOpenWeeklyAnalytics = useCallback(() => setShowWeeklyAnalytics(true), []);
   const handleCloseWeeklyAnalytics = useCallback(() => setShowWeeklyAnalytics(false), []);
-  const handleCloseCelebration = useCallback(() => setShowCelebration(false), []);
+  
 
   // Memoized tasks for selected date
   const selectedDateTasks = useMemo(() => {
@@ -247,9 +241,6 @@ const IndexContent = () => {
           />
         )}
 
-        {showCelebration && (
-          <Celebration onComplete={handleCloseCelebration} />
-        )}
       </div>
     </div>
   );
