@@ -101,19 +101,15 @@ export const StudyDistribution: React.FC<StudyDistributionProps> = ({ tasks, sel
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Study Metrics */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="text-center p-3 bg-green-50 rounded-lg">
-            <div className="text-lg font-bold text-green-600">{completedTasks.length}</div>
-            <div className="text-xs text-green-600 font-medium">Completed</div>
+        {/* Planned Study Hours */}
+        <div className="flex items-center justify-between p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg">
+          <div className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-indigo-600" />
+            <span className="font-medium text-gray-700">Planned Study Time</span>
           </div>
-          <div className="text-center p-3 bg-orange-50 rounded-lg">
-            <div className="text-lg font-bold text-orange-600">{todayTasks.length - completedTasks.length}</div>
-            <div className="text-xs text-orange-600 font-medium">Remaining</div>
-          </div>
-          <div className="text-center p-3 bg-blue-50 rounded-lg">
-            <div className="text-lg font-bold text-blue-600">{completedHours}h 0m</div>
-            <div className="text-xs text-blue-600 font-medium">Studied</div>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-indigo-600">{plannedHours}h</div>
+            <div className="text-sm text-gray-500">{todayTasks.length} tasks</div>
           </div>
         </div>
 
