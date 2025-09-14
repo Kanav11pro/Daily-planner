@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { QuickTag, useQuickTags } from '@/hooks/useQuickTags';
+import { QuickTag, useQuickTags, PracticeConfig } from '@/hooks/useQuickTags';
 import { toast } from 'sonner';
 
 interface CustomTagManagerProps {
@@ -45,6 +45,7 @@ export const CustomTagManager: React.FC<CustomTagManagerProps> = ({ selectedTags
     icon: 'BookOpen',
     study_nature: 'Theory' as 'Theory' | 'Practice' | 'Revision',
     color_class: 'bg-blue-100 border-blue-300 text-blue-700',
+    practice_config: null as PracticeConfig | null,
   });
 
   const resetForm = () => {
@@ -53,7 +54,30 @@ export const CustomTagManager: React.FC<CustomTagManagerProps> = ({ selectedTags
       icon: 'BookOpen',
       study_nature: 'Theory',
       color_class: 'bg-blue-100 border-blue-300 text-blue-700',
+      practice_config: null,
     });
+  };
+
+  const initializePracticeConfig = () => {
+    setFormData(prev => ({
+      ...prev,
+      practice_config: {
+        sources: {
+          Module: ['Ex 1', 'Ex 1A', 'Ex 2', 'Ex 2A', 'Ex 3', 'Ex 3A', 'Misc'],
+          PYQs: ['Mains', 'Advanced'],
+          CPPs: ['Core Practice Problems'],
+          'Reference Books': ['NCERT Questions'],
+          Custom: []
+        },
+        defaultDifficulty: 'Medium' as const,
+        trackingPreferences: {
+          trackQuestions: true,
+          trackTime: true,
+          trackAccuracy: true,
+          trackDifficulty: true
+        }
+      }
+    }));
   };
 
   const handleCreateTag = async () => {
@@ -120,6 +144,7 @@ export const CustomTagManager: React.FC<CustomTagManagerProps> = ({ selectedTags
       icon: tag.icon || 'BookOpen',
       study_nature: tag.study_nature,
       color_class: tag.color_class,
+      practice_config: tag.practice_config,
     });
   };
 
@@ -155,22 +180,66 @@ export const CustomTagManager: React.FC<CustomTagManagerProps> = ({ selectedTags
                 />
               </div>
 
-              <div>
-                <Label>Study Nature</Label>
-                <Select 
-                  value={formData.study_nature} 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, study_nature: value as any }))}
-                >
-                  <SelectTrigger className="mt-1">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Theory">🧠 Theory</SelectItem>
-                    <SelectItem value="Practice">✏️ Practice</SelectItem>
-                    <SelectItem value="Revision">🔄 Revision</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                <div>
+                  <Label>Study Nature</Label>
+                  <Select 
+                    value={formData.study_nature} 
+                    onValueChange={(value) => {
+                      setFormData(prev => ({ ...prev, study_nature: value as any }));
+                      if (value === 'Practice') {
+                        initializePracticeConfig();
+                      } else {
+                        setFormData(prev => ({ ...prev, practice_config: null }));
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Theory">🧠 Theory</SelectItem>
+                      <SelectItem value="Practice">✏️ Practice</SelectItem>
+                      <SelectItem value="Revision">🔄 Revision</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {formData.study_nature === 'Practice' && (
+                  <div className="space-y-4 p-4 bg-blue-50 rounded-lg border">
+                    <h4 className="font-medium text-blue-900">Practice Configuration</h4>
+                    <p className="text-sm text-blue-700">
+                      This tag is for practice tasks. Configure the sources and tracking preferences.
+                    </p>
+                    
+                    <div>
+                      <Label>Default Difficulty</Label>
+                      <Select 
+                        value={formData.practice_config?.defaultDifficulty || 'Medium'} 
+                        onValueChange={(value) => setFormData(prev => ({ 
+                          ...prev, 
+                          practice_config: prev.practice_config ? {
+                            ...prev.practice_config,
+                            defaultDifficulty: value as any
+                          } : null
+                        }))}
+                      >
+                        <SelectTrigger className="mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Easy">Easy</SelectItem>
+                          <SelectItem value="Medium">Medium</SelectItem>
+                          <SelectItem value="Hard">Hard</SelectItem>
+                          <SelectItem value="Mixed">Mixed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="text-xs text-blue-600 bg-blue-100 p-2 rounded">
+                      💡 Practice sources (Module, PYQs, etc.) are pre-configured for fast logging when completing tasks.
+                    </div>
+                  </div>
+                )}
 
               <div>
                 <Label>Icon</Label>
