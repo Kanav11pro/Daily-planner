@@ -2,17 +2,6 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
-export interface PracticeConfig {
-  sources: Record<string, string[]>;
-  defaultDifficulty: 'Easy' | 'Medium' | 'Hard' | 'Mixed';
-  trackingPreferences: {
-    trackQuestions: boolean;
-    trackTime: boolean;
-    trackAccuracy: boolean;
-    trackDifficulty: boolean;
-  };
-}
-
 export interface QuickTag {
   id: string;
   user_id: string;
@@ -21,7 +10,6 @@ export interface QuickTag {
   study_nature: 'Theory' | 'Practice' | 'Revision';
   color_class: string;
   is_default: boolean;
-  practice_config?: PracticeConfig | null;
   created_at: string;
   updated_at: string;
 }
@@ -50,8 +38,7 @@ export const useQuickTags = () => {
 
       setTags(data?.map(tag => ({
         ...tag,
-        study_nature: tag.study_nature as 'Theory' | 'Practice' | 'Revision',
-        practice_config: tag.practice_config ? (tag.practice_config as unknown as PracticeConfig) : null
+        study_nature: tag.study_nature as 'Theory' | 'Practice' | 'Revision'
       })) || []);
     } catch (error) {
       console.error('Error fetching tags:', error);
@@ -64,15 +51,12 @@ export const useQuickTags = () => {
     if (!user) return null;
 
     try {
-      const insertData = {
-        ...tagData,
-        user_id: user.id,
-        practice_config: tagData.practice_config as any
-      };
-
       const { data, error } = await supabase
         .from('quick_tags')
-        .insert([insertData])
+        .insert([{
+          ...tagData,
+          user_id: user.id,
+        }])
         .select()
         .single();
 
@@ -83,8 +67,7 @@ export const useQuickTags = () => {
 
       setTags(prev => [...prev, {
         ...data,
-        study_nature: data.study_nature as 'Theory' | 'Practice' | 'Revision',
-        practice_config: data.practice_config ? (data.practice_config as unknown as PracticeConfig) : null
+        study_nature: data.study_nature as 'Theory' | 'Practice' | 'Revision'
       }]);
       return data;
     } catch (error) {
@@ -95,14 +78,9 @@ export const useQuickTags = () => {
 
   const updateTag = async (tagId: string, updates: Partial<QuickTag>) => {
     try {
-      const updateData = {
-        ...updates,
-        practice_config: updates.practice_config as any
-      };
-
       const { data, error } = await supabase
         .from('quick_tags')
-        .update(updateData)
+        .update(updates)
         .eq('id', tagId)
         .select()
         .single();
@@ -114,8 +92,7 @@ export const useQuickTags = () => {
 
       setTags(prev => prev.map(tag => tag.id === tagId ? {
         ...data,
-        study_nature: data.study_nature as 'Theory' | 'Practice' | 'Revision',
-        practice_config: data.practice_config ? (data.practice_config as unknown as PracticeConfig) : null
+        study_nature: data.study_nature as 'Theory' | 'Practice' | 'Revision'
       } : tag));
       return data;
     } catch (error) {

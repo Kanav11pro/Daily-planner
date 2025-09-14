@@ -1,11 +1,10 @@
-import { Calendar, Clock, AlertTriangle, CheckCircle, Trash2, Edit, ChevronDown, ChevronRight, Target, Check, Plus, BookOpen, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useState, useEffect } from 'react';
-import { EditTaskModal } from './EditTaskModal';
-import { MoveTaskModal } from './MoveTaskModal';
-import { DeleteConfirmDialog } from './DeleteConfirmDialog';
-import { TaskCompletionModal } from './TaskCompletionModal';
+import { Check, Clock, X, Plus, BookOpen, Sparkles, Edit, Trash2, Calendar, ChevronDown, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useState, useEffect } from "react";
+import { EditTaskModal } from "./EditTaskModal";
+import { DeleteConfirmDialog } from "./DeleteConfirmDialog";
+import { MoveTaskModal } from "./MoveTaskModal";
 import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
 
 interface TaskListProps {
@@ -42,7 +41,6 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
   const [editingTask, setEditingTask] = useState<any>(null);
   const [deletingTaskId, setDeletingTaskId] = useState<string | null>(null);
   const [movingTask, setMovingTask] = useState<any>(null);
-  const [completingTask, setCompletingTask] = useState<any>(null);
   const [isCompletedExpanded, setIsCompletedExpanded] = useState(false);
   const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
@@ -182,28 +180,6 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
                     </p>
                   )}
                 </div>
-                {!isCompleted && (
-                  <div className="ml-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setCompletingTask(task)}
-                      className="bg-green-50 border-green-200 hover:bg-green-100 text-green-700"
-                    >
-                      {task.study_nature === 'Practice' ? (
-                        <>
-                          <Target className="h-4 w-4 mr-1" />
-                          Log Practice
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Complete
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                )}
               </div>
               
               <div className="flex items-center space-x-2 sm:space-x-3 mt-3 flex-wrap gap-2">
@@ -356,18 +332,6 @@ export const TaskList = ({ tasks, onToggleTask, onDeleteTask, onEditTask, onAddT
           task={movingTask}
           onClose={() => setMovingTask(null)}
           onMove={handleMoveTask}
-        />
-      )}
-
-      {completingTask && (
-        <TaskCompletionModal
-          task={completingTask}
-          open={completingTask !== null}
-          onClose={() => setCompletingTask(null)}
-          onComplete={() => {
-            setCompletingTask(null);
-            // Task will be refreshed automatically via the parent component
-          }}
         />
       )}
     </div>
