@@ -8,11 +8,13 @@ interface DateSelectorProps {
   selectedDate: Date;
   onDateChange: (date: Date) => void;
   onAddTask: () => void;
+  onLogPractice: () => void;
 }
 export const DateSelector = ({
   selectedDate,
   onDateChange,
-  onAddTask
+  onAddTask,
+  onLogPractice
 }: DateSelectorProps) => {
   const [showCalendar, setShowCalendar] = useState(false);
   const {
@@ -157,14 +159,25 @@ export const DateSelector = ({
           </span>
         </div>
         
-        <Button onClick={onAddTask} className={`
-            bg-gradient-to-r ${themeColors.primary} hover:opacity-90 text-white 
-            shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105
-            rounded-xl px-6 py-2 w-full sm:w-auto
-          `}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Task
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <Button onClick={onAddTask} className={`
+              bg-gradient-to-r ${themeColors.primary} hover:opacity-90 text-white 
+              shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105
+              rounded-xl px-6 py-2 flex-1 sm:flex-none
+            `}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Task
+          </Button>
+          
+          <Button onClick={onLogPractice} variant="outline" className={`
+              border-2 ${themeColors.border} hover:bg-primary/10 
+              shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105
+              rounded-xl px-6 py-2 flex-1 sm:flex-none
+            `}>
+            <Plus className="h-4 w-4 mr-2" />
+            Log Practice
+          </Button>
+        </div>
       </div>
     </div>;
 };

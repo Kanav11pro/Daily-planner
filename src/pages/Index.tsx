@@ -3,12 +3,14 @@ import React, { useState, useCallback, useMemo } from "react";
 import { Header } from "@/components/Header";
 import { TaskDashboard } from "@/components/TaskDashboard";
 import { TaskAnalytics } from "@/components/TaskAnalytics";
-import { WeeklyAnalytics } from "@/components/WeeklyAnalytics";
 import { TaskModal } from "@/components/TaskModal";
+import { QuickPracticeModal } from "@/components/QuickPracticeModal";
 import { Celebration } from "@/components/Celebration";
 import { DateSelector } from "@/components/DateSelector";
 import { ProfileSection } from "@/components/ProfileSection";
 import { ProgressOverview } from "@/components/ProgressOverview";
+import { IntegratedAnalytics } from "@/components/IntegratedAnalytics";
+import { FlipAnalytics } from "@/components/FlipAnalytics";
 import { AuthForm } from "@/components/AuthForm";
 import { OnboardingQuiz, OnboardingAnswers } from "@/components/OnboardingQuiz";
 import { GuidedTour } from "@/components/GuidedTour";
@@ -28,9 +30,10 @@ const MemoizedTaskAnalytics = React.memo(TaskAnalytics);
 
 const IndexContent = () => {
   const [showTaskModal, setShowTaskModal] = useState(false);
-  const [showWeeklyAnalytics, setShowWeeklyAnalytics] = useState(false);
+  const [showPracticeModal, setShowPracticeModal] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showGuidedTour, setShowGuidedTour] = useState(false);
+  const [isAnalyticsFlipped, setIsAnalyticsFlipped] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   
   const { user, loading: authLoading, updateUserMetadata, isOnboardingCompleted } = useAuth();
@@ -76,8 +79,9 @@ const IndexContent = () => {
 
   const handleOpenTaskModal = useCallback(() => setShowTaskModal(true), []);
   const handleCloseTaskModal = useCallback(() => setShowTaskModal(false), []);
-  const handleOpenWeeklyAnalytics = useCallback(() => setShowWeeklyAnalytics(true), []);
-  const handleCloseWeeklyAnalytics = useCallback(() => setShowWeeklyAnalytics(false), []);
+  const handleOpenPracticeModal = useCallback(() => setShowPracticeModal(true), []);
+  const handleClosePracticeModal = useCallback(() => setShowPracticeModal(false), []);
+  const handleToggleAnalyticsFlip = useCallback(() => setIsAnalyticsFlipped(!isAnalyticsFlipped), [isAnalyticsFlipped]);
   
 
   // Memoized tasks for selected date
@@ -156,31 +160,37 @@ const IndexContent = () => {
             <main className="container mx-auto px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
               <MemoizedProfileSection />
               
-              <MemoizedDateSelector
-                selectedDate={selectedDate}
-                onDateChange={setSelectedDate}
-                onAddTask={handleOpenTaskModal}
-              />
+          <MemoizedDateSelector
+            selectedDate={selectedDate}
+            onDateChange={setSelectedDate}
+            onAddTask={handleOpenTaskModal}
+            onLogPractice={handleOpenPracticeModal}
+          />
               
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-                <div className="lg:col-span-2">
-                  <MemoizedTaskDashboard 
-                    tasks={selectedDateTasks}
-                    onToggleTask={handleToggleTask}
-                    onDeleteTask={handleDeleteTask}
-                    onEditTask={handleEditTask}
-                    onAddTask={handleOpenTaskModal}
-                    selectedDate={selectedDate}
-                  />
-                </div>
-                <div className="space-y-6">
-                  <MemoizedProgressOverview tasks={tasks} selectedDate={selectedDate} />
-                  <MemoizedTaskAnalytics 
-                    tasks={tasks} 
-                    onOpenWeeklyAnalytics={handleOpenWeeklyAnalytics}
-                  />
-                </div>
+          {!isAnalyticsFlipped ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+              <div className="lg:col-span-2">
+                <MemoizedTaskDashboard 
+                  tasks={selectedDateTasks}
+                  onToggleTask={handleToggleTask}
+                  onDeleteTask={handleDeleteTask}
+                  onEditTask={handleEditTask}
+                  onAddTask={handleOpenTaskModal}
+                  selectedDate={selectedDate}
+                />
               </div>
+              <div className="space-y-6">
+                <MemoizedProgressOverview tasks={tasks} selectedDate={selectedDate} />
+                <IntegratedAnalytics tasks={tasks} selectedDate={selectedDate} />
+              </div>
+            </div>
+          ) : null}
+          
+          <FlipAnalytics 
+            tasks={tasks}
+            isFlipped={isAnalyticsFlipped}
+            onToggleFlip={handleToggleAnalyticsFlip}
+          />
             </main>
           </div>
         </div>
@@ -203,27 +213,33 @@ const IndexContent = () => {
             selectedDate={selectedDate}
             onDateChange={setSelectedDate}
             onAddTask={handleOpenTaskModal}
+            onLogPractice={handleOpenPracticeModal}
           />
           
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-            <div className="lg:col-span-2">
-              <MemoizedTaskDashboard 
-                tasks={selectedDateTasks}
-                onToggleTask={handleToggleTask}
-                onDeleteTask={handleDeleteTask}
-                onEditTask={handleEditTask}
-                onAddTask={handleOpenTaskModal}
-                selectedDate={selectedDate}
-              />
+          {!isAnalyticsFlipped ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+              <div className="lg:col-span-2">
+                <MemoizedTaskDashboard 
+                  tasks={selectedDateTasks}
+                  onToggleTask={handleToggleTask}
+                  onDeleteTask={handleDeleteTask}
+                  onEditTask={handleEditTask}
+                  onAddTask={handleOpenTaskModal}
+                  selectedDate={selectedDate}
+                />
+              </div>
+              <div className="space-y-6">
+                <MemoizedProgressOverview tasks={tasks} selectedDate={selectedDate} />
+                <IntegratedAnalytics tasks={tasks} selectedDate={selectedDate} />
+              </div>
             </div>
-            <div className="space-y-6">
-              <MemoizedProgressOverview tasks={tasks} selectedDate={selectedDate} />
-              <MemoizedTaskAnalytics 
-                tasks={tasks} 
-                onOpenWeeklyAnalytics={handleOpenWeeklyAnalytics}
-              />
-            </div>
-          </div>
+          ) : null}
+          
+          <FlipAnalytics 
+            tasks={tasks}
+            isFlipped={isAnalyticsFlipped}
+            onToggleFlip={handleToggleAnalyticsFlip}
+          />
         </main>
 
         {showTaskModal && (
@@ -234,10 +250,11 @@ const IndexContent = () => {
           />
         )}
 
-        {showWeeklyAnalytics && (
-          <WeeklyAnalytics
-            tasks={tasks}
-            onClose={handleCloseWeeklyAnalytics}
+        {showPracticeModal && (
+          <QuickPracticeModal
+            open={showPracticeModal}
+            onClose={handleClosePracticeModal}
+            selectedDate={selectedDate}
           />
         )}
 
