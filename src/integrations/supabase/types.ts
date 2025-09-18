@@ -259,6 +259,7 @@ export type Database = {
           id: string
           is_default: boolean | null
           name: string
+          practice_config: Json | null
           study_nature: string
           updated_at: string
           user_id: string
@@ -270,6 +271,7 @@ export type Database = {
           id?: string
           is_default?: boolean | null
           name: string
+          practice_config?: Json | null
           study_nature: string
           updated_at?: string
           user_id: string
@@ -281,6 +283,7 @@ export type Database = {
           id?: string
           is_default?: boolean | null
           name?: string
+          practice_config?: Json | null
           study_nature?: string
           updated_at?: string
           user_id?: string
@@ -343,7 +346,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      validate_practice_config: {
+        Args: { config: Json }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
