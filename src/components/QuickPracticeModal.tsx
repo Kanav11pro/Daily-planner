@@ -347,7 +347,7 @@ export const QuickPracticeModal = ({ open, onClose, selectedDate, onSessionCompl
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-      <div className={`${themeColors.card} rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden animate-scale-in`}>
+      <div className={`${themeColors.card} rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col animate-scale-in`}>
         {/* Header */}
         <div className={`flex items-center justify-between p-6 border-b ${theme === 'midnight' || theme === 'obsidian' ? 'border-gray-700' : 'border-gray-200'} bg-gradient-to-r ${themeColors.primary}`}>
           <div className="flex items-center space-x-4">
@@ -380,7 +380,7 @@ export const QuickPracticeModal = ({ open, onClose, selectedDate, onSessionCompl
               <div key={i} className="flex items-center">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
                   step > i + 1 ? 'bg-green-500 text-white' 
-                  : step === i + 1 ? `bg-primary ${themeColors.primaryText}` 
+                  : step === i + 1 ? 'bg-primary text-white' 
                   : theme === 'midnight' || theme === 'obsidian' ? 'bg-gray-700 text-gray-400' : 'bg-gray-200 text-gray-500'
                 }`}>
                   {step > i + 1 ? '✓' : i + 1}
@@ -403,7 +403,7 @@ export const QuickPracticeModal = ({ open, onClose, selectedDate, onSessionCompl
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[60vh]">
+        <div className="p-6 overflow-y-auto flex-1 min-h-0">
           {renderStep()}
         </div>
 

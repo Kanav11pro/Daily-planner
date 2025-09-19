@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Calendar, ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { Calendar, ChevronLeft, ChevronRight, Plus, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { useTheme, getThemeColors } from "@/contexts/ThemeContext";
+import { PracticeSessionsModal } from "./PracticeSessionsModal";
 interface DateSelectorProps {
   selectedDate: Date;
   onDateChange: (date: Date) => void;
@@ -17,9 +18,8 @@ export const DateSelector = ({
   onLogPractice
 }: DateSelectorProps) => {
   const [showCalendar, setShowCalendar] = useState(false);
-  const {
-    theme
-  } = useTheme();
+  const [showPracticeSessions, setShowPracticeSessions] = useState(false);
+  const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
 
   // Get week dates starting from Monday
@@ -163,7 +163,7 @@ export const DateSelector = ({
           <Button onClick={onAddTask} className={`
               bg-gradient-to-r ${themeColors.primary} hover:opacity-90 text-white 
               shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105
-              rounded-xl px-6 py-2 flex-1 sm:flex-none
+              rounded-xl px-4 py-2 flex-1 sm:flex-none
             `}>
             <Plus className="h-4 w-4 mr-2" />
             Add Task
@@ -172,12 +172,31 @@ export const DateSelector = ({
           <Button onClick={onLogPractice} variant="outline" className={`
               border-2 ${themeColors.border} hover:bg-primary/10 
               shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105
-              rounded-xl px-6 py-2 flex-1 sm:flex-none
+              rounded-xl px-4 py-2 flex-1 sm:flex-none
             `}>
             <Plus className="h-4 w-4 mr-2" />
             Log Practice
           </Button>
+
+          <Button 
+            onClick={() => setShowPracticeSessions(true)} 
+            variant="outline" 
+            className={`
+              border-2 ${themeColors.border} hover:bg-primary/10 
+              shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105
+              rounded-xl px-4 py-2 flex-1 sm:flex-none
+            `}
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            View Sessions
+          </Button>
         </div>
       </div>
+
+      <PracticeSessionsModal
+        open={showPracticeSessions}
+        onClose={() => setShowPracticeSessions(false)}
+        selectedDate={selectedDate}
+      />
     </div>;
 };

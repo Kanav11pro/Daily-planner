@@ -1,7 +1,8 @@
 import React from 'react';
-import { Brain, Edit3, RotateCcw, Clock, Target } from 'lucide-react';
+import { Brain, Edit3, RotateCcw, Clock, Target, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { usePractice } from '@/hooks/usePractice';
 
 interface Task {
   id: string;
@@ -19,11 +20,25 @@ interface StudyDistributionProps {
 }
 
 export const StudyDistribution: React.FC<StudyDistributionProps> = ({ tasks, selectedDate }) => {
+  const { sessions } = usePractice();
   const todayTasks = tasks.filter(task => {
     const taskDate = new Date(task.scheduled_date || task.created_at);
     const today = new Date(selectedDate);
     return taskDate.toDateString() === today.toDateString();
   });
+
+  // Get today's practice sessions
+  const todaySessions = sessions.filter(session => {
+    const sessionDate = new Date(session.date);
+    const today = new Date(selectedDate);
+    return sessionDate.toDateString() === today.toDateString();
+  });
+
+  // Calculate total questions practiced today
+  const totalQuestions = todaySessions.reduce((acc, session) => acc + (session.questions_solved || 0), 0);
+  const avgAccuracy = todaySessions.length > 0 
+    ? todaySessions.reduce((acc, session) => acc + (session.accuracy_percentage || 0), 0) / todaySessions.length 
+    : 0;
 
   const distribution = todayTasks.reduce(
     (acc, task) => {
@@ -101,15 +116,28 @@ export const StudyDistribution: React.FC<StudyDistributionProps> = ({ tasks, sel
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Planned Study Hours */}
-        <div className="flex items-center justify-between p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg">
-          <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-indigo-600" />
-            <span className="font-medium text-gray-700">Planned Study Time</span>
+        {/* Study Overview */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {/* Planned Study Hours */}
+          <div className="p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="h-4 w-4 text-indigo-600" />
+              <span className="font-medium text-gray-700 text-sm">Study Time</span>
+            </div>
+            <div className="text-xl font-bold text-indigo-600">{plannedHours}h</div>
+            <div className="text-xs text-gray-500">{todayTasks.length} tasks</div>
           </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-indigo-600">{plannedHours}h</div>
-            <div className="text-sm text-gray-500">{todayTasks.length} tasks</div>
+
+          {/* Questions Practiced */}
+          <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <BookOpen className="h-4 w-4 text-green-600" />
+              <span className="font-medium text-gray-700 text-sm">Questions</span>
+            </div>
+            <div className="text-xl font-bold text-green-600">{totalQuestions}</div>
+            <div className="text-xs text-gray-500">
+              {avgAccuracy > 0 ? `${Math.round(avgAccuracy)}% avg accuracy` : 'No practice yet'}
+            </div>
           </div>
         </div>
 

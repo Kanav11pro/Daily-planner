@@ -39,13 +39,6 @@ export const Header = ({
           </div>
           
           <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
-            {!isOnPracticeAnalytics && <Button variant="outline" size="sm" asChild>
-                <a href="/practice-analytics" className="gap-2">
-                  <BarChart3 className="h-4 w-4" />
-                  <span className="hidden md:inline">Practice Analytics</span>
-                  <span className="md:hidden">Analytics</span>
-                </a>
-              </Button>}
             <ThemeSelector />
           </div>
         </div>
