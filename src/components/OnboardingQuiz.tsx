@@ -1,12 +1,11 @@
+'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { OnboardingStep } from './onboarding/OnboardingStep';
 import { OnboardingOption } from './onboarding/OnboardingOption';
 import { 
-  GraduationCap, 
-  BookOpen, 
   Clock, 
   Target, 
   ChevronRight, 
@@ -30,45 +29,45 @@ interface OnboardingQuizProps {
 }
 
 const examOptions = [
-  { value: "IIT-JEE", label: "IIT-JEE", emoji: "🧮" },
-  { value: "NEET", label: "NEET", emoji: "🔬" },
-  { value: "Class-10 Board", label: "Class-10 Board", emoji: "📚" },
-  { value: "Class 9", label: "Class 9", emoji: "🎓" },
-  { value: "Other", label: "Other (Specify)", emoji: "✨" }
+  { value: 'IIT-JEE', label: 'IIT-JEE', emoji: '🧮' },
+  { value: 'NEET', label: 'NEET', emoji: '🔬' },
+  { value: 'Class-10 Board', label: 'Class-10 Board', emoji: '📚' },
+  { value: 'Class 9', label: 'Class 9', emoji: '🎓' },
+  { value: 'Other', label: 'Other (Specify)', emoji: '✨' }
 ];
 
 const instituteOptions = [
-  { value: "Allen", label: "Allen", emoji: "🏆" },
-  { value: "Aakash", label: "Aakash", emoji: "⭐" },
-  { value: "Physics Wallah", label: "Physics Wallah", emoji: "🚀" },
-  { value: "eSaral", label: "eSaral", emoji: "💡" },
-  { value: "Next Toppers", label: "Next Toppers", emoji: "🎯" },
-  { value: "Self-Study", label: "Self-Study", emoji: "📖" },
-  { value: "Others", label: "Others (Specify)", emoji: "🌟" }
+  { value: 'Allen', label: 'Allen', emoji: '🏆' },
+  { value: 'Aakash', label: 'Aakash', emoji: '⭐' },
+  { value: 'Physics Wallah', label: 'Physics Wallah', emoji: '🚀' },
+  { value: 'eSaral', label: 'eSaral', emoji: '💡' },
+  { value: 'Next Toppers', label: 'Next Toppers', emoji: '🎯' },
+  { value: 'Self-Study', label: 'Self-Study', emoji: '📖' },
+  { value: 'Others', label: 'Others (Specify)', emoji: '🌟' }
 ];
 
 const studyHoursOptions = [
-  { value: "Less than 2 hours", label: "Less than 2 hours", emoji: "⏰" },
-  { value: "2–4 hours", label: "2–4 hours", emoji: "📅" },
-  { value: "4–6 hours", label: "4–6 hours", emoji: "💪" },
-  { value: "More than 6 hours", label: "More than 6 hours", emoji: "🔥" }
+  { value: 'Less than 2 hours', label: 'Less than 2 hours', emoji: '⏰' },
+  { value: '2–4 hours', label: '2–4 hours', emoji: '📅' },
+  { value: '4–6 hours', label: '4–6 hours', emoji: '💪' },
+  { value: 'More than 6 hours', label: 'More than 6 hours', emoji: '🔥' }
 ];
 
 const challengeOptions = [
-  { value: "Time management", label: "Time management", emoji: "⏰" },
-  { value: "Memorizing formulas", label: "Memorizing formulas", emoji: "🧠" },
-  { value: "Problem-solving speed", label: "Problem-solving speed", emoji: "⚡" },
-  { value: "Staying motivated", label: "Staying motivated", emoji: "💪" },
-  { value: "Too much syllabus to cover", label: "Too much syllabus to cover", emoji: "📚" },
-  { value: "Time management - school + coaching", label: "Balancing school + coaching", emoji: "🕒" },
-  { value: "Procrastination", label: "Procrastination", emoji: "🚫" },
-  { value: "Revision and retention", label: "Revision and retention", emoji: "📝" },
-  { value: "Low mock test scores", label: "Low mock test scores", emoji: "📉" },
-  { value: "Understanding tough concepts", label: "Understanding tough concepts", emoji: "🔬" },
-  { value: "Backlogs", label: "Backlogs", emoji: "🔁" },
-  { value: "Stress and burnout", label: "Stress and burnout", emoji: "😰" },
-  { value: "Distractions", label: "Distractions", emoji: "🛑" },
-  { value: "No proper routine", label: "No proper routine", emoji: "📆" }
+  { value: 'Time management', label: 'Time management', emoji: '⏰' },
+  { value: 'Memorizing formulas', label: 'Memorizing formulas', emoji: '🧠' },
+  { value: 'Problem-solving speed', label: 'Problem-solving speed', emoji: '⚡' },
+  { value: 'Staying motivated', label: 'Staying motivated', emoji: '💪' },
+  { value: 'Too much syllabus to cover', label: 'Too much syllabus to cover', emoji: '📚' },
+  { value: 'Time management - school + coaching', label: 'Balancing school + coaching', emoji: '🕒' },
+  { value: 'Procrastination', label: 'Procrastination', emoji: '🚫' },
+  { value: 'Revision and retention', label: 'Revision and retention', emoji: '📝' },
+  { value: 'Low mock test scores', label: 'Low mock test scores', emoji: '📉' },
+  { value: 'Understanding tough concepts', label: 'Understanding tough concepts', emoji: '🔬' },
+  { value: 'Backlogs', label: 'Backlogs', emoji: '🔁' },
+  { value: 'Stress and burnout', label: 'Stress and burnout', emoji: '😰' },
+  { value: 'Distractions', label: 'Distractions', emoji: '🛑' },
+  { value: 'No proper routine', label: 'No proper routine', emoji: '📆' }
 ];
 
 export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
@@ -83,84 +82,72 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
   });
 
   const steps = [
-    { icon: Target, title: "🎯 Which exam are you preparing for?", color: "from-blue-500 to-cyan-500" },
-    { icon: Users, title: "🏫 Which institute are you studying from?", color: "from-purple-500 to-pink-500" },
-    { icon: Clock, title: "⏰ How many hours can you study daily?", color: "from-green-500 to-emerald-500" },
-    { icon: Brain, title: "💪 What are your biggest challenges?", color: "from-orange-500 to-red-500" }
+    { icon: Target, title: '🎯 Which exam are you preparing for?', color: 'from-blue-500 to-cyan-500' },
+    { icon: Users, title: '🏫 Which institute are you studying from?', color: 'from-purple-500 to-pink-500' },
+    { icon: Clock, title: '⏰ How many hours can you study daily?', color: 'from-green-500 to-emerald-500' },
+    { icon: Brain, title: '💪 What are your biggest challenges?', color: 'from-orange-500 to-red-500' }
   ];
+
+  const isNonEmpty = (s?: string) => !!s && s.trim().length > 0;
+
+  const canProceed = useMemo(() => {
+    switch (currentStep) {
+      case 1:
+        return answers.exam === 'Other'
+          ? isNonEmpty(answers.examOther)
+          : isNonEmpty(answers.exam);
+      case 2:
+        return answers.institute === 'Others'
+          ? isNonEmpty(answers.instituteOther)
+          : isNonEmpty(answers.institute);
+      case 3:
+        return isNonEmpty(answers.studyHours);
+      case 4:
+        return Array.isArray(answers.challenge) && answers.challenge.length > 0;
+      default:
+        return false;
+    }
+  }, [currentStep, answers]);
 
   const handleNext = () => {
     if (currentStep < 4) {
-      setCurrentStep(currentStep + 1);
+      setCurrentStep((s) => Math.min(4, s + 1));
     } else {
       onComplete(answers);
     }
   };
 
   const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+    setCurrentStep((s) => Math.max(1, s - 1));
   };
 
   const handleExamSelect = (value: string) => {
-    setAnswers(prev => ({ 
-      ...prev, 
-      exam: value, 
-      examOther: value === 'Other' ? prev.examOther : '' 
+    setAnswers((prev) => ({
+      ...prev,
+      exam: value,
+      examOther: value === 'Other' ? prev.examOther ?? '' : ''
     }));
   };
 
   const handleInstituteSelect = (value: string) => {
-    setAnswers(prev => ({ 
-      ...prev, 
-      institute: value, 
-      instituteOther: value === 'Others' ? prev.instituteOther : '' 
+    setAnswers((prev) => ({
+      ...prev,
+      institute: value,
+      instituteOther: value === 'Others' ? prev.instituteOther ?? '' : ''
     }));
   };
 
   const handleStudyHoursSelect = (value: string) => {
-    setAnswers(prev => ({ ...prev, studyHours: value }));
+    setAnswers((prev) => ({ ...prev, studyHours: value }));
   };
 
   const handleChallengeChange = (challengeValue: string) => {
-    setAnswers(prev => {
-      const currentChallenges = prev.challenge || [];
-      const isSelected = currentChallenges.includes(challengeValue);
-      
-      if (isSelected) {
-        return {
-          ...prev,
-          challenge: currentChallenges.filter(c => c !== challengeValue)
-        };
-      } else {
-        return {
-          ...prev,
-          challenge: [...currentChallenges, challengeValue]
-        };
-      }
+    setAnswers((prev) => {
+      const curr = prev.challenge ?? [];
+      return curr.includes(challengeValue)
+        ? { ...prev, challenge: curr.filter((c) => c !== challengeValue) }
+        : { ...prev, challenge: [...curr, challengeValue] };
     });
-  };
-
-  const isStepValid = () => {
-    switch (currentStep) {
-      case 1:
-        if (answers.exam === 'Other') {
-          return answers.examOther && answers.examOther.trim().length > 0;
-        }
-        return answers.exam && answers.exam.length > 0;
-      case 2:
-        if (answers.institute === 'Others') {
-          return answers.instituteOther && answers.instituteOther.trim().length > 0;
-        }
-        return answers.institute && answers.institute.length > 0;
-      case 3:
-        return answers.studyHours && answers.studyHours.length > 0;
-      case 4:
-        return answers.challenge && answers.challenge.length > 0;
-      default:
-        return false;
-    }
   };
 
   const currentStepData = steps[currentStep - 1];
@@ -173,7 +160,12 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
       currentStep={currentStep}
       totalSteps={4}
     >
-      <div className="space-y-4 max-w-2xl mx-auto">
+      <div
+        className="space-y-4 max-w-2xl mx-auto"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && canProceed) handleNext();
+        }}
+      >
         {/* Step 1: Exam Selection */}
         {currentStep === 1 && (
           <div className="space-y-3">
@@ -183,16 +175,21 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
                 selected={answers.exam === option.value}
                 onClick={() => handleExamSelect(option.value)}
                 emoji={option.emoji}
+                aria-pressed={answers.exam === option.value}
+                role="button"
+                tabIndex={0}
               >
                 {option.label}
               </OnboardingOption>
             ))}
-            {answers.exam === "Other" && (
+            {answers.exam === 'Other' && (
               <div className="mt-6">
                 <Input
                   placeholder="Please specify your exam"
-                  value={answers.examOther || ""}
-                  onChange={(e) => setAnswers(prev => ({...prev, examOther: e.target.value}))}
+                  value={answers.examOther ?? ''}
+                  onChange={(e) =>
+                    setAnswers((prev) => ({ ...prev, examOther: e.target.value }))
+                  }
                   className="border-2 border-white/30 bg-white/10 text-white placeholder:text-white/70 focus:border-blue-400 text-lg p-4"
                 />
               </div>
@@ -209,16 +206,21 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
                 selected={answers.institute === option.value}
                 onClick={() => handleInstituteSelect(option.value)}
                 emoji={option.emoji}
+                aria-pressed={answers.institute === option.value}
+                role="button"
+                tabIndex={0}
               >
                 {option.label}
               </OnboardingOption>
             ))}
-            {answers.institute === "Others" && (
+            {answers.institute === 'Others' && (
               <div className="mt-6">
                 <Input
                   placeholder="Please specify your institute"
-                  value={answers.instituteOther || ""}
-                  onChange={(e) => setAnswers(prev => ({...prev, instituteOther: e.target.value}))}
+                  value={answers.instituteOther ?? ''}
+                  onChange={(e) =>
+                    setAnswers((prev) => ({ ...prev, instituteOther: e.target.value }))
+                  }
                   className="border-2 border-white/30 bg-white/10 text-white placeholder:text-white/70 focus:border-purple-400 text-lg p-4"
                 />
               </div>
@@ -235,6 +237,9 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
                 selected={answers.studyHours === option.value}
                 onClick={() => handleStudyHoursSelect(option.value)}
                 emoji={option.emoji}
+                aria-pressed={answers.studyHours === option.value}
+                role="button"
+                tabIndex={0}
               >
                 {option.label}
               </OnboardingOption>
@@ -256,6 +261,9 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
                   onClick={() => handleChallengeChange(option.value)}
                   emoji={option.emoji}
                   className="text-sm"
+                  aria-pressed={answers.challenge?.includes(option.value) || false}
+                  role="button"
+                  tabIndex={0}
                 >
                   {option.label}
                 </OnboardingOption>
@@ -265,8 +273,9 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
         )}
 
         {/* Navigation */}
-        <div className="flex justify-between pt-8">
+        <div className="flex justify-between pt-8 pointer-events-auto">
           <Button
+            type="button"
             onClick={handlePrevious}
             disabled={currentStep === 1}
             variant="outline"
@@ -277,11 +286,13 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
           </Button>
 
           <Button
+            type="button"
             onClick={handleNext}
-            disabled={!isStepValid()}
+            disabled={!canProceed}
+            aria-disabled={!canProceed}
             className={`bg-gradient-to-r ${currentStepData.color} hover:opacity-90 transition-all duration-300 text-white font-semibold px-8 disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            <span>{currentStep === 4 ? "Complete Setup" : "Next"}</span>
+            <span>{currentStep === 4 ? 'Complete Setup' : 'Next'}</span>
             {currentStep === 4 ? <Trophy className="h-4 w-4 ml-2" /> : <ChevronRight className="h-4 w-4 ml-2" />}
           </Button>
         </div>
