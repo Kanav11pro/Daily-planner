@@ -3,8 +3,8 @@
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+// import { OnboardingOption } from './onboarding/OnboardingOption'; // not needed anymore
 import { OnboardingStep } from './onboarding/OnboardingStep';
-import { OnboardingOption } from './onboarding/OnboardingOption';
 import { 
   Clock, 
   Target, 
@@ -70,6 +70,50 @@ const challengeOptions = [
   { value: 'No proper routine', label: 'No proper routine', emoji: '📆' }
 ];
 
+/**
+ * Local, fully interactive option tile
+ * Avoids any outside component/overlay issues.
+ */
+function OptionTile({
+  selected,
+  onClick,
+  emoji,
+  children,
+  className = ''
+}: {
+  selected: boolean;
+  onClick: () => void;
+  emoji: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={selected}
+      className={[
+        'w-full rounded-xl border-2 px-4 py-4 text-left transition outline-none',
+        'bg-white/10 text-white hover:bg-white/15',
+        selected ? 'border-white' : 'border-white/30',
+        'flex items-center justify-between',
+        className
+      ].join(' ')}
+    >
+      <span className="flex items-center gap-3">
+        <span className="text-xl">{emoji}</span>
+        <span className="text-base md:text-lg">{children}</span>
+      </span>
+      <span
+        className={[
+          'h-5 w-5 rounded-full border-2',
+          selected ? 'bg-white border-white' : 'border-white/50'
+        ].join(' ')}
+      />
+    </button>
+  );
+}
+
 export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [answers, setAnswers] = useState<OnboardingAnswers>({
@@ -110,16 +154,12 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
   }, [currentStep, answers]);
 
   const handleNext = () => {
-    if (currentStep < 4) {
-      setCurrentStep((s) => Math.min(4, s + 1));
-    } else {
-      onComplete(answers);
-    }
+    if (!canProceed) return;
+    if (currentStep < 4) setCurrentStep((s) => s + 1);
+    else onComplete(answers);
   };
 
-  const handlePrevious = () => {
-    setCurrentStep((s) => Math.max(1, s - 1));
-  };
+  const handlePrevious = () => setCurrentStep((s) => Math.max(1, s - 1));
 
   const handleExamSelect = (value: string) => {
     setAnswers((prev) => ({
@@ -141,12 +181,12 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
     setAnswers((prev) => ({ ...prev, studyHours: value }));
   };
 
-  const handleChallengeChange = (challengeValue: string) => {
+  const handleChallengeChange = (value: string) => {
     setAnswers((prev) => {
-      const curr = prev.challenge ?? [];
-      return curr.includes(challengeValue)
-        ? { ...prev, challenge: curr.filter((c) => c !== challengeValue) }
-        : { ...prev, challenge: [...curr, challengeValue] };
+      const list = prev.challenge ?? [];
+      return list.includes(value)
+        ? { ...prev, challenge: list.filter((v) => v !== value) }
+        : { ...prev, challenge: [...list, value] };
     });
   };
 
@@ -161,26 +201,23 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
       totalSteps={4}
     >
       <div
-        className="space-y-4 max-w-2xl mx-auto"
+        className="space-y-4 max-w-2xl mx-auto relative"
         onKeyDown={(e) => {
           if (e.key === 'Enter' && canProceed) handleNext();
         }}
       >
-        {/* Step 1: Exam Selection */}
+        {/* Step 1: Exam */}
         {currentStep === 1 && (
           <div className="space-y-3">
-            {examOptions.map((option) => (
-              <OnboardingOption
-                key={option.value}
-                selected={answers.exam === option.value}
-                onClick={() => handleExamSelect(option.value)}
-                emoji={option.emoji}
-                aria-pressed={answers.exam === option.value}
-                role="button"
-                tabIndex={0}
+            {examOptions.map((o) => (
+              <OptionTile
+                key={o.value}
+                selected={answers.exam === o.value}
+                onClick={() => handleExamSelect(o.value)}
+                emoji={o.emoji}
               >
-                {option.label}
-              </OnboardingOption>
+                {o.label}
+              </OptionTile>
             ))}
             {answers.exam === 'Other' && (
               <div className="mt-6">
@@ -197,21 +234,18 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
           </div>
         )}
 
-        {/* Step 2: Institute Selection */}
+        {/* Step 2: Institute */}
         {currentStep === 2 && (
           <div className="space-y-3">
-            {instituteOptions.map((option) => (
-              <OnboardingOption
-                key={option.value}
-                selected={answers.institute === option.value}
-                onClick={() => handleInstituteSelect(option.value)}
-                emoji={option.emoji}
-                aria-pressed={answers.institute === option.value}
-                role="button"
-                tabIndex={0}
+            {instituteOptions.map((o) => (
+              <OptionTile
+                key={o.value}
+                selected={answers.institute === o.value}
+                onClick={() => handleInstituteSelect(o.value)}
+                emoji={o.emoji}
               >
-                {option.label}
-              </OnboardingOption>
+                {o.label}
+              </OptionTile>
             ))}
             {answers.institute === 'Others' && (
               <div className="mt-6">
@@ -231,49 +265,43 @@ export const OnboardingQuiz = ({ onComplete }: OnboardingQuizProps) => {
         {/* Step 3: Study Hours */}
         {currentStep === 3 && (
           <div className="space-y-3">
-            {studyHoursOptions.map((option) => (
-              <OnboardingOption
-                key={option.value}
-                selected={answers.studyHours === option.value}
-                onClick={() => handleStudyHoursSelect(option.value)}
-                emoji={option.emoji}
-                aria-pressed={answers.studyHours === option.value}
-                role="button"
-                tabIndex={0}
+            {studyHoursOptions.map((o) => (
+              <OptionTile
+                key={o.value}
+                selected={answers.studyHours === o.value}
+                onClick={() => handleStudyHoursSelect(o.value)}
+                emoji={o.emoji}
               >
-                {option.label}
-              </OnboardingOption>
+                {o.label}
+              </OptionTile>
             ))}
           </div>
         )}
 
-        {/* Step 4: Challenge Selection */}
+        {/* Step 4: Challenges */}
         {currentStep === 4 && (
           <div className="space-y-4">
             <div className="text-center mb-6">
               <p className="text-white/80 text-lg">Select all that apply to you</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {challengeOptions.map((option) => (
-                <OnboardingOption
-                  key={option.value}
-                  selected={answers.challenge?.includes(option.value) || false}
-                  onClick={() => handleChallengeChange(option.value)}
-                  emoji={option.emoji}
+              {challengeOptions.map((o) => (
+                <OptionTile
+                  key={o.value}
+                  selected={answers.challenge?.includes(o.value) || false}
+                  onClick={() => handleChallengeChange(o.value)}
+                  emoji={o.emoji}
                   className="text-sm"
-                  aria-pressed={answers.challenge?.includes(option.value) || false}
-                  role="button"
-                  tabIndex={0}
                 >
-                  {option.label}
-                </OnboardingOption>
+                  {o.label}
+                </OptionTile>
               ))}
             </div>
           </div>
         )}
 
         {/* Navigation */}
-        <div className="flex justify-between pt-8 pointer-events-auto">
+        <div className="flex justify-between pt-8 relative z-10">
           <Button
             type="button"
             onClick={handlePrevious}
