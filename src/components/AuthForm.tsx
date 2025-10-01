@@ -4,35 +4,42 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { useTheme, getThemeColors } from '@/contexts/ThemeContext';
-import { BookOpen, Brain, GraduationCap, Target, Trophy, Calendar, CheckCircle, BarChart3, Clock, PenTool, Award, Rocket, Lightbulb, Sparkles, TrendingUp, Shield } from 'lucide-react';
+import {
+  BookOpen,
+  Brain,
+  GraduationCap,
+  Target,
+  Trophy,
+  Calendar,
+  BarChart3,
+  Clock,
+  PenTool,
+  Shield,
+  Sparkles,
+  Rocket,
+} from 'lucide-react';
+
 export const AuthForm = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
-  const {
-    signUp,
-    signIn
-  } = useAuth();
-  const {
-    theme
-  } = useTheme();
+
+  const { signUp, signIn } = useAuth();
+  const { theme } = useTheme();
   const themeColors = getThemeColors(theme);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
       if (isSignUp) {
-        const {
-          error
-        } = await signUp(email, password, fullName);
+        const { error } = await signUp(email, password, fullName);
         if (error) throw error;
         toast.success('Account created successfully! Please check your email to verify your account.');
       } else {
-        const {
-          error
-        } = await signIn(email, password);
+        const { error } = await signIn(email, password);
         if (error) throw error;
         toast.success('Welcome back to Exam Ace!');
       }
@@ -47,185 +54,247 @@ export const AuthForm = () => {
   const studyIcons = [BookOpen, Brain, GraduationCap, Target, Trophy, Calendar];
 
   // Updated features to show only what exists in the app
-  const features = [{
-    icon: Calendar,
-    title: "Smart Scheduling",
-    desc: "Plan your daily study sessions",
-    color: "from-blue-500 to-cyan-500"
-  }, {
-    icon: Target,
-    title: "Task Management",
-    desc: "Track your study goals",
-    color: "from-purple-500 to-pink-500"
-  }, {
-    icon: BarChart3,
-    title: "Progress Analytics",
-    desc: "Monitor your performance",
-    color: "from-green-500 to-emerald-500"
-  }, {
-    icon: Trophy,
-    title: "Achievement System",
-    desc: "Celebrate your progress",
-    color: "from-yellow-500 to-orange-500"
-  }, {
-    icon: Clock,
-    title: "Time Tracking",
-    desc: "Optimize study duration",
-    color: "from-red-500 to-pink-500"
-  }, {
-    icon: PenTool,
-    title: "Subject Organization",
-    desc: "Organize by chapters",
-    color: "from-indigo-500 to-purple-500"
-  }];
-  return <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-      {/* Enhanced Background */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Animated gradient orbs */}
-        <div className="absolute -top-40 -left-40 w-80 h-80 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/3 right-1/4 w-60 h-60 bg-gradient-to-r from-pink-500/15 to-violet-500/15 rounded-full blur-2xl animate-bounce" style={{
-        animationDelay: '1s',
-        animationDuration: '4s'
-      }}></div>
-        <div className="absolute bottom-1/4 left-1/3 w-48 h-48 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-2xl animate-pulse" style={{
-        animationDelay: '2s'
-      }}></div>
-        
-        {/* Floating study icons */}
-        {studyIcons.map((Icon, index) => <div key={index} className="absolute text-white/10 animate-bounce" style={{
-        left: `${15 + index * 12}%`,
-        top: `${10 + index * 8}%`,
-        animationDelay: `${index * 0.8}s`,
-        animationDuration: `${3 + Math.random()}s`
-      }}>
-            <Icon size={16 + index * 4} />
-          </div>)}
-        
-        {/* Grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+  const features = [
+    { icon: Calendar, title: 'Smart Scheduling', desc: 'Plan daily study sessions', color: 'from-blue-500 to-cyan-500' },
+    { icon: Target, title: 'Task Management', desc: 'Track study goals', color: 'from-purple-500 to-pink-500' },
+    { icon: BarChart3, title: 'Progress Analytics', desc: 'Monitor performance', color: 'from-green-500 to-emerald-500' },
+    { icon: Trophy, title: 'Achievement System', desc: 'Celebrate progress', color: 'from-yellow-500 to-orange-500' },
+    { icon: Clock, title: 'Time Tracking', desc: 'Optimize study duration', color: 'from-red-500 to-pink-500' },
+    { icon: PenTool, title: 'Subject Organization', desc: 'Organize by chapters', color: 'from-indigo-500 to-purple-500' },
+  ];
+
+  return (
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Background gradient mesh + noise */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        {/* Mesh gradients */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900" />
+        <div className="absolute -top-24 -left-24 h-[28rem] w-[28rem] rounded-full bg-gradient-to-br from-indigo-500/25 to-purple-500/20 blur-3xl" />
+        <div className="absolute top-1/4 right-0 h-[22rem] w-[22rem] rounded-full bg-gradient-to-tr from-pink-500/20 to-violet-500/20 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-gradient-to-br from-cyan-400/20 to-sky-500/20 blur-2xl" />
+        {/* Radial vignette */}
+        <div className="absolute inset-0 bg-[radial-gradient(60rem_40rem_at_30%_10%,rgba(255,255,255,0.06),transparent_60%)]" />
+        {/* Subtle grid */}
+        <div className="absolute inset-0 opacity-[0.06] [background:linear-gradient(rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:44px_44px]" />
+        {/* Noise layer */}
+        <div className="absolute inset-0 opacity-[0.06] mix-blend-overlay [background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%222%22 stitchTiles=%22stitch%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22 opacity=%220.35%22/></svg>')]" />
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 min-h-screen flex flex-col lg:flex-row">
-        {/* Left Side - Enhanced Features Showcase */}
-        <div className="lg:w-1/2 flex flex-col justify-center p-4 sm:p-6 lg:p-12 text-white">
-          <div className="animate-fade-in max-w-lg mx-auto lg:max-w-none lg:mx-0">
-            {/* Enhanced Logo Section */}
-            <div className="text-center lg:text-left mb-8 lg:mb-12">
-              <div className="inline-flex items-center justify-center lg:justify-start mb-6">
-                <div className="relative group">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 rounded-3xl flex items-center justify-center shadow-2xl transform group-hover:scale-105 transition-transform duration-300">
-                    <GraduationCap className="h-10 w-10 sm:h-12 sm:w-12 text-white" />
+      {/* Floating study icons */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        {studyIcons.map((Icon, index) => (
+          <div
+            key={index}
+            className="absolute text-white/15 motion-reduce:animate-none animate-pulse"
+            style={{
+              left: `${10 + index * 14}%`,
+              top: `${12 + (index % 3) * 22}%`,
+              animationDelay: `${index * 0.9}s`,
+            }}
+          >
+            <Icon size={18 + index * 6} />
+          </div>
+        ))}
+      </div>
+
+      {/* Main content */}
+      <div className="relative z-10 flex min-h-screen flex-col lg:flex-row">
+        {/* Left: Brand + value prop */}
+        <section className="flex flex-col justify-center px-5 py-10 text-white sm:px-8 lg:w-1/2 lg:px-14">
+          <div className="mx-auto max-w-xl lg:mx-0">
+            {/* Logo block */}
+            <div className="mb-10 text-center lg:text-left">
+              <div className="inline-flex items-center justify-center lg:justify-start">
+                <div className="group relative">
+                  <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-500 to-red-500 shadow-2xl ring-1 ring-white/10">
+                    <GraduationCap className="h-12 w-12 text-white" />
                   </div>
-                  <div className="absolute -top-3 -right-3 w-8 h-8 bg-gradient-to-r from-pink-400 to-red-500 rounded-full flex items-center justify-center animate-bounce shadow-xl">
+                  <div className="absolute -right-3 -top-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-pink-400 to-red-500 shadow-lg motion-reduce:animate-none animate-bounce">
                     <Sparkles className="h-4 w-4 text-white" />
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 rounded-3xl blur-xl opacity-30 animate-pulse"></div>
+                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-500 to-red-500 opacity-25 blur-2xl" />
                 </div>
                 <div className="ml-6">
-                  <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold bg-gradient-to-r from-white via-amber-200 to-orange-300 bg-clip-text text-transparent">
+                  <h1 className="bg-gradient-to-r from-white via-amber-100 to-orange-200 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent sm:text-6xl">
                     Exam Ace
                   </h1>
-                  <div className="flex items-center mt-2">
-                    <Shield className="h-5 w-5 text-emerald-400 mr-2" />
-                    <span className="text-base sm:text-lg text-emerald-200 font-semibold">Your Smart Study Companion</span>
+                  <div className="mt-2 flex items-center text-emerald-200">
+                    <Shield className="mr-2 h-5 w-5" />
+                    <span className="text-lg font-semibold">Your Smart Study Companion</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="text-center lg:text-left mb-8 lg:mb-12">
-              <p className="text-xl sm:text-2xl lg:text-3xl mb-6 text-blue-100 font-bold">
-                Transform Your Study Journey 🚀
+            {/* Headline */}
+            <div className="mb-10 text-center lg:text-left">
+              <p className="mb-4 text-3xl font-bold leading-tight text-blue-100 sm:text-4xl">
+                Transform the way to prepare 📚
               </p>
-              <p className="text-base sm:text-lg lg:text-xl text-gray-300 leading-relaxed">
-                Join thousands of students who've mastered their exam preparation with our 
-                comprehensive planning tools, analytics, and achievement systems.
+              <p className="text-lg leading-relaxed text-white/80">
+                Plan precisely, track progress, and stay motivated with analytics and achievements designed for exam excellence.
               </p>
+            </div>
+
+            {/* Feature grid (purely visual) */}
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              {features.map(({ icon: Icon, title, desc, color }, i) => (
+                <div
+                  key={i}
+                  className="group rounded-2xl border border-white/10 bg-white/5 p-4 shadow-lg backdrop-blur-md transition-all hover:border-white/20 hover:bg-white/10"
+                >
+                  <div className={`inline-flex rounded-xl bg-gradient-to-r ${color} p-2 text-white shadow-md ring-1 ring-white/10`}>
+                    <Icon size={18} />
+                  </div>
+                  <div className="mt-3">
+                    <h3 className="text-sm font-semibold text-white">{title}</h3>
+                    <p className="mt-1 text-xs text-white/70">{desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
+        </section>
 
-          {/* Enhanced Features Grid */}
-          
-
-          {/* Enhanced Success Stats */}
-          
-        </div>
-
-        {/* Right Side - Enhanced Auth Form */}
-        <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
-          <div className="bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl p-8 sm:p-10 w-full max-w-md border border-white/30">
-            {/* Enhanced Header */}
-            <div className="text-center mb-8">
-              <div className="flex justify-center mb-6">
-                <div className="relative group">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl group-hover:shadow-3xl transition-shadow duration-300">
-                    <GraduationCap className="h-10 w-10 sm:h-12 sm:w-12 text-white" />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-3xl blur-xl opacity-20 animate-pulse"></div>
+        {/* Right: Auth card */}
+        <section className="flex flex-1 items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
+          <div className="w-full max-w-md">
+            <div className="relative rounded-3xl border border-white/20 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
+              {/* Glow ring */}
+              <div className="pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-br from-white/20 via-white/5 to-transparent" />
+              {/* Header */}
+              <div className="mb-8 text-center">
+                <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 shadow-xl ring-1 ring-black/10">
+                  <GraduationCap className="h-10 w-10 text-white" />
                 </div>
+                <h2 className="mb-2 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-3xl font-bold text-transparent">
+                  {isSignUp ? 'Create an Exam Ace account' : 'Welcome to Daily Planner'}
+                </h2>
+                <p className="text-sm text-white/80">
+                  {isSignUp ? '🚀 Start the journey to exam success' : '🎯 Continue the path to excellence'}
+                </p>
               </div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3 sm:text-3xl">Welcome to Daily Planner</h2>
-              <p className="text-base sm:text-lg text-gray-600 font-medium">
-                {isSignUp ? '🚀 Start your journey to exam success' : '🎯 Continue your path to excellence'}
-              </p>
-            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {isSignUp && <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-3">
-                    <Brain className="inline h-4 w-4 mr-2 text-purple-600" />
-                    Full Name
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {isSignUp && (
+                  <div>
+                    <label
+                      htmlFor="full_name"
+                      className="mb-2 block text-sm font-semibold text-white/90"
+                    >
+                      <span className="inline-flex items-center">
+                        <Brain className="mr-2 h-4 w-4 text-purple-300" />
+                        Full Name
+                      </span>
+                    </label>
+                    <Input
+                      id="full_name"
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      required
+                      placeholder="Enter full name"
+                      className="h-12 rounded-xl border-2 border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:border-indigo-400 focus:bg-white/5"
+                      aria-label="Full name"
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="mb-2 block text-sm font-semibold text-white/90"
+                  >
+                    <span className="inline-flex items-center">
+                      <Target className="mr-2 h-4 w-4 text-blue-300" />
+                      Email
+                    </span>
                   </label>
-                  <Input type="text" value={fullName} onChange={e => setFullName(e.target.value)} required placeholder="Enter your full name" className="border-2 focus:border-indigo-500 hover:border-purple-300 h-12 text-base rounded-xl" />
-                </div>}
-              
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
-                  <Target className="inline h-4 w-4 mr-2 text-blue-600" />
-                  Email
-                </label>
-                <Input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="Enter your email" className="border-2 focus:border-indigo-500 hover:border-purple-300 h-12 text-base rounded-xl" />
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="name@example.com"
+                    className="h-12 rounded-xl border-2 border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:border-indigo-400 focus:bg-white/5"
+                    aria-label="Email address"
+                    autoComplete="email"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="password"
+                    className="mb-2 block text-sm font-semibold text-white/90"
+                  >
+                    <span className="inline-flex items-center">
+                      <Shield className="mr-2 h-4 w-4 text-emerald-300" />
+                      Password
+                    </span>
+                  </label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    placeholder="Enter a secure password"
+                    minLength={6}
+                    className="h-12 rounded-xl border-2 border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:border-indigo-400 focus:bg-white/5"
+                    aria-label="Password"
+                    autoComplete={isSignUp ? 'new-password' : 'current-password'}
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 py-4 font-bold text-white shadow-lg ring-1 ring-black/10 transition-all hover:from-indigo-700 hover:to-purple-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 disabled:opacity-70"
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center">
+                      <div className="mr-3 h-5 w-5 animate-spin rounded-full border-b-2 border-white" />
+                      Processing...
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center">
+                      {isSignUp ? <Rocket className="mr-3 h-5 w-5" /> : <Trophy className="mr-3 h-5 w-5" />}
+                      {isSignUp ? 'Start Your Journey' : 'Continue Learning'}
+                    </div>
+                  )}
+                </Button>
+              </form>
+
+              {/* Switch mode */}
+              <div className="mt-8 text-center">
+                <button
+                  onClick={() => setIsSignUp(!isSignUp)}
+                  className="text-base font-semibold text-indigo-300 transition-colors hover:text-indigo-200"
+                >
+                  {isSignUp
+                    ? '✨ Already have an account? Sign in'
+                    : "🎯 Don't have an account? Join Exam Ace"}
+                </button>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">
-                  <Shield className="inline h-4 w-4 mr-2 text-green-600" />
-                  Password
-                </label>
-                <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Enter your password" minLength={6} className="border-2 focus:border-indigo-500 hover:border-purple-300 h-12 text-base rounded-xl" />
+              {/* Quote */}
+              <div className="mt-8 rounded-2xl border border-white/15 bg-gradient-to-r from-indigo-50/10 via-purple-50/10 to-pink-50/10 p-5 text-center shadow-lg">
+                <p className="text-base font-semibold leading-relaxed text-white/90">
+                  "Success is where preparation and opportunity meet."
+                </p>
+                <p className="mt-2 text-sm font-bold text-white/60">- Bobby Unser</p>
               </div>
-
-              <Button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-4 rounded-xl relative overflow-hidden group shadow-lg hover:shadow-xl transition-all duration-300">
-                {loading ? <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                    Processing...
-                  </div> : <div className="flex items-center justify-center">
-                    {isSignUp ? <Rocket className="h-5 w-5 mr-3" /> : <Trophy className="h-5 w-5 mr-3" />}
-                    {isSignUp ? 'Start Your Journey' : 'Continue Learning'}
-                  </div>}
-              </Button>
-            </form>
-
-            <div className="mt-8 text-center">
-              <button onClick={() => setIsSignUp(!isSignUp)} className="text-base text-indigo-600 hover:text-indigo-800 font-semibold transition-colors duration-200">
-                {isSignUp ? '✨ Already have an account? Sign in' : "🎯 Don't have an account? Join Exam Ace"}
-              </button>
             </div>
 
-            {/* Enhanced Motivational Quote */}
-            <div className="mt-8 p-6 bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-2xl text-center border border-purple-100 shadow-lg">
-              <div className="flex justify-center items-center mb-3">
-                <Lightbulb className="h-6 w-6 text-yellow-500 mr-3" />
-                <TrendingUp className="h-5 w-5 text-purple-500" />
-              </div>
-              <p className="text-base text-gray-700 italic font-semibold leading-relaxed">
-                "Success is where preparation and opportunity meet."
-              </p>
-              <p className="text-sm text-gray-500 mt-2 font-bold">- Bobby Unser</p>
-            </div>
+            {/* Motion preference helper (utility class usage) */}
+            <p className="sr-only">
+              Animations are reduced when system preferences request reduced motion.
+            </p>
           </div>
-        </div>
+        </section>
       </div>
-    </div>;
+    </div>
+  );
 };
