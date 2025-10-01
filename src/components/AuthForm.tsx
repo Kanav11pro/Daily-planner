@@ -4,7 +4,20 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { useTheme, getThemeColors } from '@/contexts/ThemeContext';
-import { BookOpen, Brain, GraduationCap, Target, Trophy, Calendar, BarChart3, Clock, PenTool, Shield, Sparkles, Lightbulb, TrendingUp, Rocket } from 'lucide-react';
+import {
+  BookOpen,
+  Brain,
+  GraduationCap,
+  Target,
+  Trophy,
+  Calendar,
+  BarChart3,
+  Clock,
+  PenTool,
+  Shield,
+  Sparkles,
+  Rocket,
+} from 'lucide-react';
 
 export const AuthForm = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -37,258 +50,221 @@ export const AuthForm = () => {
     }
   };
 
-  // Study-related icons for background
   const studyIcons = [BookOpen, Brain, GraduationCap, Target, Trophy, Calendar];
 
-  // Features to display
   const features = [
-    { icon: Calendar, title: 'Smart Scheduling', desc: 'Plan your daily study sessions', color: 'from-blue-500 to-cyan-500' },
-    { icon: Target, title: 'Task Management', desc: 'Track your study goals', color: 'from-purple-500 to-pink-500' },
-    { icon: BarChart3, title: 'Progress Analytics', desc: 'Monitor your performance', color: 'from-green-500 to-emerald-500' },
-    { icon: Trophy, title: 'Achievement System', desc: 'Celebrate your progress', color: 'from-yellow-500 to-orange-500' },
+    { icon: Calendar, title: 'Smart Scheduling', desc: 'Plan daily study sessions', color: 'from-blue-500 to-cyan-500' },
+    { icon: Target, title: 'Task Management', desc: 'Track study goals', color: 'from-purple-500 to-pink-500' },
+    { icon: BarChart3, title: 'Progress Analytics', desc: 'Monitor performance', color: 'from-green-500 to-emerald-500' },
+    { icon: Trophy, title: 'Achievement System', desc: 'Celebrate progress', color: 'from-yellow-500 to-orange-500' },
     { icon: Clock, title: 'Time Tracking', desc: 'Optimize study duration', color: 'from-red-500 to-pink-500' },
     { icon: PenTool, title: 'Subject Organization', desc: 'Organize by chapters', color: 'from-indigo-500 to-purple-500' },
   ];
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background layers */}
-      <div className="absolute inset-0 bg-slate-900" />
+    <div className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+      {/* Bold gradient hero with dark overlay */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        {/* Saturated mesh */}
+        <div className="absolute inset-0 bg-[radial-gradient(60rem_40rem_at_20%_10%,rgba(99,102,241,0.35),transparent_60%),radial-gradient(50rem_30rem_at_80%_20%,rgba(168,85,247,0.35),transparent_60%),radial-gradient(70rem_40rem_at_50%_80%,rgba(236,72,153,0.35),transparent_60%)]" />
+        {/* Darkening overlay to avoid washed-out look */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-950/90 to-slate-950/95" />
+        {/* Subtle grid for texture */}
+        <div className="absolute inset-0 opacity-[0.07] [background:linear-gradient(rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:42px_42px]" />
+      </div>
 
-      {/* Soft radial glows */}
-      <div className="pointer-events-none absolute -top-40 -left-40 h-[32rem] w-[32rem] rounded-full bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.25),transparent_60%)]" />
-      <div className="pointer-events-none absolute -bottom-40 -right-40 h-[36rem] w-[36rem] rounded-full bg-[radial-gradient(circle_at_center,rgba(236,72,153,0.22),transparent_60%)]" />
+      {/* Understated study icon field */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        {studyIcons.map((Icon, i) => (
+          <div
+            key={i}
+            className="absolute text-white/10"
+            style={{
+              left: `${12 + i * 14}%`,
+              top: `${18 + (i % 3) * 22}%`,
+            }}
+          >
+            <Icon size={18 + i * 6} />
+          </div>
+        ))}
+      </div>
 
-      {/* Animated gradient blobs */}
-      <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-gradient-to-tr from-fuchsia-500/20 to-indigo-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s' }} />
-      <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 rounded-full blur-2xl animate-[pulse_4s_ease-in-out_infinite_1s]" />
-
-      {/* Subtle grid overlay */}
-      <div className="absolute inset-0 opacity-[0.07] bg-[linear-gradient(rgba(255,255,255,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.15)_1px,transparent_1px)] bg-[size:60px_60px]" />
-
-      {/* Floating study icons */}
-      {studyIcons.map((Icon, index) => (
-        <div
-          key={index}
-          className="absolute text-white/10 animate-[float_6s_ease-in-out_infinite]"
-          style={{
-            left: `${12 + index * 14}%`,
-            top: `${8 + index * 9}%`,
-            animationDelay: `${index * 0.7}s`,
-          }}
-        >
-          <Icon size={18 + index * 5} />
-        </div>
-      ))}
-
-      {/* Main Content */}
-      <div className="relative z-10 min-h-screen flex flex-col lg:flex-row">
-        {/* Left: Brand + Features */}
-        <div className="lg:w-1/2 flex flex-col justify-center p-6 sm:p-10 lg:p-14 text-white">
-          <div className="max-w-xl">
-            {/* Logo/Brand */}
-            <div className="flex items-center gap-5 mb-10">
-              <div className="relative">
-                <div className="size-20 sm:size-24 rounded-3xl bg-gradient-to-br from-amber-400 via-orange-500 to-rose-500 shadow-2xl grid place-content-center">
-                  <GraduationCap className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
+      {/* Main layout */}
+      <div className="relative z-10 flex min-h-screen flex-col lg:flex-row">
+        {/* Left: Brand & features */}
+        <aside className="flex flex-col justify-center px-6 py-12 lg:w-1/2 lg:px-14">
+          <div className="mx-auto w-full max-w-xl lg:mx-0">
+            <div className="mb-10 text-center lg:text-left">
+              <div className="inline-flex items-center justify-center lg:justify-start">
+                <div className="relative">
+                  <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-500 to-red-500 shadow-2xl shadow-black/40 ring-1 ring-white/10">
+                    <GraduationCap className="h-12 w-12 text-white" />
+                  </div>
+                  <div className="absolute -right-3 -top-3 flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-pink-400 to-red-500 shadow-md shadow-black/40">
+                    <Sparkles className="h-4 w-4 text-white" />
+                  </div>
                 </div>
-                <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-amber-300 animate-bounce" />
-              </div>
-              <div>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
-                  <span className="bg-gradient-to-r from-white via-amber-200 to-orange-300 bg-clip-text text-transparent">Exam Ace</span>
-                </h1>
-                <div className="mt-2 flex items-center text-emerald-200">
-                  <Shield className="w-5 h-5 mr-2" />
-                  <span className="font-semibold">Smart study companion</span>
+                <div className="ml-6">
+                  <h1 className="bg-gradient-to-r from-white via-amber-100 to-orange-200 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent sm:text-6xl">
+                    Exam Ace
+                  </h1>
+                  <div className="mt-2 flex items-center text-emerald-200">
+                    <Shield className="mr-2 h-5 w-5" />
+                    <span className="text-lg font-semibold">Your Smart Study Companion</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Hero copy */}
-            <p className="text-xl sm:text-2xl font-semibold text-blue-100 mb-3">
-              Transform the study journey with structured planning and insights
-            </p>
-            <p className="text-base sm:text-lg text-gray-300 mb-10">
-              Plan sessions, track goals, and measure progress with a clean, focused interface designed for exam excellence
-            </p>
+            <div className="mb-10 text-center lg:text-left">
+              <p className="mb-3 text-3xl font-bold leading-tight text-indigo-100 sm:text-4xl">
+                Prepare with clarity and confidence
+              </p>
+              <p className="text-lg leading-relaxed text-slate-200">
+                Plan precisely, track progress, and stay motivated with analytics and achievements built for exam excellence.
+              </p>
+            </div>
 
-            {/* Features grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {features.map(({ icon: Ico, title, desc, color }, i) => (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              {features.map(({ icon: Icon, title, desc, color }, i) => (
                 <div
                   key={i}
-                  className="group relative rounded-2xl p-[1px] bg-gradient-to-br from-white/10 to-white/0 hover:from-white/20 transition"
+                  className="group rounded-2xl border border-white/10 bg-slate-900 p-4 shadow-lg shadow-black/30 transition-colors hover:border-white/20"
                 >
-                  <div className="rounded-2xl h-full w-full bg-white/5 backdrop-blur-xl border border-white/10 p-4">
-                    <div className={`inline-flex items-center justify-center rounded-xl p-2 bg-gradient-to-r ${color} text-white shadow-lg mb-3`}>
-                      <Ico className="w-5 h-5" />
-                    </div>
-                    <h3 className="text-white font-semibold">{title}</h3>
-                    <p className="text-sm text-gray-300 mt-1">{desc}</p>
+                  <div className={`inline-flex rounded-xl bg-gradient-to-r ${color} p-2 text-white shadow ring-1 ring-white/10`}>
+                    <Icon size={18} />
+                  </div>
+                  <div className="mt-3">
+                    <h3 className="text-sm font-semibold text-white">{title}</h3>
+                    <p className="mt-1 text-xs text-slate-300">{desc}</p>
                   </div>
                 </div>
               ))}
             </div>
-
-            {/* Trust badges */}
-            <div className="mt-8 flex flex-wrap items-center gap-3 text-xs text-gray-300">
-              <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur">No-nonsense UI</span>
-              <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur">Accessible focus states</span>
-              <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur">Responsive by default</span>
-            </div>
           </div>
-        </div>
+        </aside>
 
-        {/* Right: Auth Card */}
-        <div className="flex-1 flex items-center justify-center p-4 sm:p-8 lg:p-10">
+        {/* Right: Solid auth card */}
+        <section className="flex flex-1 items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
           <div className="w-full max-w-md">
-            <div className="relative rounded-3xl border border-white/15 bg-white/90 backdrop-blur-2xl shadow-2xl">
-              {/* Shine */}
-              <div className="absolute -top-1 left-1/2 -translate-x-1/2 h-px w-2/3 bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+            <div className="relative rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-2xl shadow-black/50">
               {/* Header */}
-              <div className="px-8 pt-8 text-center">
-                <div className="mx-auto mb-6 relative">
-                  <div className="size-20 sm:size-24 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 grid place-content-center shadow-2xl">
-                    <GraduationCap className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
-                  </div>
-                  <div className="absolute inset-0 rounded-2xl blur-2xl bg-gradient-to-r from-indigo-600/30 to-purple-600/30 -z-10" />
+              <div className="mb-8 text-center">
+                <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 shadow-xl shadow-black/40 ring-1 ring-black/20">
+                  <GraduationCap className="h-10 w-10 text-white" />
                 </div>
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  {isSignUp ? 'Create your Exam Ace account' : 'Welcome back to Exam Ace'}
+                <h2 className="mb-2 text-3xl font-bold text-white">
+                  {isSignUp ? 'Create your Exam Ace account' : 'Welcome to Exam Ace'}
                 </h2>
-                <p className="mt-2 text-gray-600">
+                <p className="text-sm text-slate-300">
                   {isSignUp ? '🚀 Start the journey to exam success' : '🎯 Continue the path to excellence'}
                 </p>
               </div>
 
               {/* Form */}
-              <form onSubmit={handleSubmit} className="px-8 py-8 space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 {isSignUp && (
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      <span className="inline-flex items-center gap-2">
-                        <Brain className="h-4 w-4 text-purple-600" />
+                  <div>
+                    <label htmlFor="full_name" className="mb-2 block text-sm font-semibold text-slate-200">
+                      <span className="inline-flex items-center">
+                        <Brain className="mr-2 h-4 w-4 text-purple-300" />
                         Full Name
                       </span>
                     </label>
-                    <div className="relative">
-                      <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                        <Brain className="h-4 w-4 text-purple-500/70" />
-                      </div>
-                      <Input
-                        type="text"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        required
-                        placeholder="Enter full name"
-                        className="pl-9 h-12 text-base rounded-xl border-2 hover:border-purple-300 focus:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-300 transition"
-                      />
-                    </div>
+                    <Input
+                      id="full_name"
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      required
+                      placeholder="Enter full name"
+                      className="h-12 rounded-xl border-2 border-slate-700 bg-slate-800 text-white placeholder:text-slate-400 focus:border-indigo-400 focus:bg-slate-900"
+                      aria-label="Full name"
+                    />
                   </div>
                 )}
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    <span className="inline-flex items-center gap-2">
-                      <Target className="h-4 w-4 text-blue-600" />
+                <div>
+                  <label htmlFor="email" className="mb-2 block text-sm font-semibold text-slate-200">
+                    <span className="inline-flex items-center">
+                      <Target className="mr-2 h-4 w-4 text-indigo-300" />
                       Email
                     </span>
                   </label>
-                  <div className="relative">
-                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                      <Target className="h-4 w-4 text-blue-500/70" />
-                    </div>
-                    <Input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      placeholder="Enter email"
-                      className="pl-9 h-12 text-base rounded-xl border-2 hover:border-purple-300 focus:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-300 transition"
-                    />
-                  </div>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="name@example.com"
+                    className="h-12 rounded-xl border-2 border-slate-700 bg-slate-800 text-white placeholder:text-slate-400 focus:border-indigo-400 focus:bg-slate-900"
+                    aria-label="Email address"
+                    autoComplete="email"
+                  />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
-                    <span className="inline-flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-green-600" />
+                <div>
+                  <label htmlFor="password" className="mb-2 block text-sm font-semibold text-slate-200">
+                    <span className="inline-flex items-center">
+                      <Shield className="mr-2 h-4 w-4 text-emerald-300" />
                       Password
                     </span>
                   </label>
-                  <div className="relative">
-                    <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center">
-                      <Shield className="h-4 w-4 text-green-500/70" />
-                    </div>
-                    <Input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      placeholder="Enter password"
-                      minLength={6}
-                      className="pl-9 h-12 text-base rounded-xl border-2 hover:border-purple-300 focus:border-indigo-500 focus-visible:ring-2 focus-visible:ring-indigo-300 transition"
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500">At least 6 characters</p>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    placeholder="Enter a secure password"
+                    minLength={6}
+                    className="h-12 rounded-xl border-2 border-slate-700 bg-slate-800 text-white placeholder:text-slate-400 focus:border-indigo-400 focus:bg-slate-900"
+                    aria-label="Password"
+                    autoComplete={isSignUp ? 'new-password' : 'current-password'}
+                  />
                 </div>
 
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full relative overflow-hidden rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold py-4 shadow-lg hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transition active:scale-[0.99]"
+                  className="relative w-full rounded-xl bg-gradient-to-r from-indigo-600 to-fuchsia-600 py-4 font-bold text-white shadow-lg shadow-black/40 transition-[transform,box-shadow] hover:from-indigo-700 hover:to-fuchsia-700 hover:shadow-xl hover:shadow-black/50 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 disabled:opacity-70"
                 >
-                  <span className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10 -skew-x-12 translate-x-[-200%] group-hover:translate-x-[200%] transition duration-700" />
                   {loading ? (
                     <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3" />
+                      <div className="mr-3 h-5 w-5 animate-spin rounded-full border-b-2 border-white" />
                       Processing...
                     </div>
                   ) : (
                     <div className="flex items-center justify-center">
-                      {isSignUp ? <Rocket className="h-5 w-5 mr-3" /> : <Trophy className="h-5 w-5 mr-3" />}
+                      {isSignUp ? <Rocket className="mr-3 h-5 w-5" /> : <Trophy className="mr-3 h-5 w-5" />}
                       {isSignUp ? 'Start Your Journey' : 'Continue Learning'}
                     </div>
                   )}
                 </Button>
-
-                <div className="text-center">
-                  <button
-                    type="button"
-                    onClick={() => setIsSignUp(!isSignUp)}
-                    className="text-base text-indigo-600 hover:text-indigo-800 font-semibold transition-colors"
-                  >
-                    {isSignUp ? '✨ Already have an account? Sign in' : "🎯 Don't have an account? Join Exam Ace"}
-                  </button>
-                </div>
               </form>
 
+              {/* Switch */}
+              <div className="mt-8 text-center">
+                <button
+                  onClick={() => setIsSignUp(!isSignUp)}
+                  className="text-base font-semibold text-indigo-300 transition-colors hover:text-indigo-200"
+                >
+                  {isSignUp ? '✨ Already have an account? Sign in' : "🎯 Don't have an account? Join Exam Ace"}
+                </button>
+              </div>
+
               {/* Quote */}
-              <div className="px-8 pb-8">
-                <div className="p-5 rounded-2xl bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border border-purple-100">
-                  <div className="flex justify-center items-center gap-3 mb-2">
-                    <Lightbulb className="h-5 w-5 text-yellow-500" />
-                    <TrendingUp className="h-5 w-5 text-purple-500" />
-                  </div>
-                  <p className="text-sm text-gray-700 italic font-semibold text-center">
-                    "Success is where preparation and opportunity meet."
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1 font-bold text-center">- Bobby Unser</p>
-                </div>
+              <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-900 p-5 text-center shadow-md shadow-black/30">
+                <p className="text-base font-semibold leading-relaxed text-slate-100">
+                  "Success is where preparation and opportunity meet."
+                </p>
+                <p className="mt-2 text-sm font-bold text-slate-400">- Bobby Unser</p>
               </div>
             </div>
           </div>
-        </div>
-      </div>      
-
-      {/* Keyframes for float */}
-      <style>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
-        }
-      `}</style>
+        </section>
+      </div>
     </div>
   );
 };
